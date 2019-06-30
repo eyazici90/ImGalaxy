@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class AggregateRootEntity : IAggregateRoot
+    public abstract class AggregateRoot : IAggregateRoot
     {
         private IEventRouter _eventRouter;
 
@@ -13,7 +13,7 @@ namespace ImGalaxy.ES.Core
 
         public IReadOnlyCollection<object> Events => _events?.AsReadOnly();
 
-        public AggregateRootEntity()
+        public AggregateRoot()
         {
             _eventRouter = _eventRouter ?? new EventRouter();
             _events = _events ?? new List<object>();

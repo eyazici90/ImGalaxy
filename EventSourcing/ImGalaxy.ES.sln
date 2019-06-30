@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29001.49
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.Core", "Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj", "{D9523394-666B-4D72-90F3-EBBBA9AEFB5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Core", "Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj", "{D9523394-666B-4D72-90F3-EBBBA9AEFB5E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.EventStore", "EventStore\ImGalaxy.ES.EventStore\ImGalaxy.ES.EventStore.csproj", "{A330407C-BA34-4A0B-8B63-BAEEA01441D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.EventStore", "EventStore\ImGalaxy.ES.EventStore\ImGalaxy.ES.EventStore.csproj", "{A330407C-BA34-4A0B-8B63-BAEEA01441D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.CosmoStore", "CosmoStore\ImGalaxy.ES.CosmoStore\ImGalaxy.ES.CosmoStore.csproj", "{82AA9159-FF27-45AB-977B-536AFA23C724}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.CosmoStore", "CosmoStore\ImGalaxy.ES.CosmoStore\ImGalaxy.ES.CosmoStore.csproj", "{82AA9159-FF27-45AB-977B-536AFA23C724}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
