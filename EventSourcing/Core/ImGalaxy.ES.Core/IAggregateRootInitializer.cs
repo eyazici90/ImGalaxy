@@ -4,7 +4,8 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface IAggregateRootStore
-    {
+    public interface IAggregateRootInitializer
+    { 
+        void Initialize(IEnumerable<object> events);
     }
 }

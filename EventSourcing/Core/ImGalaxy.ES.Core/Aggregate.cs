@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ImGalaxy.ES.Core
+{
+    public class Aggregate
+    {
+        public string Identifier { get; private set; }
+
+        public int ExpectedVersion { get; private set; }
+
+        public string RootType { get; private set; }
+
+        public IAggregateRoot Root { get; private set; }
+
+        public Aggregate(string identifier, int expectedVersion, IAggregateRoot root)
+        {
+            this.Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
+            this.ExpectedVersion = expectedVersion;
+            this.Root = root ?? throw new ArgumentNullException(nameof(root));
+            this.RootType = root.GetType().Name;
+        }
+    }
+}

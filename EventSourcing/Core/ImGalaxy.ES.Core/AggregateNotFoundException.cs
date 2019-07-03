@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImGalaxy.ES.EventStore
+namespace ImGalaxy.ES.Core
 {
     public class AggregateNotFoundException : Exception
     {

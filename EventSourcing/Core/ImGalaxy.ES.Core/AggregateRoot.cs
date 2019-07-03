@@ -67,5 +67,13 @@ namespace ImGalaxy.ES.Core
             _events.Add(eventItem);
 
         public void ClearChanges() => _events?.Clear();
+
+        public void Initialize(IEnumerable<object> events)
+        {
+            foreach (var e in events)
+            {
+                ApplyEvent(e);
+            }
+        }
     }
 }
