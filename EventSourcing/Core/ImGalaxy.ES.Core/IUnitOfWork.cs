@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface IAggregateStore
+    public interface IUnitOfWork
     {
     }
 }

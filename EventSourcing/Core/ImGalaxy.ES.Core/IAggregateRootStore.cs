@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    interface ISnapshotter
+    public interface IAggregateRootStore
     {
     }
 }

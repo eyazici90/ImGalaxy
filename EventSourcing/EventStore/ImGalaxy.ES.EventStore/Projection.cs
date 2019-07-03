@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImGalaxy.ES.Core
+namespace ImGalaxy.ES.EventStore
 {
-    interface ISnapshotter
+    class Projection
     {
     }
 }

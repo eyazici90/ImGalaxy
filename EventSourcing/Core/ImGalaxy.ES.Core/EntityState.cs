@@ -5,7 +5,7 @@ using System.Text;
 namespace ImGalaxy.ES.Core
 { 
     public abstract class EntityState<TState> : Entity, IEntityState<TState>
-           where TState : class
+           where TState : IEntity
     {  
         public TState With(TState state, Action<TState> update)
         {
