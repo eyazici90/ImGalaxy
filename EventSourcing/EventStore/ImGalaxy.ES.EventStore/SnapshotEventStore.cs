@@ -7,24 +7,25 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotReader: ISnapshotReader
+    public class SnapshotEventStore : ISnapshotStore
     {
         private readonly IEventStoreConnection _connection;
         private readonly IEventDeserializer _deserializer;
-
-        public SnapshotReader(IEventStoreConnection connection, IEventDeserializer deserializer)
+        private readonly Func<ResolvedEvent, bool> _strategy;
+        public SnapshotEventStore(IEventStoreConnection connection,
+            IEventDeserializer deserializer,
+            Func<ResolvedEvent, bool> strategy)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _deserializer = deserializer ?? throw new ArgumentNullException(nameof(deserializer));
+            _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
         }
 
-
-        public async Task<Optional<Snapshot>> ReadOptional(string identifier)
+        public async Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)
         {
-            if (identifier == null) throw new ArgumentNullException(nameof(identifier));
-            var slice = await _connection.
-                ReadStreamEventsBackwardAsync(
-                    identifier, StreamPosition.End, 1, false);
+            if (snapshotStream == null) throw new ArgumentNullException(nameof(snapshotStream));
+
+            var slice = await _connection.ReadStreamEventsBackwardAsync(snapshotStream, StreamPosition.End, 1, false);
 
             if (slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound ||
                 (slice.Events.Length == 0 && slice.NextEventNumber == -1))
@@ -38,6 +39,13 @@ namespace ImGalaxy.ES.EventStore
             var eMetaData = this._deserializer.Deserialize<EventMetadata>(Encoding.UTF8.GetString(e.Metadata));
 
             return new Optional<Snapshot>(new Snapshot(eMetaData.Version, eData));
+        }
+
+        public bool ShouldTakeSnapshot(Type aggregateType, object @event) =>
+                typeof(ISnapshotable).IsAssignableFrom(aggregateType) && _strategy((ResolvedEvent)@event);
+
+        public async Task TakeSnapshot(string stream)
+        {  
         }
     }
 }

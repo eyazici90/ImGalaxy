@@ -11,18 +11,18 @@ namespace ImGalaxy.ES.EventStore
     public class SnapshotableRootRepository<TAggregateRoot> : ISnapshotableRootRepository<TAggregateRoot>
              where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
-        private readonly ISnapshotReader _snapshotReader;
+        private readonly ISnapshotStore _snapshotStore;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventDeserializer _eventDeserializer;
         private readonly IEventStoreConnection _connection;
-        public SnapshotableRootRepository(ISnapshotReader snapshotReader,
+        public SnapshotableRootRepository(ISnapshotStore snapshotStore,
             IStreamNameProvider streamNameProvider,
             IUnitOfWork unitOfWork,
             IEventStoreConnection connection,
             IEventDeserializer eventDeserializer)
         {
-            _snapshotReader = snapshotReader ?? throw new ArgumentNullException(nameof(snapshotReader));
+            _snapshotStore = snapshotStore ?? throw new ArgumentNullException(nameof(snapshotStore));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -56,12 +56,11 @@ namespace ImGalaxy.ES.EventStore
 
             var snapshotStreamName = _streamNameProvider.GetSnapshotStreamName(root, identifier);
 
-            Optional<Snapshot> snapshot = await _snapshotReader.ReadOptional(snapshotStreamName);
+            Optional<Snapshot> snapshot = await _snapshotStore.GetLastSnapshot(snapshotStreamName);
+
             var version = StreamPosition.Start;
-            if (snapshot.HasValue)
-            {
-                version = snapshot.Value.Version + 1;
-            }
+
+            if (snapshot.HasValue) { version = snapshot.Value.Version + 1; }
 
             StreamEventsSlice slice =
                  await
