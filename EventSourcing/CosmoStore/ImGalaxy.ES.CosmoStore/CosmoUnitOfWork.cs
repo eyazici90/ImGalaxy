@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmoStore
 {
@@ -35,5 +36,15 @@ namespace ImGalaxy.ES.CosmoStore
 
         public IEnumerable<Aggregate> GetChanges() =>
              _aggregates.Values.Where(aggregate => aggregate.Root.HasChanges());
+
+        public void SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

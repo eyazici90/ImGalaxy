@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.EventStore", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.CosmoStore", "CosmoStore\ImGalaxy.ES.CosmoStore\ImGalaxy.ES.CosmoStore.csproj", "{82AA9159-FF27-45AB-977B-536AFA23C724}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.InMemoryStore", "ImGalaxy.ES.InMemoryStore\ImGalaxy.ES.InMemoryStore.csproj", "{AFEA25C8-39F1-45C9-90B9-2F34F68E702B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{82AA9159-FF27-45AB-977B-536AFA23C724}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{82AA9159-FF27-45AB-977B-536AFA23C724}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{82AA9159-FF27-45AB-977B-536AFA23C724}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFEA25C8-39F1-45C9-90B9-2F34F68E702B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFEA25C8-39F1-45C9-90B9-2F34F68E702B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFEA25C8-39F1-45C9-90B9-2F34F68E702B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFEA25C8-39F1-45C9-90B9-2F34F68E702B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,7 +31,7 @@ namespace ImGalaxy.ES.EventStore
             _checkpointStore = checkpointStore ?? throw new ArgumentNullException(nameof(checkpointStore)); 
             _eventDeserializer = eventDeserializer ?? throw new ArgumentNullException(nameof(eventDeserializer));
         }
-        public Task Activate() => Task.WhenAll(_projections.Select(x => StartProjection(x)));
+        public Task Activate() => Task.WhenAll(_projections.Select(h => StartProjection(h)));
 
         private async Task StartProjection(ProjectionHandler projection)
         {
@@ -60,8 +60,7 @@ namespace ImGalaxy.ES.EventStore
             ProjectionHandler projection,
             string projectionName
         ) => async (_, e) =>
-        {
-            // check system event
+        { 
             if (e.OriginalEvent.EventType.StartsWith("$")) { return; }
 
             var @event = this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType), Encoding.UTF8.GetString(e.Event.Data));
@@ -77,10 +76,7 @@ namespace ImGalaxy.ES.EventStore
             ISnapshotStore snapshotStore = _snapshotters.FirstOrDefault(
                             x => x.ShouldTakeSnapshot(Type.GetType(metadata.AggregateAssemblyQualifiedName), e) && !metadata.IsSnapshot);
 
-            if (snapshotStore != null)
-            {
-                await snapshotStore.TakeSnapshot(e.OriginalStreamId);
-            }
+            if (snapshotStore != null)  {  await snapshotStore.TakeSnapshot(e.OriginalStreamId); }
         };
 
         private Action<EventStoreCatchUpSubscription, SubscriptionDropReason, Exception> SubscriptionDropped(ProjectionHandler projection, string projectionName)
