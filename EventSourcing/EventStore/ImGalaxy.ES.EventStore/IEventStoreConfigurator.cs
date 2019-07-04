@@ -11,6 +11,9 @@ namespace ImGalaxy.ES.EventStore
         string Username { get; set; }
         string Password { get; set; }
         string Uri { get; set; }
+        int MaxLiveQueueSize { get; set; }
+        int ReadBatchSize { get; set; }
+        
         bool IsSnapshottingOn { get; set; }
     }
 }

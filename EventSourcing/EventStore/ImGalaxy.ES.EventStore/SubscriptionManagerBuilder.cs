@@ -12,10 +12,9 @@ namespace ImGalaxy.ES.EventStore
         public static readonly SubscriptionManagerBuilder New = new SubscriptionManagerBuilder();
         private ICheckpointStore _checkpointStore;
         private IEventStoreConnection _connection;
-        private IEventDeserializer _deserializer;
-        private int? _maxLiveQueueSize;
-        private ProjectionHandler[] _projections;
-        private int? _readBatchSize;
+        private IEventDeserializer _deserializer; 
+        private IEventStoreConfigurator _configurator;
+        private ProjectionHandler[] _projections; 
         private ISnapshotStore[] _snapshotstore = { };
 
         public SubscriptionManagerBuilder Connection(IEventStoreConnection connection)
@@ -32,7 +31,7 @@ namespace ImGalaxy.ES.EventStore
 
         public SubscriptionManagerBuilder MaxLiveQueueSize(int maxLiveQueueSize)
         {
-            _maxLiveQueueSize = maxLiveQueueSize;
+            _configurator.MaxLiveQueueSize = maxLiveQueueSize;
             return this;
         }
 
@@ -44,7 +43,7 @@ namespace ImGalaxy.ES.EventStore
 
         public SubscriptionManagerBuilder ReadBatchSize(int readBatchSize)
         {
-            _readBatchSize = readBatchSize;
+            _configurator.ReadBatchSize = readBatchSize;
             return this;
         }
 
@@ -60,15 +59,15 @@ namespace ImGalaxy.ES.EventStore
             return this;
         }
 
-        //public SubscriptionManager Build() =>
-        //  new SubscriptionManager(_connection, _deserializer, _checkpointStore, _projections, _snapshotters, _maxLiveQueueSize, _readBatchSize);
+        public SubscriptionManager Build() =>
+          new SubscriptionManager(_connection, _checkpointStore, _projections, _snapshotstore, _deserializer, _configurator);
 
-        //public async Task<SubscriptionManager> Activate()
-        //{
-        //    SubscriptionManager manager = Build();
-        //    await manager.Activate();
-        //    return manager;
-        //}
+        public async Task<SubscriptionManager> Activate()
+        {
+            SubscriptionManager manager = Build();
+            await manager.Activate();
+            return manager;
+        }
 
 
     }
