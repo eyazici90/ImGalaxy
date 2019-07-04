@@ -4,7 +4,10 @@ using System.Text;
 
 namespace ImGalaxy.ES.CosmoStore
 {
-    interface ICosmoConfigurator
-    {
+    public interface ICosmoConfigurator
+    { 
+        string EndpointUri { get; set; }
+        string PrimaryKey { get; set; }
+        string DatabaseId { get; set; }
     }
 }
