@@ -7,16 +7,29 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotEventStore : ISnapshotStore
+    public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotStore where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
+
+        private readonly ISnapshotableRootRepository<TAggregateRoot> _snapRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IStreamNameProvider _streamNameProvider;
         private readonly IEventStoreConnection _connection;
+        private readonly IEventSerializer _eventSerializer;
         private readonly IEventDeserializer _deserializer;
         private readonly Func<ResolvedEvent, bool> _strategy;
-        public SnapshotEventStore(IEventStoreConnection connection,
+        public SnapshotEventStore(ISnapshotableRootRepository<TAggregateRoot> snapRepository,
+            IUnitOfWork unitOfWork,
+            IStreamNameProvider streamNameProvider,
+            IEventStoreConnection connection,
+            IEventSerializer eventSerializer,
             IEventDeserializer deserializer,
             Func<ResolvedEvent, bool> strategy)
         {
+            _snapRepository = snapRepository ?? throw new ArgumentNullException(nameof(snapRepository));
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
+            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
             _deserializer = deserializer ?? throw new ArgumentNullException(nameof(deserializer));
             _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
         }
@@ -45,7 +58,31 @@ namespace ImGalaxy.ES.EventStore
                 typeof(ISnapshotable).IsAssignableFrom(aggregateType) && _strategy((ResolvedEvent)@event);
 
         public async Task TakeSnapshot(string stream)
-        {  
+        {
+            TAggregateRoot root = await _snapRepository.GetAsync(stream);
+
+            Aggregate aggregate;
+
+            this._unitOfWork.TryGet(stream, out aggregate);
+
+            if (root == null) { throw new AggregateNotFoundException($"Aggregate not found by {stream}"); }
+
+            var changes = new EventData(
+                                        Guid.NewGuid(),
+                                        typeof(TSnapshot).TypeQualifiedName(),
+                                        true,
+                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root).TakeSnapshot())),
+                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
+                                        {
+                                            AggregateAssemblyQualifiedName = typeof(TAggregateRoot).AssemblyQualifiedName,
+                                            AggregateType = typeof(TAggregateRoot).Name,
+                                            TimeStamp = DateTime.Now,
+                                            IsSnapshot = true,
+                                            Version = aggregate.ExpectedVersion
+                                        })
+                                       ));
+           var snapShotStreamName = _streamNameProvider.GetSnapshotStreamName(root, stream);
+           await _connection.AppendToStreamAsync(snapShotStreamName, ExpectedVersion.Any, changes);
         }
     }
 }
