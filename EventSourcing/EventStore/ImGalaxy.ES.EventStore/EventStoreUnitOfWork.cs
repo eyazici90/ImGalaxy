@@ -1,6 +1,7 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Exceptions;
 using ImGalaxy.ES.Core;
+using MediatR;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -15,16 +16,19 @@ namespace ImGalaxy.ES.EventStore
     {
         private readonly ConcurrentDictionary<string, Aggregate> _aggregates;
         private readonly IEventStoreConnection _connection;
+        private readonly IMediator _mediator;
         private readonly IEventSerializer _eventSerializer;
         private readonly IStreamNameProvider _streamNameProvider;
         public EventStoreUnitOfWork(IEventStoreConnection connection,
+            IMediator mediator,
             IEventSerializer eventSerializer,
             IStreamNameProvider streamNameProvider)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            _aggregates = new ConcurrentDictionary<string, Aggregate>();
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
+            _aggregates = new ConcurrentDictionary<string, Aggregate>();
         }
        
         public void Attach(Aggregate aggregate)
@@ -51,6 +55,22 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task DispatchNotificationsAsync()
         {
+            var notifications = this._aggregates.Values.Select(a => (a.Root as IAggregateChangeTracker));
+
+            var domainEvents = notifications
+                .SelectMany(x => x.GetChanges())
+                .ToList();
+
+            notifications.ToList()
+                .ForEach(entity => entity.ClearChanges());
+
+            var tasks = domainEvents
+                .Select(async (domainEvent) =>
+                {
+                    await this._mediator.Publish(domainEvent);
+                });
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task<int> AppendToStreamAsync()
