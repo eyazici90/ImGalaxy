@@ -8,13 +8,21 @@ namespace ImGalaxy.ES.EventStore.Module
 {
     public static class ImGalaxyESEventStoreModule
     {
-        public static IServiceCollection AddEventStoreModule(this IServiceCollection services)
+        public static IServiceCollection AddEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurator> configurations)
         {
+            RegisterConfigurations(services, configurations);
             RegisterRepositories(services);
             RegisterSnapshotableRepositories(services);
             RegisterUnitOfWork(services);
             return services; 
         }
+        private static IServiceCollection RegisterConfigurations(this IServiceCollection services, Action<IEventStoreConfigurator> configurations) =>
+             services.AddSingleton<IEventStoreConfigurator>(provider => 
+             {
+                 var confs = new EventStoreConfigurations();
+                 configurations(confs);
+                 return confs;
+             });
 
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
             services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
