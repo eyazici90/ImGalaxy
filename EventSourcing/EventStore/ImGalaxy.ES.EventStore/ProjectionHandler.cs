@@ -7,7 +7,7 @@ namespace ImGalaxy.ES.EventStore
 {
     public abstract class ProjectionHandler
     {
-        readonly Type _type;
+        private readonly Type _type;
 
         protected ProjectionHandler() => _type = GetType();
 

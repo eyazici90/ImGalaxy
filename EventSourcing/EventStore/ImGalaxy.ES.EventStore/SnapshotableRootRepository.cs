@@ -28,11 +28,7 @@ namespace ImGalaxy.ES.EventStore
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _eventDeserializer = eventDeserializer ?? throw new ArgumentNullException(nameof(eventDeserializer));
         }
-        public TAggregateRoot Add(TAggregateRoot root, string identifier = default)
-        {
-            this._unitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
-            return root;
-        }
+        public TAggregateRoot Add(TAggregateRoot root, string identifier = default) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = default)
         {
@@ -48,13 +44,11 @@ namespace ImGalaxy.ES.EventStore
 
             _unitOfWork.TryGet(identifier, out existingAggregate);
 
-            if (existingAggregate != null) { return (TAggregateRoot)((existingAggregate).Root); }
+            if (existingAggregate != null) { return (TAggregateRoot)((existingAggregate).Root); } 
+     
+            var streamName = _streamNameProvider.GetStreamName(typeof(TAggregateRoot), identifier);
 
-            TAggregateRoot root = (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true);
-
-            var streamName = _streamNameProvider.GetStreamName(root, identifier);
-
-            var snapshotStreamName = _streamNameProvider.GetSnapshotStreamName(root, identifier);
+            var snapshotStreamName = _streamNameProvider.GetSnapshotStreamName(typeof(TAggregateRoot), identifier);
 
             Optional<Snapshot> snapshot = await _snapshotStore.GetLastSnapshot(snapshotStreamName);
 
@@ -67,6 +61,8 @@ namespace ImGalaxy.ES.EventStore
                      _connection.ReadStreamEventsForwardAsync(streamName, version, 100, false);
 
             if (slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound) { throw new AggregateNotFoundException($"Aggregate not found by {streamName}"); }
+
+            TAggregateRoot root = (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true);
 
             if (snapshot.HasValue)
             {
@@ -96,10 +92,6 @@ namespace ImGalaxy.ES.EventStore
 
             return root;
         }
-
-        public async Task<Optional<TAggregateRoot>> GetOptionalAsync(string identifier)
-        {
-            throw new NotImplementedException();
-        }
+         
     }
 }

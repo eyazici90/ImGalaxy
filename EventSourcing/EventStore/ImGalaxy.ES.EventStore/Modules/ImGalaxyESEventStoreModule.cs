@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImGalaxy.ES.EventStore.Module
+namespace ImGalaxy.ES.EventStore.Modules
 {
     public static class ImGalaxyESEventStoreModule
     {

@@ -9,11 +9,9 @@ namespace ImGalaxy.ES.Core
     {
         TAggregateRoot Get(string identifier);
         Task<TAggregateRoot> GetAsync(string identifier);
- 
-        Task<Optional<TAggregateRoot>> GetOptionalAsync(string identifier);
 
         TAggregateRoot Add(TAggregateRoot root, string identifier = default);
 
-        Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = default); 
+        Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = default);
     }
 }

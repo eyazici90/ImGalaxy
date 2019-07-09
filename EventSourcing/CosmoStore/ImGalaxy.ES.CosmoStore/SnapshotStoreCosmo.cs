@@ -8,7 +8,7 @@ namespace ImGalaxy.ES.CosmoStore
 {
     public class SnapshotStoreCosmo<TAggregateRoot, TSnapshot> : ISnapshotStore where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
-        public Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)
+        public async Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)
         {
             throw new NotImplementedException();
         }
@@ -18,7 +18,7 @@ namespace ImGalaxy.ES.CosmoStore
             throw new NotImplementedException();
         }
 
-        public Task TakeSnapshot(string stream)
+        public async Task TakeSnapshot(string stream)
         {
             throw new NotImplementedException();
         }

@@ -47,10 +47,8 @@ namespace ImGalaxy.ES.EventStore
             _unitOfWork.TryGet(identifier, out existingAggregate);
 
             if (existingAggregate != null) { return (TAggregateRoot)((existingAggregate).Root); }
-
-            TAggregateRoot root = (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true);
-
-            var streamName = _streamNameProvider.GetStreamName(root, identifier);
+             
+            var streamName = _streamNameProvider.GetStreamName(typeof(TAggregateRoot), identifier);
 
             var version = StreamPosition.Start;
 
@@ -59,7 +57,9 @@ namespace ImGalaxy.ES.EventStore
                      _connection.ReadStreamEventsForwardAsync(streamName, version, 100, false);
 
             if (slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound) {  throw new AggregateNotFoundException($"Aggregate not found by {streamName}"); }
-           
+
+            TAggregateRoot root = (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true);
+
             (root as IAggregateRootInitializer).Initialize(slice.Events.Select(e => this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType, true)
                         , Encoding.UTF8.GetString(e.Event.Data))));
  
@@ -82,11 +82,6 @@ namespace ImGalaxy.ES.EventStore
             this._unitOfWork.Attach(aggregate);
 
             return root;
-        }
-
-        public async Task<Optional<TAggregateRoot>> GetOptionalAsync(string identifier)
-        {
-            throw new NotImplementedException();
-        }
+        } 
     }
 }

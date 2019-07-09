@@ -76,7 +76,7 @@ namespace ImGalaxy.ES.EventStore
         private async Task<int> AppendToStreamAsync()
         {
             int eventCount = 0;
-            foreach (Aggregate aggregate in _aggregates.Values)
+            foreach (Aggregate aggregate in GetChanges())
             {
                 EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetChanges()
                                                .Select(@event => new EventData(
@@ -98,7 +98,7 @@ namespace ImGalaxy.ES.EventStore
 
                     eventCount = eventCount + changes.Length;
                 }
-                catch (WrongExpectedVersionException ex)
+                catch (WrongExpectedVersionException)
                 {
                     throw;
                 }
