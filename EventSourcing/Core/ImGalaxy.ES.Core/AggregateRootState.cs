@@ -12,7 +12,7 @@ namespace ImGalaxy.ES.Core
             update(state);
             return state;
         }
-        public abstract string GetStreamName(string id);  
+        public virtual string GetStreamName(string id) => $"{typeof(TState).FullName}-{id}";            
     }
  
 }

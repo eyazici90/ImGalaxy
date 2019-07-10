@@ -10,7 +10,7 @@ namespace ImGalaxy.ES.EventStore
     {
         public async Task<T> GetLastCheckpoint<T>(string projection) => await Task.FromResult(default(T));
 
-        public async Task SetLastCheckpoint<T>(string projection, T checkpoint) => await Task.FromResult(true);
+        public async Task SetLastCheckpoint<T>(string projection, T checkpoint) => await Task.CompletedTask;
 
     }
 }
