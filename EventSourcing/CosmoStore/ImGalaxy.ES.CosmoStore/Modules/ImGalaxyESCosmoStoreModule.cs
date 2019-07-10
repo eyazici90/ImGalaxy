@@ -7,7 +7,7 @@ namespace ImGalaxy.ES.CosmoStore.Modules
 {
     public static class ImGalaxyESCosmoStoreModule
     {
-        public static IServiceCollection AddCosmoStoreModule(this IServiceCollection services, Action<ICosmoConfigurator> configurations)
+        public static IServiceCollection AddGalaxyESCosmoStoreModule(this IServiceCollection services, Action<ICosmoConfigurator> configurations)
         { 
             return services;
         }

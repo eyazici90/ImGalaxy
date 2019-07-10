@@ -8,7 +8,7 @@ namespace ImGalaxy.ES.EventStore.Modules
 {
     public static class ImGalaxyESEventStoreModule
     {
-        public static IServiceCollection AddEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurator> configurations)
+        public static IServiceCollection AddGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurator> configurations)
         {
             RegisterConfigurations(services, configurations);
             RegisterRepositories(services);

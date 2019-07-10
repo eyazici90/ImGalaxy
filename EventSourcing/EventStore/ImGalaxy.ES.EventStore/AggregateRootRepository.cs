@@ -11,15 +11,18 @@ namespace ImGalaxy.ES.EventStore
     public class AggregateRootRepository<TAggregateRoot> : IAggregateRootRepository<TAggregateRoot>
             where TAggregateRoot : IAggregateRoot
     {
+        private readonly IEventStoreConfigurator _configurator;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEventDeserializer _eventDeserializer;
         private readonly IEventStoreConnection _connection;
-        public AggregateRootRepository(IUnitOfWork unitOfWork,
+        public AggregateRootRepository(IEventStoreConfigurator configurator,
+            IUnitOfWork unitOfWork,
             IStreamNameProvider streamNameProvider,
             IEventStoreConnection connection,
             IEventDeserializer eventDeserializer)
         {
+            _configurator = configurator ?? throw new ArgumentNullException(nameof(configurator));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -54,7 +57,7 @@ namespace ImGalaxy.ES.EventStore
 
             StreamEventsSlice slice =
                  await
-                     _connection.ReadStreamEventsForwardAsync(streamName, version, 100, false);
+                     _connection.ReadStreamEventsForwardAsync(streamName, version, this._configurator.ReadBatchSize, false);
 
             if (slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound) {  throw new AggregateNotFoundException($"Aggregate not found by {streamName}"); }
 
@@ -68,7 +71,7 @@ namespace ImGalaxy.ES.EventStore
             {
                 slice =
                     await
-                        _connection.ReadStreamEventsForwardAsync(streamName, slice.NextEventNumber, 100,
+                        _connection.ReadStreamEventsForwardAsync(streamName, slice.NextEventNumber, this._configurator.ReadBatchSize,
                             false);
 
                 (root as IAggregateRootInitializer).Initialize(slice.Events.Select(e => this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType, true)
