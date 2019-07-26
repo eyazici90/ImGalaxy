@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.CosmoStore
 {
     public class SnapshotStoreCosmo<TAggregateRoot, TSnapshot> : ISnapshotStore 
-        where TAggregateRoot : IAggregateRoot, ISnapshotable<TSnapshot>
-        where TSnapshot : class
+        where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         public async Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)
         {

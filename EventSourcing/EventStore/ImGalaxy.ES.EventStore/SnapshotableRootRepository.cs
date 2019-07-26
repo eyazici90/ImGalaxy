@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotableRootRepository<TAggregateRoot, TSnapshot> : ISnapshotableRootRepository<TAggregateRoot, TSnapshot>
-             where TAggregateRoot : IAggregateRoot, ISnapshotable<TSnapshot>
-             where TSnapshot : class
+    public class SnapshotableRootRepository<TAggregateRoot> : ISnapshotableRootRepository<TAggregateRoot>
+             where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         private readonly IEventStoreConfigurator _configurator;
         private readonly ISnapshotStore _snapshotStore;
@@ -70,7 +69,7 @@ namespace ImGalaxy.ES.EventStore
 
             if (snapshot.HasValue)
             {
-                root.RestoreSnapshot(snapshot.Value.State as TSnapshot);
+                root.RestoreSnapshot(snapshot.Value.State);
             }
 
             (root as IAggregateRootInitializer).Initialize(slice.Events.Select(e => this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType, true)

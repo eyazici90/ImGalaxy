@@ -28,7 +28,7 @@ namespace ImGalaxy.ES.EventStore.Modules
             services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
          
         private static IServiceCollection RegisterSnapshotableRepositories(this IServiceCollection services) =>
-            services.AddScoped(typeof(ISnapshotableRootRepository<,>), typeof(SnapshotableRootRepository<,>));
+            services.AddScoped(typeof(ISnapshotableRootRepository<>), typeof(SnapshotableRootRepository<>));
 
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, EventStoreUnitOfWork>();
