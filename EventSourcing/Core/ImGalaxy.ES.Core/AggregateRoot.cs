@@ -8,15 +8,13 @@ namespace ImGalaxy.ES.Core
     public abstract class AggregateRoot : IAggregateRoot
     {
         private IEventRouter _eventRouter;
-
-        private List<object> _events;
-
-        public IReadOnlyCollection<object> Events => _events?.AsReadOnly();
+        private IEventRecorder _eventRecorder;  
+        public IReadOnlyCollection<object> Events => _eventRecorder?.RecordedEvents;
 
         public AggregateRoot()
         {
             _eventRouter = _eventRouter ?? new EventRouter();
-            _events = _events ?? new List<object>();
+            _eventRecorder = _eventRecorder ?? new EventRecorder();
         } 
         
         public  void RegisterEvent<TEvent>(Action<TEvent> handler) =>
@@ -34,7 +32,7 @@ namespace ImGalaxy.ES.Core
 
             BeforeApplyChange(@event);
             Play(@event);
-            AddEvent(@event);
+            RecordEvent(@event);
             AfterApplyChange(@event);
         }
 
@@ -48,13 +46,11 @@ namespace ImGalaxy.ES.Core
 
         private void Play(object @event) =>
             _eventRouter.Route(@event);
-
-
+         
         public virtual void BeforeApplyChange(object @event)
         {
         }
-
-
+         
         public virtual void AfterApplyChange(object @event)
         {
         }
@@ -63,10 +59,10 @@ namespace ImGalaxy.ES.Core
 
         public IEnumerable<object> GetChanges() => Events.AsEnumerable();
 
-        private void AddEvent(object eventItem) =>
-            _events.Add(eventItem);
+        private void RecordEvent(object eventItem) =>
+            _eventRecorder.Record(eventItem);
 
-        public void ClearChanges() => _events?.Clear();
+        public void ClearChanges() => _eventRecorder?.Reset();
 
         public void Initialize(IEnumerable<object> events)
         {

@@ -9,8 +9,8 @@ namespace ImGalaxy.ES.Core
     {
         public static readonly Optional<T> Empty = new Optional<T>();
 
-        readonly bool _hasValue;
-        readonly T _value;
+        private readonly bool _hasValue;
+        private readonly T _value;
 
         public Optional(T value)
         {
