@@ -7,17 +7,19 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotStore where TAggregateRoot : IAggregateRoot, ISnapshotable
+    public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotStore
+        where TAggregateRoot : IAggregateRoot, ISnapshotable<TSnapshot>
+        where TSnapshot : class
     {
 
-        private readonly ISnapshotableRootRepository<TAggregateRoot> _snapRepository;
+        private readonly ISnapshotableRootRepository<TAggregateRoot, TSnapshot> _snapRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IEventStoreConnection _connection;
         private readonly IEventSerializer _eventSerializer;
         private readonly IEventDeserializer _deserializer;
         private readonly Func<ResolvedEvent, bool> _strategy;
-        public SnapshotEventStore(ISnapshotableRootRepository<TAggregateRoot> snapRepository,
+        public SnapshotEventStore(ISnapshotableRootRepository<TAggregateRoot, TSnapshot> snapRepository,
             IUnitOfWork unitOfWork,
             IStreamNameProvider streamNameProvider,
             IEventStoreConnection connection,
@@ -55,7 +57,7 @@ namespace ImGalaxy.ES.EventStore
         }
 
         public bool ShouldTakeSnapshot(Type aggregateType, object @event) =>
-                typeof(ISnapshotable).IsAssignableFrom(aggregateType) && _strategy((ResolvedEvent)@event);
+                typeof(ISnapshotable<TSnapshot>).IsAssignableFrom(aggregateType) && _strategy((ResolvedEvent)@event);
 
         public async Task TakeSnapshot(string stream)
         {
@@ -71,7 +73,7 @@ namespace ImGalaxy.ES.EventStore
                                         Guid.NewGuid(),
                                         typeof(TSnapshot).TypeQualifiedName(),
                                         true,
-                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root).TakeSnapshot())),
+                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable<TSnapshot>)root).TakeSnapshot())),
                                         Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
                                         {
                                             AggregateAssemblyQualifiedName = typeof(TAggregateRoot).AssemblyQualifiedName,

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmoStore
 {
-    public class SnapshotableRootRepository<TAggregateRoot> : ISnapshotableRootRepository<TAggregateRoot>
-            where TAggregateRoot : IAggregateRoot, ISnapshotable
+    public class SnapshotableRootRepository<TAggregateRoot, TSnapshot> : ISnapshotableRootRepository<TAggregateRoot, TSnapshot>
+            where TAggregateRoot : IAggregateRoot, ISnapshotable<TSnapshot>
+            where TSnapshot : class
     {
         public TAggregateRoot Add(TAggregateRoot root, string identifier = null)
         {

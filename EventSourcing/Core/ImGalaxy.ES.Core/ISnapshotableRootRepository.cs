@@ -4,8 +4,9 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface ISnapshotableRootRepository<TAggregateRoot> : IAggregateRootRepository<TAggregateRoot>
-        where TAggregateRoot : IAggregateRoot, ISnapshotable
+    public interface ISnapshotableRootRepository<TAggregateRoot, TSnapshot> : IAggregateRootRepository<TAggregateRoot>
+        where TAggregateRoot : IAggregateRoot, ISnapshotable<TSnapshot>
+        where TSnapshot : class
     { 
 
     }

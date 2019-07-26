@@ -4,10 +4,10 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface ISnapshotable
+    public interface ISnapshotable<TSnapshot> where TSnapshot : class
     {
-        void RestoreSnapshot(object state);
+        void RestoreSnapshot(TSnapshot state);
 
-        object TakeSnapshot();
+        TSnapshot TakeSnapshot();
     }
 }
