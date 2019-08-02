@@ -30,10 +30,10 @@ namespace ImGalaxy.ES.Core
                 throw new ArgumentNullException(nameof(@event));
             }
 
-            BeforeApplyChange(@event);
+            BeforeApplyEvent(@event);
             Play(@event);
             RecordEvent(@event);
-            AfterApplyChange(@event);
+            AfterApplyEvent(@event);
         }
 
         public void ApplyAllChanges()
@@ -47,11 +47,11 @@ namespace ImGalaxy.ES.Core
         private void Play(object @event) =>
             _eventRouter.Route(@event);
          
-        public virtual void BeforeApplyChange(object @event)
+        public virtual void BeforeApplyEvent(object @event)
         {
         }
          
-        public virtual void AfterApplyChange(object @event)
+        public virtual void AfterApplyEvent(object @event)
         {
         }
 
