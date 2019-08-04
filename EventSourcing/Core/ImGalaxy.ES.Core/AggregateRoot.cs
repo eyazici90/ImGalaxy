@@ -17,10 +17,10 @@ namespace ImGalaxy.ES.Core
             _eventRecorder = _eventRecorder ?? new EventRecorder();
         } 
         
-        public  void RegisterEvent<TEvent>(Action<TEvent> handler) =>
+        public void RegisterEvent<TEvent>(Action<TEvent> handler) =>
             _eventRouter.RegisterEvent(handler);
 
-        public  void RegisterEvent<TEvent>(Type @eventType, Action<object> handler) =>
+        public void RegisterEvent<TEvent>(Type @eventType, Action<object> handler) =>
            _eventRouter.RegisterEvent(eventType, handler);
 
         public void ApplyEvent(object @event)

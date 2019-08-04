@@ -18,10 +18,8 @@ namespace ImGalaxy.ES.Core
             _value = value;
         }
 
-        public bool HasValue
-        {
-            get { return _hasValue; }
-        }
+        public bool HasValue => _hasValue; 
+        
 
         public T Value
         {

@@ -12,63 +12,41 @@ namespace ImGalaxy.ES.EventStore
         public static readonly SubscriptionManagerBuilder New = new SubscriptionManagerBuilder();
         private ICheckpointStore _checkpointStore;
         private IEventStoreConnection _connection;
-        private IEventDeserializer _deserializer; 
+        private IEventDeserializer _deserializer;
         private IEventStoreConfigurator _configurator;
-        private ProjectionHandler[] _projections; 
-        private ISnapshotStore[] _snapshotstore = { };
+        private ProjectionHandler[] _projections;
+        private ISnapshotStore[] _snapshotstore;
 
-        public SubscriptionManagerBuilder Connection(IEventStoreConnection connection)
-        {
-            _connection = connection;
-            return this;
-        }
+        public SubscriptionManagerBuilder Connection(IEventStoreConnection connection) =>
+            this.With(t => _connection = connection);
 
-        public SubscriptionManagerBuilder Deserializer(IEventDeserializer deserializer)
-        {
-            _deserializer = deserializer;
-            return this;
-        }
+        public SubscriptionManagerBuilder Deserializer(IEventDeserializer deserializer) =>
+            this.With(t => _deserializer = deserializer);
 
-        public SubscriptionManagerBuilder MaxLiveQueueSize(int maxLiveQueueSize)
-        {
-            _configurator.MaxLiveQueueSize = maxLiveQueueSize;
-            return this;
-        }
+        public SubscriptionManagerBuilder MaxLiveQueueSize(int maxLiveQueueSize) =>
+             this.With(t => _configurator.MaxLiveQueueSize = maxLiveQueueSize);
 
-        public SubscriptionManagerBuilder CheckpointStore(ICheckpointStore checkpointStore)
-        {
-            _checkpointStore = checkpointStore;
-            return this;
-        }
+        public SubscriptionManagerBuilder CheckpointStore(ICheckpointStore checkpointStore) =>
+            this.With(t => _checkpointStore = checkpointStore);
 
-        public SubscriptionManagerBuilder ReadBatchSize(int readBatchSize)
-        {
-            _configurator.ReadBatchSize = readBatchSize;
-            return this;
-        }
+        public SubscriptionManagerBuilder ReadBatchSize(int readBatchSize) =>
+              this.With(t => _configurator.ReadBatchSize = readBatchSize);
 
-        public SubscriptionManagerBuilder SnaphotStore(params ISnapshotStore[] snapshotstore)
-        {
-            _snapshotstore = snapshotstore;
-            return this;
-        }
+        public SubscriptionManagerBuilder SnaphotStore(params ISnapshotStore[] snapshotstore) =>
+             this.With(t => _snapshotstore = snapshotstore);
 
-        public SubscriptionManagerBuilder Projections(params ProjectionHandler[] projections)
-        {
-            _projections = projections;
-            return this;
-        }
+        public SubscriptionManagerBuilder Projections(params ProjectionHandler[] projections) =>
+              this.With(t => _projections = projections);
 
         public SubscriptionManager Build() =>
           new SubscriptionManager(_connection, _checkpointStore, _projections, _snapshotstore, _deserializer, _configurator);
 
-        public async Task<SubscriptionManager> Activate()
+        public async Task<SubscriptionManager> Activate() 
         {
             SubscriptionManager manager = Build();
             await manager.Activate();
             return manager;
-        }
-
+        } 
 
     }
 }

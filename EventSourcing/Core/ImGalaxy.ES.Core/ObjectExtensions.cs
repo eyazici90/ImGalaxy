@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Core
 {
-    public static class FunctionalExtensions
+    public static class ObjectExtensions
     {
         public static async Task<T> ThenAsync<T>(this T @obj, Func<T, Task> then)
         {
@@ -29,6 +29,13 @@ namespace ImGalaxy.ES.Core
             return @obj;
         }
 
+        public static T ThrowsIfNull<T>(this T @obj, Exception exception)
+        {
+            if (@obj == null)
+                throw exception;
+
+            return @obj;
+        }
 
         public static T ThrowsIf<T>(this T @obj, Func<T, bool> assert, Exception exception)
         {
@@ -58,6 +65,16 @@ namespace ImGalaxy.ES.Core
             if (sut)
                 await throwing(@obj);
 
+            return @obj;
+        }
+        public static T With<T>(this T @obj, Action<T> action)
+        {
+            action(@obj);
+            return @obj;
+        }
+        public static async Task<T> WithAsync<T>(this T @obj, Func<T, Task> action)
+        {
+            await action(@obj);
             return @obj;
         }
 

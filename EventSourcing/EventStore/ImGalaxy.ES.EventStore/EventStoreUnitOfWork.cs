@@ -33,16 +33,13 @@ namespace ImGalaxy.ES.EventStore
        
         public void Attach(Aggregate aggregate)
         {
-            if (aggregate == null)
-            {
-                throw new ArgumentNullException(nameof(aggregate));
-            }
-            if (!_aggregates.TryAdd(aggregate.Identifier, aggregate))
-            {
-                throw new ArgumentException(
+            aggregate.ThrowsIfNull(new ArgumentNullException(nameof(aggregate)));
+
+            aggregate.ThrowsIf(a=> !_aggregates.TryAdd(aggregate.Identifier, aggregate),
+                new ArgumentException(
                     string.Format(CultureInfo.InvariantCulture,
-                        $@"The aggregate of type '{aggregate.Root.GetType().Name}' with identifier '{aggregate.Identifier}' was already added."));
-            }
+                        $@"The aggregate of type '{aggregate.Root.GetType().Name}' with identifier '{aggregate.Identifier}' was already added.")));
+           
         }
          
         public bool TryGet(string identifier, out Aggregate aggregate) => _aggregates.TryGetValue(identifier, out aggregate);

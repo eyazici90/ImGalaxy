@@ -37,15 +37,12 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)
         {
-            if (snapshotStream == null) throw new ArgumentNullException(nameof(snapshotStream));
-
+            snapshotStream.ThrowsIfNull(new ArgumentNullException(nameof(snapshotStream)));
+            
             var slice = await _connection.ReadStreamEventsBackwardAsync(snapshotStream, StreamPosition.End, 1, false);
 
-            if (slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound ||
-                (slice.Events.Length == 0 && slice.NextEventNumber == -1))
-            {
-                return Optional<Snapshot>.Empty;
-            }
+            if (CheckIfStreamIsNotFound(slice)) return Optional<Snapshot>.Empty;
+            
             var e = slice.Events[0].Event;
             var eData = this._deserializer.Deserialize(Type.GetType(e.EventType, true)
                                                         , Encoding.UTF8.GetString(e.Data));
@@ -58,6 +55,9 @@ namespace ImGalaxy.ES.EventStore
         public bool ShouldTakeSnapshot(Type aggregateType, object @event) =>
                 typeof(ISnapshotable).IsAssignableFrom(aggregateType) && _strategy((ResolvedEvent)@event);
 
+        private bool CheckIfStreamIsNotFound(StreamEventsSlice slice) => slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound ||
+                (slice.Events.Length == 0 && slice.NextEventNumber == -1);
+
         public async Task TakeSnapshot(string stream)
         {
             TAggregateRoot root = await _snapRepository.GetAsync(stream);
@@ -66,7 +66,7 @@ namespace ImGalaxy.ES.EventStore
 
             this._unitOfWork.TryGet(stream, out aggregate);
 
-            if (root == null) { throw new AggregateNotFoundException($"Aggregate not found by {stream}"); }
+            root.ThrowsIfNull(new AggregateNotFoundException($"Aggregate not found by {stream}"));
 
             var changes = new EventData(
                                         Guid.NewGuid(),
@@ -82,8 +82,11 @@ namespace ImGalaxy.ES.EventStore
                                             Version = aggregate.ExpectedVersion
                                         })
                                        ));
+
            var snapShotStreamName = _streamNameProvider.GetSnapshotStreamName(root, stream);
+
            await _connection.AppendToStreamAsync(snapShotStreamName, ExpectedVersion.Any, changes);
         }
+        
     }
 }
