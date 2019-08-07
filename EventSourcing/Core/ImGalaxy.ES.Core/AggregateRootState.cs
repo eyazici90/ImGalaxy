@@ -1,17 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class AggregateRootState<TState> : AggregateRoot, IAggregateRootState<TState> 
-            where TState : IAggregateRoot
-    {
-        public TState With(TState state, Action<TState> update)
+    public abstract class AggregateRootState<TState> : StateBase<TState>, IAggregateRootState<TState> where TState : class, IAggregateRoot 
+    {  
+        private IEventRecorder _eventRecorder;
+        private IReadOnlyCollection<object> _events => _eventRecorder?.RecordedEvents;
+
+        public AggregateRootState() =>
+            _eventRecorder = _eventRecorder ?? new EventRecorder(); 
+
+        public Result ApplyEvent(object @event)
         {
-            update(state);
-            return state;
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
+            BeforeApplyEvent(@event);
+            Play(@event);
+            RecordEvent(@event);
+            AfterApplyEvent(@event); 
+            return new Result(this as TState, _events);
+        } 
+
+        public void ApplyAllChanges()
+        {
+            foreach (var @event in _events)
+            {
+                Play(@event);
+            }
+        } 
+          
+        public bool HasChanges() => _events.Any();
+
+        public IEnumerable<object> GetChanges() => _events.AsEnumerable();
+
+        private void RecordEvent(object eventItem) =>
+            _eventRecorder.Record(eventItem);
+
+        public void ClearChanges() => _eventRecorder?.Reset();
+
+        public void Initialize(IEnumerable<object> events)
+        {
+            foreach (var e in events)
+            {
+                ApplyEvent(e);
+            }
         }
+         
         public virtual string GetStreamName(string id) => $"{typeof(TState).FullName}-{id}";            
     }
  

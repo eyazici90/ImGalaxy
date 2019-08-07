@@ -67,16 +67,26 @@ namespace ImGalaxy.ES.Core
 
             return @obj;
         }
-        public static T With<T>(this T @obj, Action<T> action)
+        public static T With<T>(this T @obj, Action<T> update)
         {
-            action(@obj);
+            update(@obj);
             return @obj;
         }
-        public static async Task<T> WithAsync<T>(this T @obj, Func<T, Task> action)
+        public static async Task<T> WithAsync<T>(this T @obj, Func<T, Task> update)
         {
-            await action(@obj);
+            await update(@obj);
             return @obj;
         }
+        public static TDestination To<TSource, TDestination>(this TSource @obj, Func<TSource, TDestination> update) =>
+            update(@obj);
 
+        public static TDestination To<TSource, TDestination>(this TSource @obj, TDestination target) =>
+           To(@obj, source => target);
+
+        public static async Task<TDestination> ToAsync<TSource, TDestination>(this TSource @obj, Func<TSource, Task<TDestination>> update) =>
+            await update(@obj);
+
+        public static async Task<TDestination> ToAsync<TSource, TDestination>(this TSource @obj, TDestination target) =>
+           await ToAsync(@obj, async source => target);
     }
 }

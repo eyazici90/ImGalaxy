@@ -4,13 +4,15 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 { 
-    public abstract class EntityState<TState> : Entity, IEntityState<TState>
-           where TState : IEntity
-    {  
-        public TState With(TState state, Action<TState> update)
+    public abstract class EntityState<TState> : StateBase<TState>, IEntityState<TState> where TState : class
+    {
+        public Result ApplyEvent(object @event)
         {
-            update(state);
-            return state;
-        }
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
+            BeforeApplyEvent(@event);
+            Play(@event);
+            AfterApplyEvent(@event); 
+            return new Result(this as TState, null);
+        } 
     }
 }
