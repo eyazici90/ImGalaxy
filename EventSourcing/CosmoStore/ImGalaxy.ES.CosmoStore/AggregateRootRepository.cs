@@ -22,23 +22,20 @@ namespace ImGalaxy.ES.CosmoStore
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
         }
-        public TAggregateRoot Add(TAggregateRoot root, string identifier = null) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
+        public void Add(TAggregateRoot root, string identifier = null) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = null)
-        {
-            this._unitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
-            return root;
-        }
+        public async Task AddAsync(TAggregateRoot root, string identifier = null) =>
+            this._unitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root)); 
 
-        public TAggregateRoot Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
+        public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<TAggregateRoot> GetAsync(string identifier)
+        public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
             Aggregate existingAggregate;
 
             _unitOfWork.TryGet(identifier, out existingAggregate);
 
-            if (existingAggregate != null) { return (TAggregateRoot)((existingAggregate).Root); } 
+            if (existingAggregate != null) { return new Optional<TAggregateRoot>((TAggregateRoot)((existingAggregate).Root)); } 
     
             var streamName = _streamNameProvider.GetStreamName(typeof(TAggregateRoot), identifier);
 
@@ -50,7 +47,7 @@ namespace ImGalaxy.ES.CosmoStore
 
             this._unitOfWork.Attach(aggregate);
 
-            return root; 
+            return new Optional<TAggregateRoot>(root); 
             
         }
  

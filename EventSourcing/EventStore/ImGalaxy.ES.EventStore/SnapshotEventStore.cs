@@ -60,7 +60,9 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task TakeSnapshot(string stream)
         {
-            TAggregateRoot root = await _snapRepository.GetAsync(stream);
+           Optional<TAggregateRoot> root = await _snapRepository.GetAsync(stream);
+
+            root.ThrowsIf(r=>!r.HasValue, new AggregateNotFoundException(stream));
 
             Aggregate aggregate;
 
@@ -72,7 +74,7 @@ namespace ImGalaxy.ES.EventStore
                                         Guid.NewGuid(),
                                         typeof(TSnapshot).TypeQualifiedName(),
                                         true,
-                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root).TakeSnapshot<TSnapshot>())),
+                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot<TSnapshot>())),
                                         Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
                                         {
                                             AggregateAssemblyQualifiedName = typeof(TAggregateRoot).AssemblyQualifiedName,

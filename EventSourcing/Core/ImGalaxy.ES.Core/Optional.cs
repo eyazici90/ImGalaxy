@@ -19,17 +19,7 @@ namespace ImGalaxy.ES.Core
         }
 
         public bool HasValue => _hasValue; 
-        
-
-        public T Value
-        {
-            get
-            {
-                if (!HasValue)
-                    throw new InvalidOperationException();
-                return _value;
-            }
-        }
+        public T Value => !HasValue ? throw new InvalidOperationException() : _value; 
 
         public IEnumerator<T> GetEnumerator()
         {

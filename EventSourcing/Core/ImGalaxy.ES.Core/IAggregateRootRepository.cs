@@ -7,11 +7,11 @@ namespace ImGalaxy.ES.Core
 {
     public interface IAggregateRootRepository<TAggregateRoot>   where TAggregateRoot : IAggregateRoot
     {
-        TAggregateRoot Get(string identifier);
-        Task<TAggregateRoot> GetAsync(string identifier);
+        Optional<TAggregateRoot>  Get(string identifier);
+        Task<Optional<TAggregateRoot>> GetAsync(string identifier);
 
-        TAggregateRoot Add(TAggregateRoot root, string identifier = default);
+        void  Add(TAggregateRoot root, string identifier = default);
 
-        Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = default);
+        Task AddAsync(TAggregateRoot root, string identifier = default);
     }
 }

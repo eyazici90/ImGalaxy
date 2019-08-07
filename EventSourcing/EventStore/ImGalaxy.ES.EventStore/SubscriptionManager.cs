@@ -65,7 +65,7 @@ namespace ImGalaxy.ES.EventStore
 
             var @event = this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType), Encoding.UTF8.GetString(e.Event.Data));
 
-            if (@event == null) { throw new ArgumentNullException(nameof(@event)); }
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event)));
 
             await projection.Handle(@event);
 

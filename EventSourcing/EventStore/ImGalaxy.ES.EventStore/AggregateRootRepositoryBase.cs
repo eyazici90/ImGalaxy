@@ -33,8 +33,8 @@ namespace ImGalaxy.ES.EventStore
             slice.Events.Select(e => this.EventDeserializer.Deserialize(Type.GetType(e.Event.EventType, true)
                        , Encoding.UTF8.GetString(e.Event.Data))); 
         protected virtual string GetStreamNameOfRoot(string identifier) => StreamNameProvider.GetStreamName(typeof(TAggregateRoot), identifier);
-        protected virtual TAggregateRoot IntanceOfRoot() => (TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true);
-        protected virtual TAggregateRoot IntanceOfRoot(Aggregate aggregate) => (TAggregateRoot)((aggregate).Root);
+        protected virtual Optional<TAggregateRoot> IntanceOfRoot() => new Optional<TAggregateRoot>((TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true));
+        protected virtual Optional<TAggregateRoot> IntanceOfRoot(Aggregate aggregate) => new Optional<TAggregateRoot>((TAggregateRoot)((aggregate).Root));
 
         protected virtual Aggregate GetAggregateFromUnitOfWorkIfExits(string identifier)
         {

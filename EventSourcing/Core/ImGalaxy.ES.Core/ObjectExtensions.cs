@@ -12,12 +12,19 @@ namespace ImGalaxy.ES.Core
             await then(@obj);
             return @obj;
         }
+        public static async Task<TDestination> ThenAsync<TSource, TDestination>(this TSource @obj, Func<TSource, Task<TDestination>> then) =>
+            await then(@obj);
+
 
         public static T Then<T>(this T @obj, Action<T> then)
         {
             then(@obj);
             return @obj;
         }
+
+        public static TDestination Then<TSource, TDestination>(this TSource @obj, Func<TSource, TDestination> then) =>
+            then(@obj);
+
 
         public static async Task<T> ThrowsIfAsync<T>(this T @obj, Func<T, Task<bool>> assert, Exception exception)
         {

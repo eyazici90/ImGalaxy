@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class StateBase<TState> where TState : class
+    public abstract class StateBase<TState>  where TState: class
     {
         protected IEventRouter EventRouter;
 
@@ -16,7 +16,9 @@ namespace ImGalaxy.ES.Core
 
         public void RegisterEvent<TEvent>(Type @eventType, Action<object> handler) =>
            EventRouter.RegisterEvent(eventType, handler);
-         
+
+        public Result EmptyResult() => new Result(this as TState, new List<object>());
+
         public class Result
         {
             public readonly TState State;

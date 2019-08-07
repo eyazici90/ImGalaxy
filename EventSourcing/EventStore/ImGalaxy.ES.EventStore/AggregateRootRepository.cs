@@ -20,15 +20,15 @@ namespace ImGalaxy.ES.EventStore
         {
         }
          
-        public TAggregateRoot Add(TAggregateRoot root, string identifier = default) =>
+        public void Add(TAggregateRoot root, string identifier = default) =>
             root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
 
-        public async Task<TAggregateRoot> AddAsync(TAggregateRoot root, string identifier = default) =>
+        public async Task AddAsync(TAggregateRoot root, string identifier = default) =>
             root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
 
-        public TAggregateRoot Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
+        public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<TAggregateRoot> GetAsync(string identifier)
+        public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
             Aggregate existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
 
@@ -43,7 +43,7 @@ namespace ImGalaxy.ES.EventStore
             slice.ThrowsIf(s=> s.Status == SliceReadStatus.StreamDeleted || s.Status == SliceReadStatus.StreamNotFound,
                 new AggregateNotFoundException($"Aggregate not found by {streamName}"));
 
-            TAggregateRoot root = IntanceOfRoot();
+            TAggregateRoot root = IntanceOfRoot().Value;
 
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice)); 
 
@@ -56,7 +56,7 @@ namespace ImGalaxy.ES.EventStore
 
             ClearChangesOfRoot(root);
 
-            return AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root); 
+            return new Optional<TAggregateRoot>(AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root)); 
         }
 
     }
