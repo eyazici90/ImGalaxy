@@ -19,34 +19,23 @@ namespace ImGalaxy.ES.Core
             BeforeApplyEvent(@event);
             Play(@event);
             RecordEvent(@event);
-            AfterApplyEvent(@event); 
-            return new Result(this as TState, _events);
-        } 
+            AfterApplyEvent(@event);
+            var newResult = new Result(this as TState, _events);
 
-        public void ApplyAllChanges()
-        {
-            foreach (var @event in _events)
-            {
-                Play(@event);
-            }
-        } 
-          
+            return newResult;
+        }
+
+        public void ApplyAllChanges() => _events.ForEach(@event => Play(@event));
+
         public bool HasChanges() => _events.Any();
 
         public IEnumerable<object> GetChanges() => _events.AsEnumerable();
 
-        private void RecordEvent(object eventItem) =>
-            _eventRecorder.Record(eventItem);
+        private void RecordEvent(object eventItem) => _eventRecorder.Record(eventItem);
 
         public void ClearChanges() => _eventRecorder?.Reset();
 
-        public void Initialize(IEnumerable<object> events)
-        {
-            foreach (var e in events)
-            {
-                ApplyEvent(e);
-            }
-        }
+        public void Initialize(IEnumerable<object> events) => events.ForEach(e=> ApplyEvent(e)); 
          
         public virtual string GetStreamName(string id) => $"{typeof(TState).FullName}-{id}";            
     }

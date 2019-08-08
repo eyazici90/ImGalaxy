@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,8 +14,7 @@ namespace ImGalaxy.ES.Core
             return @obj;
         }
         public static async Task<TDestination> ThenAsync<TSource, TDestination>(this TSource @obj, Func<TSource, Task<TDestination>> then) =>
-            await then(@obj);
-
+            await then(@obj); 
 
         public static T Then<T>(this T @obj, Action<T> then)
         {
@@ -25,6 +25,24 @@ namespace ImGalaxy.ES.Core
         public static TDestination Then<TSource, TDestination>(this TSource @obj, Func<TSource, TDestination> then) =>
             then(@obj);
 
+        public static T Match<T>(this Optional<T> @obj, Action<T> some, Action none)
+        {
+            if (@obj.HasValue)
+                some(@obj.Value);
+            else
+                none();
+
+            return @obj.Value;
+        }
+        public static async Task<T> MatchAsync<T>(this Optional<T> @obj, Func<T, Task> some, Action none)
+        {
+            if (@obj.HasValue)
+                await some(@obj.Value);
+            else
+                none();
+
+            return @obj.Value;
+        }
 
         public static async Task<T> ThrowsIfAsync<T>(this T @obj, Func<T, Task<bool>> assert, Exception exception)
         {
@@ -95,5 +113,9 @@ namespace ImGalaxy.ES.Core
 
         public static async Task<TDestination> ToAsync<TSource, TDestination>(this TSource @obj, TDestination target) =>
            await ToAsync(@obj, async source => target);
+
+        public static void ForEach<T>(this IEnumerable<T> @objList, Action<T> act) => @objList.ToList().ForEach(act);
+
+        public static void ForEach<T>(this IReadOnlyCollection<T> @objList, Action<T> act) => @objList.ToList().ForEach(act);
     }
 }

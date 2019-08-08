@@ -37,12 +37,9 @@ namespace ImGalaxy.ES.CosmoStore
         public IEnumerable<Aggregate> GetChanges() =>
              _aggregates.Values.Where(aggregate => aggregate.Root.HasChanges());
 
-        public void SaveChanges()
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<int> SaveChangesAsync()
+        public void SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        
+        public async Task SaveChangesAsync()
         {
             throw new NotImplementedException();
         }

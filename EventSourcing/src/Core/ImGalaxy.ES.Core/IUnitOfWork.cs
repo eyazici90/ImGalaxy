@@ -11,7 +11,7 @@ namespace ImGalaxy.ES.Core
         void Attach(Aggregate aggregateRoot); 
         bool HasChanges();
         void SaveChanges();
-        Task<int> SaveChangesAsync();
+        Task SaveChangesAsync();
         IEnumerable<Aggregate> GetChanges();
     }
 }

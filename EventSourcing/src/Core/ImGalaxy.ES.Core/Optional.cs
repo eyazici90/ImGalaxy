@@ -14,8 +14,8 @@ namespace ImGalaxy.ES.Core
 
         public Optional(T value)
         {
-            _hasValue = true;
             _value = value;
+            _hasValue = value == null ? false : true;
         }
 
         public bool HasValue => _hasValue; 

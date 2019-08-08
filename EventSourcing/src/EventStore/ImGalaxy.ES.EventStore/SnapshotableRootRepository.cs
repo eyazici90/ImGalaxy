@@ -43,7 +43,7 @@ namespace ImGalaxy.ES.EventStore
 
             var version = StreamPosition.Start;
 
-            if (snapshot.HasValue) { version = snapshot.Value.Version + 1; }
+            snapshot.Match(s=> version = snapshot.Value.Version + 1, null);
 
             StreamEventsSlice slice = await ReadStreamEventsForwardAsync(streamName, version);
 
@@ -52,10 +52,8 @@ namespace ImGalaxy.ES.EventStore
              
             TAggregateRoot root = IntanceOfRoot().Value;
 
-            if (snapshot.HasValue)
-            {
-                root.RestoreSnapshot(snapshot.Value.State);
-            }
+            snapshot.Match(s=> root.RestoreSnapshot(snapshot.Value.State), null);
+
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice));
              
             while (!slice.IsEndOfStream)

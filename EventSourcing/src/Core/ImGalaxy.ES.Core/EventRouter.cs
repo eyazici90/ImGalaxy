@@ -12,24 +12,16 @@ namespace ImGalaxy.ES.Core
 
         private void ConfigureRoute(Type @event, Action<object> handler)
         {
-            if (@event == null)
-            {
-                throw new ArgumentNullException(nameof(@event));
-            }
-            if (handler == null)
-            {
-                throw new ArgumentNullException(nameof(handler));
-            }
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event)));
+
+            handler.ThrowsIfNull(new ArgumentNullException(nameof(handler)));
 
             _handlers.Add(@event, handler);
         }
 
         private void ConfigureRoute<TEvent>(Action<TEvent> handler)
         {
-            if (handler == null)
-            {
-                throw new ArgumentNullException(nameof(handler));
-            }
+            handler.ThrowsIfNull(new ArgumentNullException(nameof(handler)));
 
             _handlers.Add(typeof(TEvent), @event => handler((TEvent)@event));
         }
@@ -41,8 +33,7 @@ namespace ImGalaxy.ES.Core
 
         public void Route(object @event)
         {
-            if (@event == null)
-                throw new ArgumentNullException(nameof(@event));
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event)));
 
             Action<object> handler;
             if (_handlers.TryGetValue(@event.GetType(), out handler))

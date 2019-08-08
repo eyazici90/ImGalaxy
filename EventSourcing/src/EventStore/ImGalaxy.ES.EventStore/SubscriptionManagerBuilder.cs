@@ -30,16 +30,16 @@ namespace ImGalaxy.ES.EventStore
             this.With(t => _checkpointStore = checkpointStore);
 
         public SubscriptionManagerBuilder ReadBatchSize(int readBatchSize) =>
-              this.With(t => _configurator.ReadBatchSize = readBatchSize);
+            this.With(t => _configurator.ReadBatchSize = readBatchSize);
 
         public SubscriptionManagerBuilder SnaphotStore(params ISnapshotStore[] snapshotstore) =>
-             this.With(t => _snapshotstore = snapshotstore);
+            this.With(t => _snapshotstore = snapshotstore);
 
         public SubscriptionManagerBuilder Projections(params ProjectionHandler[] projections) =>
-              this.With(t => _projections = projections);
+            this.With(t => _projections = projections);
 
         public SubscriptionManager Build() =>
-          new SubscriptionManager(_connection, _checkpointStore, _projections, _snapshotstore, _deserializer, _configurator);
+            new SubscriptionManager(_connection, _checkpointStore, _projections, _snapshotstore, _deserializer, _configurator);
 
         public async Task<SubscriptionManager> Activate() 
         {

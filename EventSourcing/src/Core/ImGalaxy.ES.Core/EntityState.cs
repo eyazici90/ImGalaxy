@@ -11,8 +11,9 @@ namespace ImGalaxy.ES.Core
             @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
             BeforeApplyEvent(@event);
             Play(@event);
-            AfterApplyEvent(@event); 
-            return new Result(this as TState, null);
+            AfterApplyEvent(@event);
+            var newResult = new Result(this as TState, null);
+            return newResult;
         } 
     }
 }

@@ -10,14 +10,11 @@ namespace ImGalaxy.ES.Core
         public EventRecorder() => _events = new List<object>();
         public IReadOnlyList<object> RecordedEvents => _events.AsReadOnly();
 
-        public void Record(object @event)
-        {
+        public void Record(object @event) =>
             _events.Add(@event);
-        }
-
-        public void Reset()
-        {
+        
+        public void Reset() =>
             _events?.Clear();
-        }
+        
     }
 }

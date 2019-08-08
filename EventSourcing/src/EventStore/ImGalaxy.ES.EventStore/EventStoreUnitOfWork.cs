@@ -105,11 +105,10 @@ namespace ImGalaxy.ES.EventStore
 
         public void SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task<int> SaveChangesAsync()
+        public async Task SaveChangesAsync()
         {
-            var result = await AppendToStreamAsync();
+            await AppendToStreamAsync();
             await DispatchNotificationsAsync();
-            return result;
         }
     }
 }
