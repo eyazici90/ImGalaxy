@@ -68,7 +68,7 @@ namespace ImGalaxy.ES.EventStore
 
             this._unitOfWork.TryGet(stream, out aggregate);
 
-            root.ThrowsIfNull(new AggregateNotFoundException($"Aggregate not found by {stream}"));
+            aggregate.ThrowsIfNull(new AggregateNotFoundException($"Aggregate not found by {stream}"));
 
             var changes = new EventData(
                                         Guid.NewGuid(),

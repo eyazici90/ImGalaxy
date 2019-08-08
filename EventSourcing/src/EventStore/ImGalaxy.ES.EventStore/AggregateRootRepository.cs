@@ -30,9 +30,9 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
-            Aggregate existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
+            Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
 
-            if (existingAggregate != null) { return IntanceOfRoot(existingAggregate); }
+            if (!existingAggregate.HasValue) { return Optional<TAggregateRoot>.Empty; }
              
             var streamName = GetStreamNameOfRoot(identifier);
 
@@ -56,7 +56,9 @@ namespace ImGalaxy.ES.EventStore
 
             ClearChangesOfRoot(root);
 
-            return new Optional<TAggregateRoot>(AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root)); 
+            AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root);
+
+            return new Optional<TAggregateRoot>(root); 
         }
 
     }

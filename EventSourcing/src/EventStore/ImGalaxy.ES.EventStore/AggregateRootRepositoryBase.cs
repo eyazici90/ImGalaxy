@@ -36,17 +36,17 @@ namespace ImGalaxy.ES.EventStore
         protected virtual Optional<TAggregateRoot> IntanceOfRoot() => new Optional<TAggregateRoot>((TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true));
         protected virtual Optional<TAggregateRoot> IntanceOfRoot(Aggregate aggregate) => new Optional<TAggregateRoot>((TAggregateRoot)((aggregate).Root));
 
-        protected virtual Aggregate GetAggregateFromUnitOfWorkIfExits(string identifier)
+        protected virtual Optional<Aggregate> GetAggregateFromUnitOfWorkIfExits(string identifier)
         {
             Aggregate existingAggregate;
 
             UnitOfWork.TryGet(identifier, out existingAggregate);
 
-            return existingAggregate;
+            return new Optional<Aggregate>(existingAggregate);
         }
 
         protected virtual void ClearChangesOfRoot(TAggregateRoot root) => root.ClearChanges();
-        protected virtual TAggregateRoot AttachAggregateToUnitOfWork(string identifier, int expectedVersion, TAggregateRoot aggregateRoot) =>
+        protected virtual void AttachAggregateToUnitOfWork(string identifier, int expectedVersion, TAggregateRoot aggregateRoot) =>
             aggregateRoot.With(root =>
             {
                 var aggregate = new Aggregate(identifier, expectedVersion, root);
