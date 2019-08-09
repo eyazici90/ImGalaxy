@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImGalaxy.ES.CosmoStore
+namespace ImGalaxy.ES.CosmosDB
 {
-    public class SnapshotStoreCosmo<TAggregateRoot, TSnapshot> : ISnapshotStore 
+    public class SnapshotStoreCosmosDB<TAggregateRoot, TSnapshot> : ISnapshotStore 
         where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         public async Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream)

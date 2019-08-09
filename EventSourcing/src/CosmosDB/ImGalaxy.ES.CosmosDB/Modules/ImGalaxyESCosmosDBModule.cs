@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImGalaxy.ES.CosmoStore.Modules
+namespace ImGalaxy.ES.CosmosDB.Modules
 {
     public static class ImGalaxyESCosmoStoreModule
     {
-        public static IServiceCollection AddGalaxyESCosmoStoreModule(this IServiceCollection services, Action<ICosmoConfigurator> configurations)
+        public static IServiceCollection AddGalaxyESCosmoStoreModule(this IServiceCollection services, Action<ICosmosDBConfigurator> configurations)
         { 
             return services;
         }

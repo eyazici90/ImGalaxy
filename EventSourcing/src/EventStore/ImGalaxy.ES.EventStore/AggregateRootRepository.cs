@@ -50,7 +50,7 @@ namespace ImGalaxy.ES.EventStore
             while (!slice.IsEndOfStream)
             {
                 slice = await ReadStreamEventsForwardAsync(streamName, slice.NextEventNumber); 
-
+                
                 ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice));
             }
 

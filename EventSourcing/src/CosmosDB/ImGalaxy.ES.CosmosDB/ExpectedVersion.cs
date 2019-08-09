@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ImGalaxy.ES.CosmoStore
+namespace ImGalaxy.ES.CosmosDB
 {
     public static class ExpectedVersion
     {
