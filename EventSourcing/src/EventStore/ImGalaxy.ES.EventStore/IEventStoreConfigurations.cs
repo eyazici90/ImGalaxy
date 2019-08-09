@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public interface IEventStoreConfigurator
+    public interface IEventStoreConfigurations
     {
         IEventStoreConnection Connection { get; set; }
         string Username { get; set; }

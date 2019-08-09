@@ -13,7 +13,7 @@ namespace ImGalaxy.ES.EventStore
         private ICheckpointStore _checkpointStore;
         private IEventStoreConnection _connection;
         private IEventDeserializer _deserializer;
-        private IEventStoreConfigurator _configurator;
+        private IEventStoreConfigurations _configurator;
         private ProjectionHandler[] _projections;
         private ISnapshotStore[] _snapshotstore;
 

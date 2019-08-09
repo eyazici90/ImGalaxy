@@ -15,17 +15,17 @@ namespace ImGalaxy.ES.EventStore
         private readonly ProjectionHandler[] _projections;  
         private readonly ISnapshotStore[] _snapshotters;
         private readonly IEventDeserializer _eventDeserializer;
-        private readonly IEventStoreConfigurator _configurator;
+        private readonly IEventStoreConfigurations _configurations;
 
         internal SubscriptionManager(IEventStoreConnection connection, 
             ICheckpointStore checkpointStore,
             ProjectionHandler[] projections,
             ISnapshotStore[] snapshotters,
             IEventDeserializer eventDeserializer,
-            IEventStoreConfigurator configurator)
+            IEventStoreConfigurations configurations)
         {
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
-            _configurator = configurator ?? throw new ArgumentNullException(nameof(configurator));
+            _configurations = configurations ?? throw new ArgumentNullException(nameof(configurations));
             _projections = projections ?? throw new ArgumentNullException(nameof(projections)); 
             _snapshotters = snapshotters ?? throw new ArgumentNullException(nameof(snapshotters)); 
             _checkpointStore = checkpointStore ?? throw new ArgumentNullException(nameof(checkpointStore)); 
@@ -40,8 +40,8 @@ namespace ImGalaxy.ES.EventStore
             Position lastCheckpoint = await _checkpointStore.GetLastCheckpoint<Position>(projectionTypeName);
 
             var settings = new CatchUpSubscriptionSettings(
-                this._configurator.MaxLiveQueueSize,
-                this._configurator.ReadBatchSize,
+                this._configurations.MaxLiveQueueSize,
+                this._configurations.ReadBatchSize,
                 false,
                 false,
                 projectionTypeName

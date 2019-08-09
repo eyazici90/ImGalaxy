@@ -12,12 +12,12 @@ namespace ImGalaxy.ES.CosmosDB
         protected readonly IUnitOfWork UnitOfWork;
         protected readonly IEventDeserializer EventDeserializer;
         protected readonly ICosmosDBConnection CosmosDBConnection;
-        protected readonly ICosmosDBConfigurator CosmosDBConfigurator;
+        protected readonly ICosmosDBConfigurations CosmosDBConfigurator;
         protected readonly IStreamNameProvider StreamNameProvider;
         public AggregateRootRepositoryBase(IUnitOfWork unitOfWork,
             IEventDeserializer eventDeserializer,
             ICosmosDBConnection cosmosDBConnection,
-            ICosmosDBConfigurator cosmosDBConfigurator,
+            ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider)
         {
             UnitOfWork = unitOfWork;

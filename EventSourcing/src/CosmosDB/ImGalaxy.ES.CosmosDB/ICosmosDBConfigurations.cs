@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public interface ICosmosDBConfigurator
+    public interface ICosmosDBConfigurations
     { 
         string EndpointUri { get; set; }
         string PrimaryKey { get; set; }

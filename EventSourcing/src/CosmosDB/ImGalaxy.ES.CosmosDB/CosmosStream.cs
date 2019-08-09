@@ -17,7 +17,7 @@ namespace ImGalaxy.ES.CosmosDB
         public readonly long LastEventNumber;
         public readonly long NextEventNumber;
 
-        public CosmosStream(string id, string type, long version, StreamReadStatus streamReadStatus,
+        private CosmosStream(string id, string type, long version, StreamReadStatus streamReadStatus,
             ReadDirection readDirection, CosmosEvent[] events)
         {
             Id = id;
@@ -29,6 +29,12 @@ namespace ImGalaxy.ES.CosmosDB
             LastEventNumber = Events.Length;
             NextEventNumber = LastEventNumber + 1;
         }
+        public static CosmosStream Create(string id, string type, long version, StreamReadStatus streamReadStatus,
+            ReadDirection readDirection, CosmosEvent[] events) =>
+            new CosmosStream(id, type, version, streamReadStatus, readDirection, events);
+
+        public static CosmosStream Create(string id, string type) =>
+           new CosmosStream(id, type, 0, StreamReadStatus.Success, ReadDirection.Forward, null);
 
         public CosmosStream AppendEvents(IEnumerable<CosmosEvent> cosmosEvents) =>
              new CosmosStream(this.Id, this.Type, this.Version, this.StreamReadStatus, this.ReadDirection, cosmosEvents.ToArray());

@@ -13,18 +13,18 @@ namespace ImGalaxy.ES.EventStore
         protected readonly IUnitOfWork UnitOfWork;
         protected readonly IEventDeserializer EventDeserializer;
         protected readonly IEventStoreConnection EventStoreConnection;
-        protected readonly IEventStoreConfigurator EventStoreConfigurator;
+        protected readonly IEventStoreConfigurations EventStoreConfigurations;
         protected readonly IStreamNameProvider StreamNameProvider;
         public AggregateRootRepositoryBase(IUnitOfWork unitOfWork,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
-            IEventStoreConfigurator eventStoreConfigurator,
+            IEventStoreConfigurations eventStoreConfigurations,
             IStreamNameProvider streamNameProvider)
         {
             UnitOfWork = unitOfWork;
             EventDeserializer = eventDeserializer;
             EventStoreConnection = eventStoreConnection;
-            EventStoreConfigurator = eventStoreConfigurator;
+            EventStoreConfigurations = eventStoreConfigurations;
             StreamNameProvider = streamNameProvider;
         }
         protected virtual TAggregateRoot ApplyChangesToRoot(TAggregateRoot root, IEnumerable<object> events) =>
@@ -54,6 +54,6 @@ namespace ImGalaxy.ES.EventStore
             });
 
         protected virtual async Task<StreamEventsSlice> ReadStreamEventsForwardAsync(string streamName, long version) =>
-              await EventStoreConnection.ReadStreamEventsForwardAsync(streamName, version, this.EventStoreConfigurator.ReadBatchSize, false);
+              await EventStoreConnection.ReadStreamEventsForwardAsync(streamName, version, this.EventStoreConfigurations.ReadBatchSize, false);
     }
 }

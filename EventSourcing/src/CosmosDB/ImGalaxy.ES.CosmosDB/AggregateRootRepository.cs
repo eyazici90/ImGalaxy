@@ -12,7 +12,7 @@ namespace ImGalaxy.ES.CosmosDB
           where TAggregateRoot : IAggregateRoot
     {
         public AggregateRootRepository(IUnitOfWork unitOfWork, IEventDeserializer eventDeserializer, 
-            ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurator cosmosDBConfigurator,
+            ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider) 
             : base(unitOfWork, eventDeserializer, cosmosDBConnection, cosmosDBConfigurator, streamNameProvider)
         {

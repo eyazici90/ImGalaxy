@@ -14,7 +14,7 @@ namespace ImGalaxy.ES.EventStore
         public AggregateRootRepository(IUnitOfWork unitOfWork,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
-            IEventStoreConfigurator eventStoreConfigurator,
+            IEventStoreConfigurations eventStoreConfigurator,
             IStreamNameProvider streamNameProvider)
             : base(unitOfWork, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider)
         {

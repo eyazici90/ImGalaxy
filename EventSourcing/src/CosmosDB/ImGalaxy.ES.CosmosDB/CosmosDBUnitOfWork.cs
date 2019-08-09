@@ -75,13 +75,13 @@ namespace ImGalaxy.ES.CosmosDB
                                                    Guid.NewGuid().ToString(),
                                                    @event.GetType().TypeQualifiedName(), 
                                                    @event,
-                                                  new EventMetadata
-                                                   {
-                                                       TimeStamp = DateTime.Now,
-                                                       AggregateType = aggregate.Root.GetType().Name,
-                                                       AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                       IsSnapshot = false
-                                                   }
+                                                      new EventMetadata
+                                                       {
+                                                           TimeStamp = DateTime.Now,
+                                                           AggregateType = aggregate.Root.GetType().Name,
+                                                           AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
+                                                           IsSnapshot = false
+                                                       }
                                                    )).ToArray();
                 try
                 {

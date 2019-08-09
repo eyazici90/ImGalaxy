@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.CosmosDB
         public readonly EventMetadata EventMetadata;
         public readonly DateTime CreatedTime;
 
-        public CosmosEvent(string streamId, string eventId, long position,
+        private CosmosEvent(string streamId, string eventId, long position,
             string eventType, object data, EventMetadata eventMetadata, DateTime createdTime)
         {
             StreamId = streamId;
@@ -26,6 +26,11 @@ namespace ImGalaxy.ES.CosmosDB
             EventMetadata = eventMetadata;
             CreatedTime = createdTime;
         }
+        public static CosmosEvent Create(string streamId, string eventId, long position,
+            string eventType, object data, EventMetadata eventMetadata, DateTime createdTime) =>
+            new CosmosEvent(streamId, eventId, position,
+            eventType, data, eventMetadata, createdTime);
+
 
     }
 }

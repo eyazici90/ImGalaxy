@@ -5,7 +5,7 @@ using EventStore.ClientAPI;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class EventStoreConfigurations : IEventStoreConfigurator
+    public class EventStoreConfigurations : IEventStoreConfigurations
     {
         public IEventStoreConnection Connection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string Username { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
