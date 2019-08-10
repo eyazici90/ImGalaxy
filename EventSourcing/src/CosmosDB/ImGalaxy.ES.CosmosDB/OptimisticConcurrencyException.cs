@@ -10,7 +10,7 @@ namespace ImGalaxy.ES.CosmosDB
         { }
 
         public OptimisticConcurrencyException(string message)
-            : base(message)
+            : base($"expected version is {message}" )
         { }
     }
 }

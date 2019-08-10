@@ -34,10 +34,14 @@ namespace ImGalaxy.ES.CosmosDB
             new CosmosStream(id, type, version, streamReadStatus, readDirection, events);
 
         public static CosmosStream Create(string id, string type) =>
-           new CosmosStream(id, type, 0, StreamReadStatus.Success, ReadDirection.Forward, null);
+           new CosmosStream(id, type, 0, StreamReadStatus.Success, ReadDirection.Forward, new CosmosEvent[0]);
 
         public CosmosStream AppendEvents(IEnumerable<CosmosEvent> cosmosEvents) =>
              new CosmosStream(this.Id, this.Type, this.Version, this.StreamReadStatus, this.ReadDirection, cosmosEvents.ToArray());
-        
+
+        public CosmosStream ChangeVersion(long version) =>
+            new CosmosStream(this.Id, this.Type, version, this.StreamReadStatus, this.ReadDirection, this.Events);
+
+
     }
 }

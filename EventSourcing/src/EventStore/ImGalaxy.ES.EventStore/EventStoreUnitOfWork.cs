@@ -109,6 +109,9 @@ namespace ImGalaxy.ES.EventStore
         {
             await AppendToStreamAsync();
             await DispatchNotificationsAsync();
+            DetachAllAggregates();
         }
+        private void DetachAllAggregates() =>
+                _aggregates.Clear();
     }
 }

@@ -14,21 +14,25 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBConnection : ICosmosDBConnection
     {
-        private readonly IDocumentClient _cosmosClient;
+        private readonly ICosmosDBClient _cosmosClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
-        public CosmosDBConnection(IDocumentClient cosmosClient, ICosmosDBConfigurations cosmosDBConfigurations)
+        private readonly IEventSerializer _eventSerializer;
+        public CosmosDBConnection(IEventSerializer eventSerializer,
+            ICosmosDBClient cosmosClient, 
+            ICosmosDBConfigurations cosmosDBConfigurations)
         {
+            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
             _cosmosClient = cosmosClient ?? throw new ArgumentNullException(nameof(cosmosClient));
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
         }
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamId, long start, int count) =>
-            await ReadStreamWithEventsByDirection(streamId, start, count, 
-                ()=> GetEventDocumentsForwardAsync(eDoc => eDoc.StreamId == streamId, Convert.ToInt32(start), count));
+            await ReadStreamWithEventsByDirection(streamId, start, count,
+                id => GetEventDocumentsForwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
      
         public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count) =>
               await ReadStreamWithEventsByDirection(streamId, start, count,
-                () => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == streamId, Convert.ToInt32(start), count));
+                id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
       
         public async Task AppendToStreamAsync(string streamId, long expectedVersion,
             params CosmosEventData[] events)
@@ -38,47 +42,54 @@ namespace ImGalaxy.ES.CosmosDB
             long eventPosition = 0;
             if (expectedVersion == ExpectedVersion.NoStream || expectedVersion == ExpectedVersion.Any)
             {
-                var newStream = CosmosStream.Create(id, streamType);
+                var newStream = CosmosStream.Create(id, streamType)
+                                            .ChangeVersion(1);
                 
-                await CreateItemAsync(newStream.ToCosmosStreamDocument(), this._cosmosDBConfigurations.DatabaseId, 
+                await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(), this._cosmosDBConfigurations.DatabaseId, 
                                 this._cosmosDBConfigurations.StreamCollectionName);
             }
             else
             {
-                var existingStream = await this.GetStreamDocumentByIdAsync(streamId);
-                existingStream.ThrowsIf(stream => !existingStream.HasValue, new AggregateNotFoundException(streamId));
-                              //.ThrowsIf(stream => expectedVersion <= stream.Value.Version,
-                              //                      new OptimisticConcurrencyException(expectedVersion.ToString()));
+                var existingStream = await this.ReadStreamEventsForwardAsync(streamId, StreamPosition.Start, 
+                    this._cosmosDBConfigurations.ReadBatchSize);
+
+                existingStream.ThrowsIf(stream => !existingStream.HasValue, new AggregateNotFoundException(streamId))
+                              .ThrowsIf(stream => expectedVersion != stream.Value.Version,
+                                                  new OptimisticConcurrencyException(expectedVersion.ToString()));
+
+                expectedVersion = expectedVersion+ events.Length;
+
+                var newVersionedStream = existingStream.Value.ChangeVersion(expectedVersion).ToCosmosStreamDocument();
+
+                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamCollectionName, newVersionedStream);
+
+                eventPosition = existingStream.Value.NextEventNumber;
             }
 
             foreach (var @event in events)
             {
-                var newEvent = new EventDocument(@event.EventId, id, eventPosition, @event.Data,
+                var newEvent = new EventDocument(@event.EventId, id, eventPosition, this._eventSerializer.Serialize(@event.Data),
                     @event.EventMetadata, @event.EventType);
                  
-                await CreateItemAsync(newEvent, this._cosmosDBConfigurations.DatabaseId, this._cosmosDBConfigurations.EventCollectionName);
+                await _cosmosClient.CreateItemAsync(newEvent, this._cosmosDBConfigurations.DatabaseId, this._cosmosDBConfigurations.EventCollectionName);
 
                 eventPosition++;
             }
         }
-        private async Task CreateItemAsync<T>(T item, string databaseId, string collectionName)=>
-            await _cosmosClient.CreateDocumentAsync(
-               UriFactory.CreateDocumentCollectionUri(databaseId, collectionName), item as object);
-
-        private async Task UpdateItemAsync<T>(string id, string databaseId, string collectionName, T item) =>
-        
-             await _cosmosClient.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(
-                databaseId, collectionName, id), item);
+   
         
 
-        private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<IEnumerable<EventDocument>> eventFunc)
+        private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string,IEnumerable<EventDocument>> eventFunc)
         {
-            var existingStream = await this.GetStreamDocumentByIdAsync(streamId);
+
+            var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId); 
+
+            var existingStream = await this.GetStreamDocumentByIdAsync(id);
 
             if (!existingStream.HasValue)
                 return Optional<CosmosStream>.Empty;
 
-            var existingEvents = eventFunc();
+            var existingEvents = eventFunc(id);
 
             var cosmosStream = existingStream.Value.ToCosmosStream(existingEvents);
 
@@ -87,36 +98,31 @@ namespace ImGalaxy.ES.CosmosDB
         }
 
         private  IEnumerable<EventDocument> GetEventDocumentsForwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
-           GetEventDocumentQuery(predicate)
+            _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderBy(e=>e.Position)
-                .Skip(start)
+                //.Skip(start)
                 .Take(count)
-                .AsEnumerable();
+                .ToList();
 
         private IEnumerable<EventDocument> GetEventDocumentsBackwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
-             GetEventDocumentQuery(predicate)
+             _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderByDescending(e => e.Position)
-                .Skip(start)
+                //.Skip(start)
                 .Take(count)
-                .AsEnumerable();
-
-        
-        private IQueryable<EventDocument> GetEventDocumentQuery(Expression<Func<EventDocument, bool>> predicate) =>
-            _cosmosClient.CreateDocumentQuery<EventDocument>(
-                UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId, _cosmosDBConfigurations.EventCollectionName),
-                new FeedOptions { MaxItemCount = _cosmosDBConfigurations.ReadBatchSize })
-                .Where(predicate);
+                .ToList();
+         
 
         private async Task<Optional<StreamDocument>> GetStreamDocumentByIdAsync(string id)
         {
             try
-            {
-                Document document = await _cosmosClient.ReadDocumentAsync(UriFactory.CreateDocumentUri(_cosmosDBConfigurations.DatabaseId,
-                    _cosmosDBConfigurations.StreamCollectionName, id));
+            {  
+                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.OriginalId == id, _cosmosDBConfigurations.StreamCollectionName)
+                    .ToList()
+                    .SingleOrDefault(); 
 
-                return new Optional<StreamDocument>((StreamDocument)(dynamic)document);
+                return new Optional<StreamDocument>(document);
             }
-            catch (DocumentClientException)
+            catch (DocumentClientException ex)
             {
                 return Optional<StreamDocument>.Empty;
             }

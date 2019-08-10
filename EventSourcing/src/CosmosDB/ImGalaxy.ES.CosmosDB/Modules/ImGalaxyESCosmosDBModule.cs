@@ -18,6 +18,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
                 .RegisterRepositories()
                 .RegisterSnapshotableRepositories()
                 .RegisterUnitOfWork()
+                .RegisterCosmosDbConnection()
                 .RegisterCosmosClient();
            });
 
@@ -25,7 +26,9 @@ namespace ImGalaxy.ES.CosmosDB.Modules
         private static IServiceCollection RegisterConfigurations(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
              services.AddSingleton<ICosmosDBConfigurations>(provider => new CosmosDBConfigurations().With(c => configurations(c)));
         private static IServiceCollection RegisterProviders(this IServiceCollection services) =>
-             services.AddSingleton<IStreamNameProvider, CosmosStreamNameProvider>();
+             services.AddSingleton<IStreamNameProvider, CosmosStreamNameProvider>()
+                     .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
+                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>();
 
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
             services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
@@ -36,12 +39,16 @@ namespace ImGalaxy.ES.CosmosDB.Modules
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, CosmosDBUnitOfWork>();
 
+        private static IServiceCollection RegisterCosmosDbConnection(this IServiceCollection services) =>
+           services.AddTransient<ICosmosDBConnection, CosmosDBConnection>();
+
         private static IServiceCollection RegisterCosmosClient(this IServiceCollection services) =>
               services.AddSingleton<IDocumentClient>(ctx => 
               {
                   var confs = ctx.GetRequiredService<ICosmosDBConfigurations>();
 
                   return new DocumentClient(new Uri(confs.EndpointUri), confs.PrimaryKey);
-              });
+              })
+              .AddSingleton<ICosmosDBClient, CosmosDBClient>();
     }
 }

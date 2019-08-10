@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Core", "src\Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.EventStore", "src\EventStore\ImGalaxy.ES.EventStore\ImGalaxy.ES.EventStore.csproj", "{19AFFA84-D893-4E2C-AE21-1BB8CD0579A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.InMemory", "src\InMemory\ImGalaxy.ES.InMemory\ImGalaxy.ES.InMemory.csproj", "{4338241F-1C8E-4738-A4C2-9A57990329EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.InMemory", "src\InMemory\ImGalaxy.ES.InMemory\ImGalaxy.ES.InMemory.csproj", "{4338241F-1C8E-4738-A4C2-9A57990329EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.CosmosDB", "src\CosmosDB\ImGalaxy.ES.CosmosDB\ImGalaxy.ES.CosmosDB.csproj", "{C3651516-1E0D-4AF1-99FD-2D7B894C3D1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{696CF00B-6F51-4794-8D2C-35D48FCE907E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCosmos", "samples\TestCosmos\TestCosmos.csproj", "{BE7DED4D-3326-4BAB-933C-827B59CBC44D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,10 @@ Global
 		{C3651516-1E0D-4AF1-99FD-2D7B894C3D1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3651516-1E0D-4AF1-99FD-2D7B894C3D1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3651516-1E0D-4AF1-99FD-2D7B894C3D1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE7DED4D-3326-4BAB-933C-827B59CBC44D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE7DED4D-3326-4BAB-933C-827B59CBC44D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE7DED4D-3326-4BAB-933C-827B59CBC44D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE7DED4D-3326-4BAB-933C-827B59CBC44D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +54,7 @@ Global
 		{19AFFA84-D893-4E2C-AE21-1BB8CD0579A6} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{4338241F-1C8E-4738-A4C2-9A57990329EA} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{C3651516-1E0D-4AF1-99FD-2D7B894C3D1A} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
+		{BE7DED4D-3326-4BAB-933C-827B59CBC44D} = {696CF00B-6F51-4794-8D2C-35D48FCE907E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8D35453-D24C-4CDD-92C1-B417E845699C}

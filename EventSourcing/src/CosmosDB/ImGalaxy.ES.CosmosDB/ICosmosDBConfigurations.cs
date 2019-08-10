@@ -12,7 +12,7 @@ namespace ImGalaxy.ES.CosmosDB
         int MaxLiveQueueSize { get; set; }
         int ReadBatchSize { get; set; } 
         bool IsSnapshottingOn { get; set; }
-        string StreamCollectionName { get; }
-        string EventCollectionName { get; }
+        string StreamCollectionName { get; set; }
+        string EventCollectionName { get; set; }
     }
 }

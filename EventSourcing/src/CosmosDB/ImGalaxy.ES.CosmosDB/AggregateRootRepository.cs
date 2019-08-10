@@ -11,10 +11,11 @@ namespace ImGalaxy.ES.CosmosDB
     public class AggregateRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
           where TAggregateRoot : IAggregateRoot
     {
-        public AggregateRootRepository(IUnitOfWork unitOfWork, IEventDeserializer eventDeserializer, 
+        public AggregateRootRepository(IEventDeserializer eventDeserializer,
+            IUnitOfWork unitOfWork, 
             ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider) 
-            : base(unitOfWork, eventDeserializer, cosmosDBConnection, cosmosDBConfigurator, streamNameProvider)
+            : base(eventDeserializer, unitOfWork, cosmosDBConnection, cosmosDBConfigurator, streamNameProvider)
         {
         }
 
@@ -22,15 +23,15 @@ namespace ImGalaxy.ES.CosmosDB
             root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, r)));
 
         public async Task AddAsync(TAggregateRoot root, string identifier = default) =>
-            root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, r)));
+            root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, r))); 
 
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
             Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
-
-            if (!existingAggregate.HasValue) { return Optional<TAggregateRoot>.Empty; }
+            
+            if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
             var streamName = GetStreamNameOfRoot(identifier);
 
@@ -43,14 +44,7 @@ namespace ImGalaxy.ES.CosmosDB
             TAggregateRoot root = IntanceOfRoot().Value;
 
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice.Value));
-
-            //while (!slice.IsEndOfStream)
-            //{
-            //    slice = await ReadStreamEventsForwardAsync(streamName, slice.Value.NextEventNumber);
-
-            //    ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice));
-            //}
-
+              
             ClearChangesOfRoot(root);
 
             AttachAggregateToUnitOfWork(identifier, (int)slice.Value.LastEventNumber, root);
@@ -58,5 +52,6 @@ namespace ImGalaxy.ES.CosmosDB
             return new Optional<TAggregateRoot>(root);
         }
 
+      
     }
 }

@@ -14,6 +14,7 @@ namespace ImGalaxy.ES.EventStore.Modules
             services.With(s=> 
             {
                 s.RegisterConfigurations(configurations)
+                 .RegisterProviders()
                  .RegisterEventStore(configurations)
                  .RegisterRepositories()
                  .RegisterSnapshotableRepositories()
@@ -24,7 +25,9 @@ namespace ImGalaxy.ES.EventStore.Modules
         private static IServiceCollection RegisterConfigurations(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
              services.AddSingleton<IEventStoreConfigurations>(provider => new EventStoreConfigurations().With(c=> configurations(c)));
         private static IServiceCollection RegisterProviders(this IServiceCollection services) =>
-             services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>();
+             services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>()
+                     .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
+                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>();
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
              services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
           

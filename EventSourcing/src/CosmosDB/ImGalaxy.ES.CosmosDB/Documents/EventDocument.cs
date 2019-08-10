@@ -10,11 +10,11 @@ namespace ImGalaxy.ES.CosmosDB.Documents
     {
         public readonly string StreamId;
         public readonly long Position; 
-        public readonly object Data;
+        public readonly string Data;
         public readonly EventMetadata EventMetadata;
-        public EventDocument(string id, string streamId, long position, object data
+        public EventDocument(string originalId, string streamId, long position, string data
             , EventMetadata eventMetadata, string type ) 
-            : base(id, type)
+            : base(originalId, type)
         {
             StreamId = streamId;
             Position = position; 

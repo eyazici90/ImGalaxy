@@ -10,10 +10,11 @@ namespace ImGalaxy.ES.CosmosDB
              where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         private readonly ISnapshotStore _snapshotStore;
-        public SnapshotableRootRepository(ISnapshotStore snapshotStore, IUnitOfWork unitOfWork, IEventDeserializer eventDeserializer,
+        public SnapshotableRootRepository(ISnapshotStore snapshotStore, IEventDeserializer eventDeserializer,
+            IUnitOfWork unitOfWork,
             ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider)
-            : base(unitOfWork, eventDeserializer, cosmosDBConnection,
+            : base(eventDeserializer, unitOfWork, cosmosDBConnection,
                   cosmosDBConfigurator, streamNameProvider) =>
             _snapshotStore = snapshotStore;
 
@@ -29,7 +30,7 @@ namespace ImGalaxy.ES.CosmosDB
         {
             Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
 
-            if (!existingAggregate.HasValue) { return Optional<TAggregateRoot>.Empty; }
+            if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
             var streamName = GetStreamNameOfRoot(identifier);
 
@@ -50,14 +51,7 @@ namespace ImGalaxy.ES.CosmosDB
             snapshot.Match(s => root.RestoreSnapshot(snapshot.Value.State), null);
 
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice.Value));
-
-            //while (!slice.IsEndOfStream)
-            //{
-            //    slice = await ReadStreamEventsForwardAsync(streamName, slice.NextEventNumber);
-
-            //    ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice));
-            //}
-
+             
             ClearChangesOfRoot(root);
 
             AttachAggregateToUnitOfWork(identifier, (int)slice.Value.LastEventNumber, root);

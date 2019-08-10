@@ -9,26 +9,27 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public abstract class AggregateRootRepositoryBase<TAggregateRoot> where TAggregateRoot : IAggregateRoot
     {
-        protected readonly IUnitOfWork UnitOfWork;
         protected readonly IEventDeserializer EventDeserializer;
+        protected readonly IUnitOfWork UnitOfWork;
         protected readonly ICosmosDBConnection CosmosDBConnection;
         protected readonly ICosmosDBConfigurations CosmosDBConfigurator;
         protected readonly IStreamNameProvider StreamNameProvider;
-        public AggregateRootRepositoryBase(IUnitOfWork unitOfWork,
-            IEventDeserializer eventDeserializer,
+        public AggregateRootRepositoryBase(IEventDeserializer eventDeserializer, 
+            IUnitOfWork unitOfWork,
             ICosmosDBConnection cosmosDBConnection,
             ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider)
         {
-            UnitOfWork = unitOfWork;
             EventDeserializer = eventDeserializer;
+            UnitOfWork = unitOfWork;
             CosmosDBConnection = cosmosDBConnection;
             CosmosDBConfigurator = cosmosDBConfigurator;
             StreamNameProvider = streamNameProvider;
         }
         protected virtual TAggregateRoot ApplyChangesToRoot(TAggregateRoot root, IEnumerable<object> events) =>
           root.With(r => (r as IAggregateRootInitializer).Initialize(events));
-        protected virtual IEnumerable<object> DeserializeEventsFromSlice(CosmosStream slice) => slice.Events.AsEnumerable();
+        protected virtual IEnumerable<object> DeserializeEventsFromSlice(CosmosStream slice) =>
+            slice.Events.Select(e => this.EventDeserializer.Deserialize(Type.GetType(e.EventType, true), e.Data));
         protected virtual string GetStreamNameOfRoot(string identifier) => StreamNameProvider.GetStreamName(typeof(TAggregateRoot), identifier);
         protected virtual Optional<TAggregateRoot> IntanceOfRoot() => new Optional<TAggregateRoot>((TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true));
         protected virtual Optional<TAggregateRoot> IntanceOfRoot(Aggregate aggregate) => new Optional<TAggregateRoot>((TAggregateRoot)((aggregate).Root));

@@ -32,8 +32,8 @@ namespace ImGalaxy.ES.EventStore
         {
             Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
 
-            if (!existingAggregate.HasValue) { return Optional<TAggregateRoot>.Empty; }
-             
+            if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
+
             var streamName = GetStreamNameOfRoot(identifier);
 
             var version = StreamPosition.Start;
