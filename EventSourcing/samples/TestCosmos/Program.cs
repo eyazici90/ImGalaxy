@@ -1,5 +1,5 @@
 ﻿using ImGalaxy.ES.Core;
-using ImGalaxy.ES.CosmosDB.Modules;
+using ImGalaxy.ES.CosmosDB.Modules; 
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -28,14 +28,22 @@ namespace TestCosmos
                     configs.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
                     configs.ReadBatchSize = 100;
                 });
-
+            //services
+            //    .AddMediatR(typeof(CreateCarCommandHandler).Assembly)
+            //    .AddGalaxyESEventStoreModule(configs =>
+            //    {
+            //        configs.Username = "admin";
+            //        configs.Password = "changeit";
+            //        configs.Uri = "tcp://admin:changeit@localhost:1113";
+            //        configs.ReadBatchSize = 1000;
+            //        configs.MaxLiveQueueSize = 100;
+            //    });
 
             var provider = services.BuildServiceProvider();
 
-            //await AddNewCar(provider);
-            await AddItem(provider, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
+            await AddNewCar(provider);
+            //await AddItem(provider, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
             //await ChangeCarName(provider, "642acdb1-38d2-405d-afee-b3a122642cb0");
-
             //await ChangeModelYear(provider, 2014, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
             //Exception Case for the last state
             // await ChangeModelYear(provider, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");

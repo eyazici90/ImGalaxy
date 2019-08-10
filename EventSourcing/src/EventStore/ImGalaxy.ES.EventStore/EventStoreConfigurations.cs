@@ -7,12 +7,12 @@ namespace ImGalaxy.ES.EventStore
 {
     public class EventStoreConfigurations : IEventStoreConfigurations
     {
-        public IEventStoreConnection Connection { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Username { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Password { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string Uri { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int MaxLiveQueueSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int ReadBatchSize { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool IsSnapshottingOn { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public IEventStoreConnection Connection { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Uri { get; set; }
+        public int MaxLiveQueueSize { get; set; }
+        public int ReadBatchSize { get; set; }
+        public bool IsSnapshottingOn { get; set; }
     }
 }

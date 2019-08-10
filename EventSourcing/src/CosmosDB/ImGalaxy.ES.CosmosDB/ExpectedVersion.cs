@@ -10,5 +10,6 @@ namespace ImGalaxy.ES.CosmosDB
         public const long NoStream = -1;
         public const long EmptyStream = -1;
         public const long StreamExists = -4;
+        public const long New = 1;
     }
 }

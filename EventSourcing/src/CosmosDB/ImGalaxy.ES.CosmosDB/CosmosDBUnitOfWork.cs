@@ -12,17 +12,14 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBUnitOfWork : IUnitOfWork
     {
-        private readonly IEventSerializer _eventSerializer;
         private readonly ICosmosDBConnection _cosmosDBConnection;
         private readonly IMediator _mediator; 
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly ConcurrentDictionary<string, Aggregate> _aggregates;
-        public CosmosDBUnitOfWork(IEventSerializer eventSerializer,
-            ICosmosDBConnection cosmosDBConnection, 
+        public CosmosDBUnitOfWork(ICosmosDBConnection cosmosDBConnection, 
             IMediator mediator,
             IStreamNameProvider streamNameProvider)
         {
-            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
             _cosmosDBConnection = cosmosDBConnection ?? throw new ArgumentNullException(nameof(cosmosDBConnection));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator)); 
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
@@ -69,9 +66,8 @@ namespace ImGalaxy.ES.CosmosDB
             await Task.WhenAll(tasks);
         }
 
-        private async Task<int> AppendToStreamAsync()
-        {
-            int eventCount = 0;
+        private async Task AppendToStreamAsync()
+        { 
             foreach (Aggregate aggregate in GetChanges())
             {
                 CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetChanges()
@@ -91,14 +87,12 @@ namespace ImGalaxy.ES.CosmosDB
                 {
                     await this._cosmosDBConnection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
 
-                    eventCount = eventCount + changes.Length;
                 }
                 catch (WrongExpectedVersionException)
                 {
                     throw;
                 }
             }
-            return eventCount;
         }
         public async Task SaveChangesAsync()
         {

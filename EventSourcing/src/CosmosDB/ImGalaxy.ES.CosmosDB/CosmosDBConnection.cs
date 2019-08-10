@@ -39,15 +39,12 @@ namespace ImGalaxy.ES.CosmosDB
         {
             var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId);
             var streamType = CosmosStreamNameExtensions.GetStreamType(streamId);
-            long eventPosition = 0;
+
+            long eventPosition = EventPosition.Start;
+
             if (expectedVersion == ExpectedVersion.NoStream || expectedVersion == ExpectedVersion.Any)
-            {
-                var newStream = CosmosStream.Create(id, streamType)
-                                            .ChangeVersion(1);
-                
-                await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(), this._cosmosDBConfigurations.DatabaseId, 
-                                this._cosmosDBConfigurations.StreamCollectionName);
-            }
+                await CreateNewStream(id, streamType); 
+            
             else
             {
                 var existingStream = await this.ReadStreamEventsForwardAsync(streamId, StreamPosition.Start, 
@@ -55,9 +52,9 @@ namespace ImGalaxy.ES.CosmosDB
 
                 existingStream.ThrowsIf(stream => !existingStream.HasValue, new AggregateNotFoundException(streamId))
                               .ThrowsIf(stream => expectedVersion != stream.Value.Version,
-                                                  new OptimisticConcurrencyException(expectedVersion.ToString()));
+                                                  new WrongExpectedVersionException(expectedVersion.ToString()));
 
-                expectedVersion = expectedVersion+ events.Length;
+                expectedVersion = expectedVersion + events.Length;
 
                 var newVersionedStream = existingStream.Value.ChangeVersion(expectedVersion).ToCosmosStreamDocument();
 
@@ -110,7 +107,15 @@ namespace ImGalaxy.ES.CosmosDB
                 //.Skip(start)
                 .Take(count)
                 .ToList();
-         
+
+        private async Task CreateNewStream(string id, string streamType)
+        {
+            var newStream = CosmosStream.Create(id, streamType)
+                                          .ChangeVersion(ExpectedVersion.New);
+
+            await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(), this._cosmosDBConfigurations.DatabaseId,
+                            this._cosmosDBConfigurations.StreamCollectionName);
+        }
 
         private async Task<Optional<StreamDocument>> GetStreamDocumentByIdAsync(string id)
         {
@@ -122,7 +127,7 @@ namespace ImGalaxy.ES.CosmosDB
 
                 return new Optional<StreamDocument>(document);
             }
-            catch (DocumentClientException ex)
+            catch (DocumentClientException)
             {
                 return Optional<StreamDocument>.Empty;
             }

@@ -7,24 +7,15 @@ namespace ImGalaxy.ES.EventStore
 {
     public class EventStoreStreamNameProvider : IStreamNameProvider
     {
-        public string GetSnapshotStreamName(object aggregateRoot, string identifier)
-        {
-            throw new NotImplementedException();
-        }
+        public string GetSnapshotStreamName(object aggregateRoot, string identifier) =>
+            $"{GetStreamName(aggregateRoot, identifier)}-Snapshot"; 
+        public string GetSnapshotStreamName(Type aggregateRootType, string identifier)=>
+             $"{GetStreamName(aggregateRootType, identifier)}-Snapshot";
 
-        public string GetSnapshotStreamName(Type aggregateRootType, string identifier)
-        {
-            throw new NotImplementedException();
-        }
+        public string GetStreamName(object aggregateRoot, string identifier)=>
+            $"{aggregateRoot.GetType().Name}-{identifier}";
 
-        public string GetStreamName(object aggregateRoot, string identifier)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetStreamName(Type aggregateRootType, string identifier)
-        {
-            throw new NotImplementedException();
-        }
+        public string GetStreamName(Type aggregateRootType, string identifier)=>
+             $"{aggregateRootType.Name}-{identifier}";
     }
 }

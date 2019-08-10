@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.EventStore.Modules
             {
                 s.RegisterConfigurations(configurations)
                  .RegisterProviders()
-                 .RegisterEventStore(configurations)
+                 .RegisterEventStore()
                  .RegisterRepositories()
                  .RegisterSnapshotableRepositories()
                  .RegisterUnitOfWork();
@@ -37,26 +37,22 @@ namespace ImGalaxy.ES.EventStore.Modules
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, EventStoreUnitOfWork>();
 
-        private static IServiceCollection RegisterEventStore(this IServiceCollection services, Action<IEventStoreConfigurations> configurationsAction)
-        {
-            var configs = new EventStoreConfigurations();
-            configurationsAction(configs);
+        private static IServiceCollection RegisterEventStore(this IServiceCollection services)=> 
+            services.AddSingleton<IEventStoreConnection>(ctx =>
+            {
+                var confs = ctx.GetRequiredService<IEventStoreConfigurations>();
 
-            ConnectionSettings settings = ConnectionSettings.Create()
-                                                            .SetDefaultUserCredentials(new UserCredentials(configs.Username, configs.Password)).Build();
+                ConnectionSettings settings = ConnectionSettings.Create()
+                                                                .SetDefaultUserCredentials(new UserCredentials(confs.Username, confs.Password)).Build();
 
-            //builder.Register(c => {
-            //    IEventStoreConnection connection = EventStoreConnection.Create(settings, new Uri(configs.Uri));
-            //    connection.ConnectAsync().ConfigureAwait(false)
-            //   .GetAwaiter()
-            //   .GetResult();
-            //    return connection;
-            //})
-            //.As<IEventStoreConnection>()
-            //.SingleInstance();
+                IEventStoreConnection connection = EventStoreConnection.Create(settings, new Uri(confs.Uri));
+                connection.ConnectAsync().ConfigureAwait(false)
+               .GetAwaiter()
+               .GetResult();
 
-            return services;
-        }
+                return connection;
+            });
+        
     }
 
 }

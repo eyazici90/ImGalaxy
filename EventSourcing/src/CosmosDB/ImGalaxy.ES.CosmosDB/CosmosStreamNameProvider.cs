@@ -7,15 +7,10 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosStreamNameProvider : IStreamNameProvider
     {
-        public string GetSnapshotStreamName(object aggregateRoot, string identifier)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetSnapshotStreamName(Type aggregateRootType, string identifier)
-        {
-            throw new NotImplementedException();
-        }
+        public string GetSnapshotStreamName(object aggregateRoot, string identifier) =>
+          $"{GetStreamName(aggregateRoot, identifier)}-Snapshot";
+        public string GetSnapshotStreamName(Type aggregateRootType, string identifier) =>
+             $"{GetStreamName(aggregateRootType, identifier)}-Snapshot";
 
         public string GetStreamName(object aggregateRoot, string identifier) =>
           CosmosStreamNameExtensions.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
