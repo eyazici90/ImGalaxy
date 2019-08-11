@@ -5,7 +5,8 @@ using System.Text;
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class AggregateRootState<TState> : StateBase<TState>, IAggregateRootState<TState> where TState : class, IAggregateRoot 
+    public abstract class AggregateRootState<TState> : StateBase<TState>, IAggregateRootState<TState>, IAggregateRoot
+        where TState : class 
     {  
         private IEventRecorder _eventRecorder;
         private IReadOnlyCollection<object> _events => _eventRecorder?.RecordedEvents;

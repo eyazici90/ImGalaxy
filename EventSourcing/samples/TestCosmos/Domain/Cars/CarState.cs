@@ -6,7 +6,7 @@ using TestCosmos.Domain.Cars;
 
 namespace TestCosmos
 {
-    public class CarState : AggregateRootState<CarState> , IAggregateRoot
+    public class CarState : AggregateRootState<CarState> 
     {
         public CarId _id { get; private set; }
         public string _name { get; private set; }

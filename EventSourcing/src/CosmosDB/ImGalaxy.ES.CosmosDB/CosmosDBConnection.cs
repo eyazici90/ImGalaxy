@@ -68,7 +68,7 @@ namespace ImGalaxy.ES.CosmosDB
                 var newEvent = new EventDocument(@event.EventId, id, eventPosition, this._eventSerializer.Serialize(@event.Data),
                     @event.EventMetadata, @event.EventType);
                  
-                await _cosmosClient.CreateItemAsync(newEvent, this._cosmosDBConfigurations.DatabaseId, this._cosmosDBConfigurations.EventCollectionName);
+                await _cosmosClient.CreateItemAsync(newEvent, this._cosmosDBConfigurations.EventCollectionName);
 
                 eventPosition++;
             }
@@ -113,7 +113,7 @@ namespace ImGalaxy.ES.CosmosDB
             var newStream = CosmosStream.Create(id, streamType)
                                           .ChangeVersion(ExpectedVersion.New);
 
-            await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(), this._cosmosDBConfigurations.DatabaseId,
+            await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(),
                             this._cosmosDBConfigurations.StreamCollectionName);
         }
 

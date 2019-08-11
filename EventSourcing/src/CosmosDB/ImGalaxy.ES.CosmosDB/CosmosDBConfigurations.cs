@@ -14,5 +14,6 @@ namespace ImGalaxy.ES.CosmosDB
         public bool IsSnapshottingOn { get; set; } 
         public string StreamCollectionName { get; set; } 
         public string EventCollectionName { get; set; }
+        public int OfferThroughput { get; set; }
     }
 }

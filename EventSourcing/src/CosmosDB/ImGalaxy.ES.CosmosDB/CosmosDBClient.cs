@@ -19,9 +19,9 @@ namespace ImGalaxy.ES.CosmosDB
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
         }
              
-        public async Task CreateItemAsync<T>(T item, string databaseId, string collectionName) =>
+        public async Task CreateItemAsync<T>(T item, string collectionName) =>
          await _client.CreateDocumentAsync(
-            UriFactory.CreateDocumentCollectionUri(databaseId, collectionName), item as object);
+            UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId, collectionName), item as object);
 
         public IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string collectionId) =>
           _client.CreateDocumentQuery<T>(
@@ -32,5 +32,39 @@ namespace ImGalaxy.ES.CosmosDB
         public async Task UpdateItemAsync<T>(string id, string collectionName, T item) => 
               await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_cosmosDBConfigurations.DatabaseId,
                   collectionName, id), item);
+
+        public async Task CreateDatabaseIfNotExistsAsync()
+        {
+            try
+            {
+                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_cosmosDBConfigurations.DatabaseId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    await _client.CreateDatabaseAsync(new Database { Id = _cosmosDBConfigurations.DatabaseId });
+                else
+                    throw;
+            }
+        }
+
+        public async Task CreateCollectionIfNotExistsAsync(string collectionId)
+        {
+            try
+            {
+                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId
+                            , collectionId));
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    await _client.CreateDocumentCollectionAsync(
+                        UriFactory.CreateDatabaseUri(_cosmosDBConfigurations.DatabaseId),
+                        new DocumentCollection { Id = collectionId },
+                        new RequestOptions { OfferThroughput = _cosmosDBConfigurations.OfferThroughput });
+                else
+                    throw;
+            }
+        }
     }
 }

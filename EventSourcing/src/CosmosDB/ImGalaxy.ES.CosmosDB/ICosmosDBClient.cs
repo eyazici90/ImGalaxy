@@ -10,8 +10,9 @@ namespace ImGalaxy.ES.CosmosDB
     public interface ICosmosDBClient
     {
         IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string collectionId); 
-        Task CreateItemAsync<T>(T item, string databaseId, string collectionName);
+        Task CreateItemAsync<T>(T item, string collectionName);
         Task UpdateItemAsync<T>(string id, string collectionName, T item);
-
+        Task CreateDatabaseIfNotExistsAsync();
+        Task CreateCollectionIfNotExistsAsync(string collectionId);
     }
 }
