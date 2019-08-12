@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImGalaxy.ES.Core
+namespace ImGalaxy.ES.EventStore
 { 
     public interface ICheckpointStore
     {

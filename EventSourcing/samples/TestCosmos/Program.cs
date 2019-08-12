@@ -21,11 +21,11 @@ namespace TestCosmos
                 .AddMediatR(typeof(CreateCarCommandHandler).Assembly)
                 .AddGalaxyESCosmosDBModule(configs =>
                 {
-                    configs.DatabaseId = "TestCosmosES";
+                    configs.DatabaseId = "TestES";
                     configs.EventCollectionName = "Events";
                     configs.StreamCollectionName = "Streams";
-                    configs.EndpointUri = "https://localhost:8081";
-                    configs.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+                    configs.EndpointUri = ".";
+                    configs.PrimaryKey = ".";
                     configs.ReadBatchSize = 100;
                 });
             //    .AddGalaxyESEventStoreModule(configs =>
@@ -42,7 +42,10 @@ namespace TestCosmos
 
             await AddNewCar(provider, mediatR);
             //await AddItem(provider, mediatR, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
-            //await ChangeCarName(provider, mediatR, "642acdb1-38d2-405d-afee-b3a122642cb0");
+
+          //  await ChangeCarName(provider, mediatR, "438143aa-205b-4d02-8135-4ace824732a8");
+
+
             //await ChangeModelYear(provider, mediatR, 2014, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
             //Exception Case for the last state
              //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
