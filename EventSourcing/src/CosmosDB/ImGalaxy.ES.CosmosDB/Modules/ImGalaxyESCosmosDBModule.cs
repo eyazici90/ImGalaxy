@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB.Modules
 {
@@ -50,5 +51,21 @@ namespace ImGalaxy.ES.CosmosDB.Modules
                   return new DocumentClient(new Uri(confs.EndpointUri), confs.PrimaryKey);
               })
               .AddSingleton<ICosmosDBClient, CosmosDBClient>();
+
+
+        public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider)
+        {
+            var confs = provider.GetRequiredService<ICosmosDBConfigurations>();
+
+            var cosmosClient = provider.GetRequiredService<ICosmosDBClient>();
+
+            await cosmosClient.CreateDatabaseIfNotExistsAsync();
+
+            await cosmosClient.CreateCollectionIfNotExistsAsync(confs.StreamCollectionName);
+
+            await cosmosClient.CreateCollectionIfNotExistsAsync(confs.EventCollectionName);
+
+            return provider;
+        }
     }
 }

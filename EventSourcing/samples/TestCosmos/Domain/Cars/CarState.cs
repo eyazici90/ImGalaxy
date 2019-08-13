@@ -20,11 +20,13 @@ namespace TestCosmos
             RegisterEvent<CarNameChangedEvent>(When);
             RegisterEvent<CarModelRenewedEvent>(When);
             RegisterEvent<CarItemAddedEvent>(When);
+
+            _carItems = _carItems ?? new List<CarItemState>();
         }
 
         internal CarState(CarId id) : this()
         {
-            id.ThrowsIfNull(new ArgumentNullException(id)); 
+            id.ThrowsIfNull(new ArgumentNullException(id));
         }
 
         private void When(CarModelRenewedEvent @event) =>

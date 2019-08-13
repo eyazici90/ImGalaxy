@@ -18,6 +18,7 @@ namespace TestCosmos.Domain.Cars
                 .ApplyEvent(new CarModelRenewedEvent(state._id, year));
 
         public static CarState.Result AddCarItem(CarState state, CarItemId carItemId, string desc)=>
-            state.ApplyEvent(new CarItemAddedEvent(state._id, carItemId, desc));
+            state.ThrowsIf(s=>s.CarItems.Count == 2, new Exception("You cannot add more than 2 items to single car"))
+                 .ApplyEvent(new CarItemAddedEvent(state._id, carItemId, desc));
     }
 }

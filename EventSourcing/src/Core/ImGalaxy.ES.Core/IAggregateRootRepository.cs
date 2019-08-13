@@ -10,8 +10,8 @@ namespace ImGalaxy.ES.Core
         Optional<TAggregateRoot>  Get(string identifier);
         Task<Optional<TAggregateRoot>> GetAsync(string identifier);
 
-        void Add(TAggregateRoot root, string identifier = default);
+        void Add(TAggregateRoot root, string identifier);
 
-        Task AddAsync(TAggregateRoot root, string identifier = default); 
+        Task AddAsync(TAggregateRoot root, string identifier); 
     }
 }

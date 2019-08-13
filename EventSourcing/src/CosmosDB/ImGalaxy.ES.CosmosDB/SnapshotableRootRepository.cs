@@ -18,9 +18,9 @@ namespace ImGalaxy.ES.CosmosDB
                   cosmosDBConfigurator, streamNameProvider) =>
             _snapshotStore = snapshotStore;
 
-        public void Add(TAggregateRoot root, string identifier = default) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
+        public void Add(TAggregateRoot root, string identifier) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task AddAsync(TAggregateRoot root, string identifier = default) =>
+        public async Task AddAsync(TAggregateRoot root, string identifier) =>
             this.UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
 
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();

@@ -48,7 +48,7 @@ namespace ImGalaxy.ES.EventStore
             StreamEventsSlice slice = await ReadStreamEventsForwardAsync(streamName, version);
 
             slice.ThrowsIf(s => s.Status == SliceReadStatus.StreamDeleted || s.Status == SliceReadStatus.StreamNotFound,
-                      new AggregateNotFoundException($"Aggregate not found by {streamName}"));
+                      new AggregateNotFoundException(streamName));
              
             TAggregateRoot root = IntanceOfRoot().Value;
 

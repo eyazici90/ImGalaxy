@@ -27,6 +27,7 @@ namespace TestCosmos
                     configs.EndpointUri = "https://localhost:8081";
                     configs.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
                     configs.ReadBatchSize = 100;
+                    configs.OfferThroughput = 400;
                 });
             //    .AddGalaxyESEventStoreModule(configs =>
             //    {
@@ -38,12 +39,16 @@ namespace TestCosmos
             //    });
 
             var provider = services.BuildServiceProvider();
+
+            await provider.UseGalaxyESCosmosDBModule();
+
+
             var mediatR = provider.GetRequiredService<IMediator>();
 
-          //  await AddNewCar(provider, mediatR);
-            //await AddItem(provider, mediatR, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");
+           await AddNewCar(provider, mediatR);
+           // await AddItem(provider, mediatR, "48b166c9-03df-47e5-9958-64bc981f6221");
 
-              await ChangeCarName(provider, mediatR, "39566137-83c6-4dd7-a6ef-01d489d341a2");
+            //   await ChangeCarName(provider, mediatR, "39566137-83c6-4dd7-a6ef-01d489d341a2");
 
 
             //await ChangeModelYear(provider, mediatR, 2014, "01f157f5-cad5-40b4-9163-2bc4987d3ae2");

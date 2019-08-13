@@ -1,10 +1,7 @@
-﻿using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 
-namespace TestCosmos.Application
+namespace ImGalaxy.ES.Core
 {
     public abstract class CommandHandlerBase<TAggregateRoot, TKey> 
         where TAggregateRoot :  IAggregateRoot

@@ -9,26 +9,18 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class NewtonsoftJsonSerializer : IEventSerializer, IEventDeserializer
     {
-        public string Serialize(object obj, bool camelCase = true, bool indented = false)
-        {
-            return JsonConvert.SerializeObject(obj, CreateSerializerSettings(camelCase, indented));
-        }
-
-        public T Deserialize<T>(string jsonString, bool camelCase = true)
-        {
-            return JsonConvert.DeserializeObject<T>(jsonString, CreateSerializerSettings(camelCase));
-        }
-
-        public object Deserialize(string jsonString, bool camelCase = true)
-        {
-            return JsonConvert.DeserializeObject(jsonString, CreateSerializerSettings(camelCase));
-        }
-
-        public object Deserialize(Type type, string jsonString, bool camelCase = true)
-        {
-            return JsonConvert.DeserializeObject(jsonString, type, CreateSerializerSettings(camelCase));
-        }
-
+        public string Serialize(object obj, bool camelCase = true, bool indented = false) =>
+             JsonConvert.SerializeObject(obj, CreateSerializerSettings(camelCase, indented));
+         
+        public T Deserialize<T>(string jsonString, bool camelCase = true) =>
+            JsonConvert.DeserializeObject<T>(jsonString, CreateSerializerSettings(camelCase));
+         
+        public object Deserialize(string jsonString, bool camelCase = true) =>
+            JsonConvert.DeserializeObject(jsonString, CreateSerializerSettings(camelCase));
+         
+        public object Deserialize(Type type, string jsonString, bool camelCase = true) => 
+             JsonConvert.DeserializeObject(jsonString, type, CreateSerializerSettings(camelCase));
+         
         private JsonSerializerSettings CreateSerializerSettings(bool camelCase = true, bool indented = false)
         {
             var settings = new JsonSerializerSettings();

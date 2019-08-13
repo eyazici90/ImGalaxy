@@ -19,10 +19,10 @@ namespace ImGalaxy.ES.CosmosDB
         {
         }
 
-        public void Add(TAggregateRoot root, string identifier = default) =>
+        public void Add(TAggregateRoot root, string identifier) =>
             root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, r)));
 
-        public async Task AddAsync(TAggregateRoot root, string identifier = default) =>
+        public async Task AddAsync(TAggregateRoot root, string identifier) =>
             root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, r))); 
 
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
