@@ -43,7 +43,7 @@ namespace ImGalaxy.ES.CosmosDB
             long eventPosition = EventPosition.Start;
 
             if (expectedVersion == ExpectedVersion.NoStream || expectedVersion == ExpectedVersion.Any)
-                await CreateNewStream(id, streamType); 
+                await CreateNewStream(id, streamType, events); 
             
             else
             {
@@ -108,10 +108,12 @@ namespace ImGalaxy.ES.CosmosDB
                 .Take(count)
                 .ToList();
 
-        private async Task CreateNewStream(string id, string streamType)
+        private async Task CreateNewStream(string id, string streamType, params CosmosEventData[] events)
         {
+            var version = events.Length;
+
             var newStream = CosmosStream.Create(id, streamType)
-                                          .ChangeVersion(ExpectedVersion.New);
+                                          .ChangeVersion(version);
 
             await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(),
                             this._cosmosDBConfigurations.StreamCollectionName);
