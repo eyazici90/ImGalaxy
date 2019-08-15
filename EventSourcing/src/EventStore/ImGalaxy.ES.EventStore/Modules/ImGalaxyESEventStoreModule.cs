@@ -13,26 +13,28 @@ namespace ImGalaxy.ES.EventStore.Modules
         public static IServiceCollection AddGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
             services.With(s=> 
             {
-                s.RegisterConfigurations(configurations)
+                var configs = new EventStoreConfigurations().With(c => configurations(c)); 
+                s.RegisterConfigurations(configs)
                  .RegisterProviders()
                  .RegisterEventStore()
                  .RegisterRepositories()
-                 .RegisterSnapshotableRepositories()
+                 .RegisterSnapshotableRepositories(configs)
                  .RegisterUnitOfWork();
             });
      
 
-        private static IServiceCollection RegisterConfigurations(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
-             services.AddSingleton<IEventStoreConfigurations>(provider => new EventStoreConfigurations().With(c=> configurations(c)));
+        private static IServiceCollection RegisterConfigurations(this IServiceCollection services, EventStoreConfigurations configurations) =>
+             services.AddSingleton<IEventStoreConfigurations>(provider => configurations);
         private static IServiceCollection RegisterProviders(this IServiceCollection services) =>
              services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>();
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
              services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
-          
-        private static IServiceCollection RegisterSnapshotableRepositories(this IServiceCollection services) =>
-            services.AddScoped(typeof(ISnapshotableRootRepository<>), typeof(SnapshotableRootRepository<>));
+
+        private static IServiceCollection RegisterSnapshotableRepositories(this IServiceCollection services, IEventStoreConfigurations configurations) =>
+         configurations.IsSnapshottingOn ? services.AddScoped(typeof(IAggregateRootRepository<>), typeof(SnapshotableRootRepository<>))
+                                         : services;
 
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, EventStoreUnitOfWork>();

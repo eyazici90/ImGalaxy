@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface ISnapshotStore
+    public interface ISnapshotter
     {
-        Task<Optional<Snapshot>> GetLastSnapshot(string snapshotStream);
-
         bool ShouldTakeSnapshot(Type aggregateType, object @event);
 
         Task TakeSnapshot(string stream);

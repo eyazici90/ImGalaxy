@@ -52,7 +52,8 @@ namespace ImGalaxy.ES.CosmosDB
 
                 existingStream.ThrowsIf(stream => !existingStream.HasValue, new AggregateNotFoundException(streamId))
                               .ThrowsIf(stream => expectedVersion != stream.Value.Version,
-                                                  new WrongExpectedVersionException(expectedVersion.ToString()));
+                                                  new WrongExpectedStreamVersionException(expectedVersion.ToString(), 
+                                                  existingStream.Value.Version.ToString()));
 
                 expectedVersion = expectedVersion + events.Length;
 
@@ -73,8 +74,7 @@ namespace ImGalaxy.ES.CosmosDB
                 eventPosition++;
             }
         }
-   
-        
+    
 
         private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string,IEnumerable<EventDocument>> eventFunc)
         {
@@ -99,14 +99,16 @@ namespace ImGalaxy.ES.CosmosDB
                 .OrderBy(e=>e.Position)
                 //.Skip(start)
                 .Take(count)
-                .ToList();
+                .ToList()
+                .Skip(start);
 
         private IEnumerable<EventDocument> GetEventDocumentsBackwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
              _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderByDescending(e => e.Position)
                 //.Skip(start)
                 .Take(count)
-                .ToList();
+                .ToList()
+                .Skip(start);
 
         private async Task CreateNewStream(string id, string streamType, params CosmosEventData[] events)
         {

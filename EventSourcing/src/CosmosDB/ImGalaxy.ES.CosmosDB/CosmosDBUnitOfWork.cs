@@ -88,7 +88,7 @@ namespace ImGalaxy.ES.CosmosDB
                     await this._cosmosDBConnection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
 
                 }
-                catch (WrongExpectedVersionException)
+                catch (WrongExpectedStreamVersionException)
                 {
                     throw;
                 }

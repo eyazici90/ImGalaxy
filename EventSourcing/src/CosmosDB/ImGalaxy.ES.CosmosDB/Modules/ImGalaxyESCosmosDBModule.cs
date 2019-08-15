@@ -14,28 +14,32 @@ namespace ImGalaxy.ES.CosmosDB.Modules
         public static IServiceCollection AddGalaxyESCosmosDBModule(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
            services.With(s =>
            {
-               s.RegisterConfigurations(configurations)
+               var configs = new CosmosDBConfigurations().With(c => configurations(c));
+
+               s.RegisterConfigurations(configs)
                 .RegisterProviders()
                 .RegisterRepositories()
-                .RegisterSnapshotableRepositories()
+                .RegisterSnapshotableRepositories(configs)
                 .RegisterUnitOfWork()
                 .RegisterCosmosDbConnection()
-                .RegisterCosmosClient();
+                .RegisterCosmosClient(); 
            });
 
 
-        private static IServiceCollection RegisterConfigurations(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
-             services.AddSingleton<ICosmosDBConfigurations>(provider => new CosmosDBConfigurations().With(c => configurations(c)));
+        private static IServiceCollection RegisterConfigurations(this IServiceCollection services, CosmosDBConfigurations configurations) =>
+             services.AddSingleton<ICosmosDBConfigurations>(provider => configurations);
         private static IServiceCollection RegisterProviders(this IServiceCollection services) =>
              services.AddSingleton<IStreamNameProvider, CosmosStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
-                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>();
+                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
+                     .AddTransient<ISnapshotReader, SnapshotReaderCosmosDB>();
 
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
             services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 
-        private static IServiceCollection RegisterSnapshotableRepositories(this IServiceCollection services) =>
-            services.AddScoped(typeof(ISnapshotableRootRepository<>), typeof(SnapshotableRootRepository<>));
+        private static IServiceCollection RegisterSnapshotableRepositories(this IServiceCollection services, ICosmosDBConfigurations configurations) =>
+            configurations.IsSnapshottingOn ? services.AddScoped(typeof(IAggregateRootRepository<>), typeof(SnapshotableRootRepository<>))
+                                            : services;
 
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, CosmosDBUnitOfWork>();
@@ -65,7 +69,11 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
             await cosmosClient.CreateCollectionIfNotExistsAsync(confs.EventCollectionName);
 
+            if (confs.IsSnapshottingOn)
+                await cosmosClient.CreateCollectionIfNotExistsAsync(confs.SnapshotCollectionName);
+
             return provider;
         }
+
     }
 }

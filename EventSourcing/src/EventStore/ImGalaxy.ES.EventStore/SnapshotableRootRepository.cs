@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotableRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, ISnapshotableRootRepository<TAggregateRoot>
+    public class SnapshotableRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
              where TAggregateRoot : IAggregateRoot, ISnapshotable
     { 
-        private readonly ISnapshotStore _snapshotStore;
+        private readonly ISnapshotReader _snapshotStore;
         public SnapshotableRootRepository(
-            ISnapshotStore snapshotStore,
+            ISnapshotReader snapshotStore,
             IUnitOfWork unitOfWork,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
@@ -43,7 +43,8 @@ namespace ImGalaxy.ES.EventStore
 
             var version = StreamPosition.Start;
 
-            snapshot.Match(s=> version = snapshot.Value.Version + 1, null);
+            if (snapshot.HasValue)
+                version = snapshot.Value.Version + 1;
 
             StreamEventsSlice slice = await ReadStreamEventsForwardAsync(streamName, version);
 
@@ -52,7 +53,8 @@ namespace ImGalaxy.ES.EventStore
              
             TAggregateRoot root = IntanceOfRoot().Value;
 
-            snapshot.Match(s=> root.RestoreSnapshot(snapshot.Value.State), null);
+            if (snapshot.HasValue)
+                root.RestoreSnapshot(snapshot.Value.State);
 
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice));
              

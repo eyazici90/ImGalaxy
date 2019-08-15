@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TestCosmos.Domain.Cars;
+using TestCosmos.Domain.Cars.Snapshots;
 
 namespace TestCosmos
 {
-    public class CarState : AggregateRootState<CarState> 
+    public class CarState : AggregateRootState<CarState> , ISnapshotable
     {
         public CarId _id { get; private set; }
         public string _name { get; private set; }
@@ -58,5 +59,25 @@ namespace TestCosmos
                 state._carItems.Add(newItem.State);
 
             });
+
+        public void RestoreSnapshot(object state)
+        {
+            var snapshot = (CarStateSnapshot)state;
+            this._id = new CarId(snapshot.Id);
+            this._name = snapshot.Name;
+            this._year = snapshot.Year;
+
+            this._carItems = snapshot.CarItems ?? this._carItems; 
+        }
+
+        public object TakeSnapshot() =>
+            new CarStateSnapshot
+            {
+                Id = this._id,
+                Name = this._name,
+                Year = this._year,
+                CarItems = this._carItems
+            };
+
     }
 }

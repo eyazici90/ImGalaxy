@@ -6,8 +6,8 @@ namespace ImGalaxy.ES.Core
 {
     public interface ISnapshotable
     {
-        void RestoreSnapshot<TSnapshot>(TSnapshot state);
+        void RestoreSnapshot(object state);
 
-        TSnapshot TakeSnapshot<TSnapshot>();
+        object TakeSnapshot();
     }
 }

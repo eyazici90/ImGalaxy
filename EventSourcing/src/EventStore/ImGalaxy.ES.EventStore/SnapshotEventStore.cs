@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotStore
+    public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotter, ISnapshotReader
         where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
 
-        private readonly ISnapshotableRootRepository<TAggregateRoot> _snapRepository;
+        private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IEventStoreConnection _connection;
         private readonly IEventSerializer _eventSerializer;
         private readonly IEventDeserializer _deserializer;
         private readonly Func<ResolvedEvent, bool> _strategy;
-        public SnapshotEventStore(ISnapshotableRootRepository<TAggregateRoot> snapRepository,
+        public SnapshotEventStore(IAggregateRootRepository<TAggregateRoot> rootRepository,
             IUnitOfWork unitOfWork,
             IStreamNameProvider streamNameProvider,
             IEventStoreConnection connection,
@@ -26,7 +26,7 @@ namespace ImGalaxy.ES.EventStore
             IEventDeserializer deserializer,
             Func<ResolvedEvent, bool> strategy)
         {
-            _snapRepository = snapRepository ?? throw new ArgumentNullException(nameof(snapRepository));
+            _rootRepository = rootRepository ?? throw new ArgumentNullException(nameof(rootRepository));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
@@ -60,21 +60,19 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task TakeSnapshot(string stream)
         {
-           Optional<TAggregateRoot> root = await _snapRepository.GetAsync(stream);
+            Optional<TAggregateRoot> root = await _rootRepository.GetAsync(stream);
 
             root.ThrowsIf(r=>!r.HasValue, new AggregateNotFoundException(stream));
 
             Aggregate aggregate;
 
-            this._unitOfWork.TryGet(stream, out aggregate);
-
-            aggregate.ThrowsIfNull(new AggregateNotFoundException($"Aggregate not found by {stream}"));
+            this._unitOfWork.TryGet(stream, out aggregate); 
 
             var changes = new EventData(
                                         Guid.NewGuid(),
                                         typeof(TSnapshot).TypeQualifiedName(),
                                         true,
-                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot<TSnapshot>())),
+                                        Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot())),
                                         Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
                                         {
                                             AggregateAssemblyQualifiedName = typeof(TAggregateRoot).AssemblyQualifiedName,

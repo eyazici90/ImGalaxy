@@ -13,14 +13,14 @@ namespace ImGalaxy.ES.EventStore
         private readonly ICheckpointStore _checkpointStore;
         private readonly IEventStoreConnection _connection; 
         private readonly ProjectionHandler[] _projections;  
-        private readonly ISnapshotStore[] _snapshotters;
+        private readonly ISnapshotter[] _snapshotters;
         private readonly IEventDeserializer _eventDeserializer;
         private readonly IEventStoreConfigurations _configurations;
 
         internal SubscriptionManager(IEventStoreConnection connection, 
             ICheckpointStore checkpointStore,
             ProjectionHandler[] projections,
-            ISnapshotStore[] snapshotters,
+            ISnapshotter[] snapshotters,
             IEventDeserializer eventDeserializer,
             IEventStoreConfigurations configurations)
         {
@@ -73,7 +73,7 @@ namespace ImGalaxy.ES.EventStore
 
             var metadata = this._eventDeserializer.Deserialize<EventMetadata>(Encoding.UTF8.GetString(e.Event.Metadata));
 
-            ISnapshotStore snapshotStore = _snapshotters.FirstOrDefault(
+            ISnapshotter snapshotStore = _snapshotters.FirstOrDefault(
                             x => x.ShouldTakeSnapshot(Type.GetType(metadata.AggregateAssemblyQualifiedName), e) && !metadata.IsSnapshot);
 
             if (snapshotStore != null)  {  await snapshotStore.TakeSnapshot(e.OriginalStreamId); }

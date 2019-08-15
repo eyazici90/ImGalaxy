@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.EventStore
         private IEventDeserializer _deserializer;
         private IEventStoreConfigurations _configurator;
         private ProjectionHandler[] _projections;
-        private ISnapshotStore[] _snapshotstore;
+        private ISnapshotter[] _snapshotstore;
 
         public SubscriptionManagerBuilder Connection(IEventStoreConnection connection) =>
             this.With(t => _connection = connection);
@@ -32,7 +32,7 @@ namespace ImGalaxy.ES.EventStore
         public SubscriptionManagerBuilder ReadBatchSize(int readBatchSize) =>
             this.With(t => _configurator.ReadBatchSize = readBatchSize);
 
-        public SubscriptionManagerBuilder SnaphotStore(params ISnapshotStore[] snapshotstore) =>
+        public SubscriptionManagerBuilder SnaphotStore(params ISnapshotter[] snapshotstore) =>
             this.With(t => _snapshotstore = snapshotstore);
 
         public SubscriptionManagerBuilder Projections(params ProjectionHandler[] projections) =>

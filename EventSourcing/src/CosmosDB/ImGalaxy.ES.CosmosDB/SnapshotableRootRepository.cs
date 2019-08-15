@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public class SnapshotableRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, ISnapshotableRootRepository<TAggregateRoot>
+    public class SnapshotableRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
              where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
-        private readonly ISnapshotStore _snapshotStore;
-        public SnapshotableRootRepository(ISnapshotStore snapshotStore, IEventDeserializer eventDeserializer,
+        private readonly ISnapshotReader _snapshotReader;
+        public SnapshotableRootRepository(ISnapshotReader snapshotReader, IEventDeserializer eventDeserializer,
             IUnitOfWork unitOfWork,
             ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider)
             : base(eventDeserializer, unitOfWork, cosmosDBConnection,
                   cosmosDBConfigurator, streamNameProvider) =>
-            _snapshotStore = snapshotStore;
+            _snapshotReader = snapshotReader;
 
         public void Add(TAggregateRoot root, string identifier) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
@@ -36,26 +36,28 @@ namespace ImGalaxy.ES.CosmosDB
 
             var snapshotStreamName = StreamNameProvider.GetSnapshotStreamName(typeof(TAggregateRoot), identifier);
 
-            Optional<Snapshot> snapshot = await _snapshotStore.GetLastSnapshot(snapshotStreamName);
+            Optional<Snapshot> snapshot = await _snapshotReader.GetLastSnapshot(snapshotStreamName);
 
             var version = StreamPosition.Start;
 
-            snapshot.Match(s => version = snapshot.Value.Version + 1, null);
-
+            if (snapshot.HasValue)
+                version = snapshot.Value.Version + 1;
+            
             var slice = await ReadStreamEventsForwardAsync(streamName, version);
 
             if (!slice.HasValue) { return Optional<TAggregateRoot>.Empty; }
 
             TAggregateRoot root = IntanceOfRoot().Value;
 
-            snapshot.Match(s => root.RestoreSnapshot(snapshot.Value.State), null);
-
+            if (snapshot.HasValue)
+                root.RestoreSnapshot(snapshot.Value.State);
+                     
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice.Value));
              
             ClearChangesOfRoot(root);
 
-            AttachAggregateToUnitOfWork(identifier, (int)slice.Value.LastEventNumber, root);
-
+            AttachAggregateToUnitOfWork(identifier, (int)slice.Value.Version, root);
+            
             return new Optional<TAggregateRoot>(root);
         }
     }
