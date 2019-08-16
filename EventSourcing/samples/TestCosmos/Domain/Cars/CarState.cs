@@ -1,6 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using TestCosmos.Domain.Cars;
 using TestCosmos.Domain.Cars.Snapshots;
@@ -67,7 +68,7 @@ namespace TestCosmos
             this._name = snapshot.Name;
             this._year = snapshot.Year;
 
-            this._carItems = snapshot.CarItems ?? this._carItems; 
+            this._carItems = snapshot.CarItems.Select(c => CarItem.Create(c.Id, new CarId(c.CarId), c.Desciption).State).ToList() ?? this._carItems;
         }
 
         public object TakeSnapshot() =>
@@ -76,7 +77,8 @@ namespace TestCosmos
                 Id = this._id,
                 Name = this._name,
                 Year = this._year,
-                CarItems = this._carItems
+                CarItems = this._carItems.Select(c=>new CarItemStateSnapshot { CarId = c._carId, Id = c._id, Desciption = c._desciption})
+                                    .ToList()
             };
 
     }
