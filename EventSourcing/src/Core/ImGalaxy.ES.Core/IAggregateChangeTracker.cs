@@ -6,9 +6,9 @@ namespace ImGalaxy.ES.Core
 {
     public interface IAggregateChangeTracker
     { 
-        bool HasChanges(); 
-        IEnumerable<object> GetChanges(); 
-        void ClearChanges();
-        void ApplyAllChanges();
+        bool HasEvents(); 
+        IEnumerable<object> GetEvents(); 
+        void ClearEvents();
+        void ApplyAllEvents();
     }
 }

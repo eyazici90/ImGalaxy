@@ -6,14 +6,19 @@ namespace ImGalaxy.ES.Core
 { 
     public abstract class EntityState<TState> : StateBase<TState>, IEntityState<TState> where TState : class
     {
-        public Result ApplyEvent(object @event)
+        private void ApplyEvent(object @event)
         {
             @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
             BeforeApplyEvent(@event);
             Play(@event);
-            AfterApplyEvent(@event);
-            var newResult = new Result(this as TState, null);
-            return newResult;
-        } 
+            AfterApplyEvent(@event); 
+        }
+
+        public Result ApplyEvent(params object[] @events)
+        {
+            var state = this as TState;
+            @events.ForEach(e=> ApplyEvent(e));
+            return new Result(state, null);
+        }
     }
 }

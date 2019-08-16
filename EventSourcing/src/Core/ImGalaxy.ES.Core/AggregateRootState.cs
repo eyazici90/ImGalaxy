@@ -8,33 +8,37 @@ namespace ImGalaxy.ES.Core
     public abstract class AggregateRootState<TState> : StateBase<TState>, IAggregateRootState<TState>, IAggregateRoot
         where TState : class 
     {  
-        private IEventRecorder _eventRecorder;
+        private readonly IEventRecorder _eventRecorder;
         private IReadOnlyCollection<object> _events => _eventRecorder?.RecordedEvents;
 
         public AggregateRootState() =>
             _eventRecorder = _eventRecorder ?? new EventRecorder(); 
 
-        public Result ApplyEvent(object @event)
+        private void ApplyEvent(object @event)
         {
             @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
             BeforeApplyEvent(@event);
             Play(@event);
             RecordEvent(@event);
             AfterApplyEvent(@event);
-            var newResult = new Result(this as TState, _events);
-
-            return newResult;
         }
 
-        public void ApplyAllChanges() => _events.ForEach(@event => Play(@event));
+        public Result ApplyEvent(params object[] @events)
+        {
+            var state = this as TState;
+            @events.ForEach(@event=> ApplyEvent(@event));
+            return new Result(state, _events);
+        }
 
-        public bool HasChanges() => _events.Any();
+        public void ApplyAllEvents() => _events.ForEach(@event => Play(@event));
 
-        public IEnumerable<object> GetChanges() => _events.AsEnumerable();
+        public bool HasEvents() => _events.Any();
+
+        public IEnumerable<object> GetEvents() => _events.AsEnumerable();
 
         private void RecordEvent(object eventItem) => _eventRecorder.Record(eventItem);
 
-        public void ClearChanges() => _eventRecorder?.Reset();
+        public void ClearEvents() => _eventRecorder?.Reset();
 
         public void Initialize(IEnumerable<object> events) => events.ForEach(e=> ApplyEvent(e)); 
          

@@ -6,7 +6,7 @@ namespace ImGalaxy.ES.Core
 {
     public abstract class StateBase<TState>  where TState: class
     {
-        protected IEventRouter EventRouter;
+        protected readonly IEventRouter EventRouter;
 
         public StateBase() =>
             EventRouter = EventRouter ?? new EventRouter(); 
@@ -18,6 +18,7 @@ namespace ImGalaxy.ES.Core
            EventRouter.RegisterEvent(eventType, handler);
 
         public Result EmptyResult() => new Result(this as TState, new List<object>());
+         
 
         public class Result
         {

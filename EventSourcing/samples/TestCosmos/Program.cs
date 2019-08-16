@@ -52,15 +52,17 @@ namespace TestCosmos
 
 
 
-            //await AddNewCar(provider, mediatR);
+          //  await AddNewCar(provider, mediatR);
             //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
 
-            //  await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
+           //  await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
 
 
-           // await ChangeModelYear(provider, mediatR, 2014, "b7887eba-896c-4f9d-9d56-7156de817b8d");
+            // await ChangeModelYear(provider, mediatR, 2014, "b7887eba-896c-4f9d-9d56-7156de817b8d");
             //Exception Case for the last state
+
             //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
+
             //var snapshotter = new SnapshotterCosmosDB<CarState, CarStateSnapshot>(rootRepo, unitofWork, cosmosClient, configurations,
             //  serializer);
 

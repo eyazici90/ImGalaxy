@@ -43,7 +43,7 @@ namespace ImGalaxy.ES.CosmosDB
             return new Optional<Aggregate>(existingAggregate);
         }
 
-        protected virtual void ClearChangesOfRoot(TAggregateRoot root) => root.ClearChanges();
+        protected virtual void ClearChangesOfRoot(TAggregateRoot root) => root.ClearEvents();
         protected virtual void AttachAggregateToUnitOfWork(string identifier, int expectedVersion, TAggregateRoot aggregateRoot) =>
             aggregateRoot.With(root =>
             {

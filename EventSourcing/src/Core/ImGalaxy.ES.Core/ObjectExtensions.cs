@@ -114,8 +114,21 @@ namespace ImGalaxy.ES.Core
         public static async Task<TDestination> ToAsync<TSource, TDestination>(this TSource @obj, TDestination target) =>
            await ToAsync(@obj, async source => target);
 
-        public static void ForEach<T>(this IEnumerable<T> @objList, Action<T> act) => @objList.ToList().ForEach(act);
-
-        public static void ForEach<T>(this IReadOnlyCollection<T> @objList, Action<T> act) => @objList.ToList().ForEach(act);
+        public static void ForEach<T>(this IEnumerable<T> @objList, Action<T> act)
+        {
+            foreach (var @obj in @objList)
+            {
+                act(@obj);
+            }
+        }
+        public static void ForEach<T>(this IReadOnlyCollection<T> @objList, Action<T> act) => objList.AsEnumerable().ForEach(act);
+         
+        public static void ForEach<T>(this T[] @objList, Action<T> act)
+        {
+            foreach (var @obj in @objList)
+            {
+                act(@obj);
+            }
+        }
     }
 }

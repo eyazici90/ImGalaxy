@@ -45,21 +45,21 @@ namespace ImGalaxy.ES.EventStore
         public bool TryGet(string identifier, out Aggregate aggregate) => _aggregates.TryGetValue(identifier, out aggregate);
  
         public bool HasChanges() =>
-             _aggregates.Values.Any(aggregate => aggregate.Root.HasChanges());
+             _aggregates.Values.Any(aggregate => aggregate.Root.HasEvents());
         
         public IEnumerable<Aggregate> GetChanges() =>
-             _aggregates.Values.Where(aggregate => aggregate.Root.HasChanges());
+             _aggregates.Values.Where(aggregate => aggregate.Root.HasEvents());
 
         public async Task DispatchNotificationsAsync()
         {
             var notifications = this._aggregates.Values.Select(a => (a.Root as IAggregateChangeTracker));
 
             var domainEvents = notifications
-                .SelectMany(x => x.GetChanges())
+                .SelectMany(x => x.GetEvents())
                 .ToList();
 
             notifications.ToList()
-                .ForEach(entity => entity.ClearChanges());
+                .ForEach(entity => entity.ClearEvents());
 
             var tasks = domainEvents
                 .Select(async (domainEvent) =>
@@ -75,7 +75,7 @@ namespace ImGalaxy.ES.EventStore
             int eventCount = 0;
             foreach (Aggregate aggregate in GetChanges())
             {
-                EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetChanges()
+                EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                .Select(@event => new EventData(
                                                    Guid.NewGuid(),
                                                    @event.GetType().TypeQualifiedName(),

@@ -39,10 +39,10 @@ namespace ImGalaxy.ES.CosmosDB
         public bool TryGet(string identifier, out Aggregate aggregate) => _aggregates.TryGetValue(identifier, out aggregate);
 
         public bool HasChanges() =>
-             _aggregates.Values.Any(aggregate => aggregate.Root.HasChanges());
+             _aggregates.Values.Any(aggregate => aggregate.Root.HasEvents());
 
         public IEnumerable<Aggregate> GetChanges() =>
-             _aggregates.Values.Where(aggregate => aggregate.Root.HasChanges());
+             _aggregates.Values.Where(aggregate => aggregate.Root.HasEvents());
 
         public void SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
@@ -51,11 +51,11 @@ namespace ImGalaxy.ES.CosmosDB
             var notifications = this._aggregates.Values.Select(a => (a.Root as IAggregateChangeTracker));
 
             var domainEvents = notifications
-                .SelectMany(x => x.GetChanges())
+                .SelectMany(x => x.GetEvents())
                 .ToList();
 
             notifications.ToList()
-                .ForEach(entity => entity.ClearChanges());
+                .ForEach(entity => entity.ClearEvents());
 
             var tasks = domainEvents
                 .Select(async (domainEvent) =>
@@ -70,7 +70,7 @@ namespace ImGalaxy.ES.CosmosDB
         { 
             foreach (Aggregate aggregate in GetChanges())
             {
-                CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetChanges()
+                CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                .Select(@event => new CosmosEventData(
                                                    Guid.NewGuid().ToString(),
                                                    @event.GetType().TypeQualifiedName(),
