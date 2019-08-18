@@ -10,8 +10,8 @@ namespace ImGalaxy.ES.Core
         bool TryGet(string identifier, out Aggregate aggregate);
         void Attach(Aggregate aggregateRoot); 
         bool HasChanges();
-        void SaveChanges();
-        Task SaveChangesAsync();
+        IExecutionResult SaveChanges();
+        Task<IExecutionResult> SaveChangesAsync();
         IEnumerable<Aggregate> GetChanges();
     }
 }

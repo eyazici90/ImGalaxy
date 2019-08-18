@@ -13,12 +13,12 @@ namespace ImGalaxy.ES.Core
             _unitOfWork = unitOfWork;
             _rootRepository = rootRepository;
         }
-        public virtual async Task AddAsync(Func<Task<TAggregateRoot>> factory, string id) =>
+        public virtual async Task<IExecutionResult> AddAsync(Func<Task<TAggregateRoot>> factory, string id) =>
             await AwaitTaskWithPrePostAction(factory, async root => await _rootRepository.AddAsync(root, id),
                         async root => await _unitOfWork.SaveChangesAsync());
 
      
-        public virtual async Task UpdateAsync(TKey id, Func<TAggregateRoot, Task> when) =>
+        public virtual async Task<IExecutionResult> UpdateAsync(TKey id, Func<TAggregateRoot, Task> when) =>
             await AwaitTaskWithPrePostAction(async () =>
             {
                 var existingRoot = await FindByIdAsync(id);
@@ -29,7 +29,7 @@ namespace ImGalaxy.ES.Core
             async root => await _unitOfWork.SaveChangesAsync());
 
 
-        private async Task AwaitTaskWithPrePostAction(Func<Task<TAggregateRoot>> preAction,
+        private async Task<IExecutionResult> AwaitTaskWithPrePostAction(Func<Task<TAggregateRoot>> preAction,
             Func<TAggregateRoot, Task> realAction, 
             Func<TAggregateRoot, Task> postAction)
         {
@@ -38,6 +38,8 @@ namespace ImGalaxy.ES.Core
             await realAction(aggregate);
 
             await postAction(aggregate);
+
+            return ExecutionResult.Success();
         }
         private async Task<Optional<TAggregateRoot>> FindByIdAsync(TKey id) => await _rootRepository.GetAsync(id.ToString()); 
 

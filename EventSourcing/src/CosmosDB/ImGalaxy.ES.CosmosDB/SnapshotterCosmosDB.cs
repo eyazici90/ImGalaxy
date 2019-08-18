@@ -35,7 +35,7 @@ namespace ImGalaxy.ES.CosmosDB
             typeof(ISnapshotable).IsAssignableFrom(aggregateType) 
                             && _cosmosDBConfigurations.SnapshotStrategy(@event as EventDocument);
 
-        public async Task TakeSnapshot(string stream)
+        public async Task<IExecutionResult> TakeSnapshotAsync(string stream)
         {
             Optional<TAggregateRoot> root = await _rootRepository.GetAsync(stream);
 
@@ -50,7 +50,9 @@ namespace ImGalaxy.ES.CosmosDB
             var newSnapshot = new SnapshotDocument(aggregate.Identifier, serializedState, aggregate.ExpectedVersion.ToString(), null, typeof(TSnapshot).TypeQualifiedName());
 
             await _cosmosDbClient.CreateItemAsync(newSnapshot,
-                            this._cosmosDBConfigurations.SnapshotCollectionName); 
+                            this._cosmosDBConfigurations.SnapshotCollectionName);
+
+            return ExecutionResult.Success();
         }
 
        

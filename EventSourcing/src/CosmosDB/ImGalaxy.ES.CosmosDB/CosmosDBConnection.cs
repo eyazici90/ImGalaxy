@@ -34,7 +34,7 @@ namespace ImGalaxy.ES.CosmosDB
               await ReadStreamWithEventsByDirection(streamId, start, count,
                 id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
       
-        public async Task AppendToStreamAsync(string streamId, long expectedVersion,
+        public async Task<IExecutionResult> AppendToStreamAsync(string streamId, long expectedVersion,
             params CosmosEventData[] events)
         {
             var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId);
@@ -76,6 +76,8 @@ namespace ImGalaxy.ES.CosmosDB
 
                 eventPosition++;
             }
+
+            return ExecutionResult.Success();
         }
     
 
@@ -114,7 +116,7 @@ namespace ImGalaxy.ES.CosmosDB
                 .ToList()
                 .Skip(start-1);
 
-        private async Task CreateNewStream(string id, string streamType, params CosmosEventData[] events)
+        private async Task<IExecutionResult> CreateNewStream(string id, string streamType, params CosmosEventData[] events)
         {
             var version = events.Length;
 
@@ -123,6 +125,8 @@ namespace ImGalaxy.ES.CosmosDB
 
             await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(),
                             this._cosmosDBConfigurations.StreamCollectionName);
+
+            return ExecutionResult.Success();
         }
 
         private async Task<Optional<StreamDocument>> GetStreamDocumentByIdAsync(string id)

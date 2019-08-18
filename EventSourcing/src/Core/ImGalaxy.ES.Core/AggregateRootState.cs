@@ -25,7 +25,7 @@ namespace ImGalaxy.ES.Core
 
         public Result ApplyEvent(params object[] @events)
         {
-            var state = this as TState;
+            var state = this as TState; 
             @events.ForEach(@event=> ApplyEvent(@event));
             return new Result(state, _events);
         }

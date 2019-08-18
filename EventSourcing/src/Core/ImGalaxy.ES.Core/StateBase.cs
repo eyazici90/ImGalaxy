@@ -9,8 +9,8 @@ namespace ImGalaxy.ES.Core
         protected readonly IEventRouter EventRouter;
 
         public StateBase() =>
-            EventRouter = EventRouter ?? new EventRouter(); 
-
+            EventRouter = EventRouter ?? new EventRouter();
+         
         public void RegisterEvent<TEvent>(Action<TEvent> handler) =>
             EventRouter.RegisterEvent(handler);
 

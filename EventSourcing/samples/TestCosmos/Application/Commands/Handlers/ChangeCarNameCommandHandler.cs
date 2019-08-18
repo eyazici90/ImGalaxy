@@ -17,10 +17,9 @@ namespace TestCosmos.Application.Commands.Handlers
         {
         }
 
-        public async Task<Unit> Handle(ChangeCarNameCommand request, CancellationToken cancellationToken)
-        {
-            await UpdateAsync(new CarId(request.CarId), async car => Car.ChangeName(car, request.Name));
-            return Unit.Value;
-        }
+        public async Task<Unit> Handle(ChangeCarNameCommand request, CancellationToken cancellationToken)=>
+            await UpdateAsync(new CarId(request.CarId), async car => Car.ChangeName(car, request.Name))
+                .ToAsync(Unit.Value);
+        
     }
 }

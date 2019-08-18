@@ -61,7 +61,7 @@ namespace ImGalaxy.ES.EventStore
             string projectionName
         ) => async (_, e) =>
         { 
-            if (e.OriginalEvent.EventType.StartsWith("$")) { return; }
+            if (e.OriginalEvent.EventType.StartsWith("$"))  return; 
 
             var @event = this._eventDeserializer.Deserialize(Type.GetType(e.Event.EventType), Encoding.UTF8.GetString(e.Event.Data));
 
@@ -76,7 +76,7 @@ namespace ImGalaxy.ES.EventStore
             ISnapshotter snapshotStore = _snapshotters.FirstOrDefault(
                             x => x.ShouldTakeSnapshot(Type.GetType(metadata.AggregateAssemblyQualifiedName), e) && !metadata.IsSnapshot);
 
-            if (snapshotStore != null)  {  await snapshotStore.TakeSnapshot(e.OriginalStreamId); }
+            if (snapshotStore != null)   await snapshotStore.TakeSnapshotAsync(e.OriginalStreamId); 
         };
 
         private Action<EventStoreCatchUpSubscription, SubscriptionDropReason, Exception> SubscriptionDropped(ProjectionHandler projection, string projectionName)

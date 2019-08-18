@@ -17,11 +17,10 @@ namespace TestCosmos.Application.Commands.Handlers
         {
         }
 
-        public async Task<Unit> Handle(AddItemToCarCommand request, CancellationToken cancellationToken)
-        {
+        public async Task<Unit> Handle(AddItemToCarCommand request, CancellationToken cancellationToken) =>
             await UpdateAsync(new CarId(request.CarId), async car=> Car.AddCarItem(car, 
-                                                                        new CarItemId(Guid.NewGuid().ToString()), request.Desc));
-            return Unit.Value;
-        }
+                                                                        new CarItemId(Guid.NewGuid().ToString()), request.Desc))
+                 .ToAsync(Unit.Value);
+
     }
 }

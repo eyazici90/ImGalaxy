@@ -21,7 +21,7 @@ namespace TestCosmos
             RegisterEvent<CarRegisteredEvent>(When);
             RegisterEvent<CarNameChangedEvent>(When);
             RegisterEvent<CarModelRenewedEvent>(When);
-            RegisterEvent<CarItemAddedEvent>(When);
+            RegisterEvent<CarItemAddedEvent>(When); 
 
             _carItems = _carItems ?? new List<CarItemState>();
         }
@@ -68,7 +68,7 @@ namespace TestCosmos
             this._name = snapshot.Name;
             this._year = snapshot.Year;
 
-            this._carItems = snapshot.CarItems.Select(c => CarItem.Create(c.Id, new CarId(c.CarId), c.Desciption).State).ToList() ?? this._carItems;
+            this._carItems = snapshot.CarItems?.Select(c => CarItem.Create(c.Id, new CarId(c.CarId), c.Desciption).State).ToList() ?? this._carItems;
         }
 
         public object TakeSnapshot() =>

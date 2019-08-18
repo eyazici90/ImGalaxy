@@ -41,7 +41,7 @@ namespace ImGalaxy.ES.CosmosDB
 
             if (!slice.HasValue) { return Optional<TAggregateRoot>.Empty; } 
 
-            TAggregateRoot root = IntanceOfRoot().Value;
+            TAggregateRoot root = IntanceOfRoot().Value; 
 
             ApplyChangesToRoot(root, DeserializeEventsFromSlice(slice.Value));
               

@@ -70,9 +70,8 @@ namespace ImGalaxy.ES.EventStore
             await Task.WhenAll(tasks);
         }
 
-        private async Task<int> AppendToStreamAsync()
-        {
-            int eventCount = 0;
+        private async Task<IExecutionResult> AppendToStreamAsync()
+        { 
             foreach (Aggregate aggregate in GetChanges())
             {
                 EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
@@ -92,24 +91,25 @@ namespace ImGalaxy.ES.EventStore
                 try
                 {
                     await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
-
-                    eventCount = eventCount + changes.Length;
+                     
                 }
                 catch (WrongExpectedVersionException)
                 {
                     throw;
                 }
             }
-            return eventCount;
+            return ExecutionResult.Success();
         }
 
-        public void SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
-        public async Task SaveChangesAsync()
+        public async Task<IExecutionResult> SaveChangesAsync()
         {
             await AppendToStreamAsync();
             await DispatchNotificationsAsync();
             DetachAllAggregates();
+
+            return ExecutionResult.Success();
         }
         private void DetachAllAggregates() =>
                 _aggregates.Clear();

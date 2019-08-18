@@ -9,6 +9,6 @@ namespace ImGalaxy.ES.Core
     {
         bool ShouldTakeSnapshot(Type aggregateType, object @event);
 
-        Task TakeSnapshot(string stream);
+        Task<IExecutionResult> TakeSnapshotAsync(string stream);
     }
 }

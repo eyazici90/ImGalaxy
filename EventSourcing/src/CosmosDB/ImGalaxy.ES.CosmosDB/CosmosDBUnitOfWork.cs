@@ -44,7 +44,7 @@ namespace ImGalaxy.ES.CosmosDB
         public IEnumerable<Aggregate> GetChanges() =>
              _aggregates.Values.Where(aggregate => aggregate.Root.HasEvents());
 
-        public void SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task DispatchNotificationsAsync()
         {
@@ -94,11 +94,13 @@ namespace ImGalaxy.ES.CosmosDB
                 }
             }
         }
-        public async Task SaveChangesAsync()
+        public async Task<IExecutionResult> SaveChangesAsync()
         {
             await AppendToStreamAsync();
             await DispatchNotificationsAsync();
             DetachAllAggregates();
+
+            return ExecutionResult.Success();
         }
         private void DetachAllAggregates() =>
             _aggregates.Clear();

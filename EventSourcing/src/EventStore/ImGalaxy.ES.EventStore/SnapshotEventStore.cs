@@ -58,7 +58,7 @@ namespace ImGalaxy.ES.EventStore
         private bool CheckIfStreamIsNotFound(StreamEventsSlice slice) => slice.Status == SliceReadStatus.StreamDeleted || slice.Status == SliceReadStatus.StreamNotFound ||
                 (slice.Events.Length == 0 && slice.NextEventNumber == -1);
 
-        public async Task TakeSnapshot(string stream)
+        public async Task<IExecutionResult> TakeSnapshotAsync(string stream)
         {
             Optional<TAggregateRoot> root = await _rootRepository.GetAsync(stream);
 
@@ -86,6 +86,8 @@ namespace ImGalaxy.ES.EventStore
            var snapShotStreamName = _streamNameProvider.GetSnapshotStreamName(root, stream);
 
            await _connection.AppendToStreamAsync(snapShotStreamName, ExpectedVersion.Any, changes);
+
+            return ExecutionResult.Success();
         }
         
     }
