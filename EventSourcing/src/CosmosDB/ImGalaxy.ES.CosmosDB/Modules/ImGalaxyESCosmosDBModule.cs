@@ -11,7 +11,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 {
     public static class ImGalaxyESCosmoStoreModule
     { 
-        public static IServiceCollection AddGalaxyESCosmosDBModule(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
+        public static IServiceCollection AddImGalaxyESCosmosDBModule(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
            services.With(s =>
            {
                var configs = new CosmosDBConfigurations().With(c => configurations(c));
@@ -45,7 +45,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
              services.AddScoped<IUnitOfWork, CosmosDBUnitOfWork>();
 
         private static IServiceCollection RegisterCosmosDbConnection(this IServiceCollection services) =>
-           services.AddTransient<ICosmosDBConnection, CosmosDBConnection>();
+           services.AddSingleton<ICosmosDBConnection, CosmosDBConnection>();
 
         private static IServiceCollection RegisterCosmosClient(this IServiceCollection services) =>
               services.AddSingleton<IDocumentClient>(ctx => 

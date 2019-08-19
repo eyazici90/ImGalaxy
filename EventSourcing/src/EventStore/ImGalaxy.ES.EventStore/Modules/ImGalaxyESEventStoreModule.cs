@@ -10,7 +10,7 @@ namespace ImGalaxy.ES.EventStore.Modules
 {
     public static class ImGalaxyESEventStoreModule
     {
-        public static IServiceCollection AddGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
+        public static IServiceCollection AddImGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
             services.With(s=> 
             {
                 var configs = new EventStoreConfigurations().With(c => configurations(c)); 

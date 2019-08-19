@@ -23,7 +23,7 @@ namespace TestCosmos
 
             services
                 .AddMediatR(typeof(CreateCarCommandHandler).Assembly)
-                .AddGalaxyESCosmosDBModule(configs =>
+                .AddImGalaxyESCosmosDBModule(configs =>
                 {
                     configs.DatabaseId = "TestCosmosES";
                     configs.EventCollectionName = "Events";
@@ -49,13 +49,11 @@ namespace TestCosmos
             var rootRepo = provider.GetRequiredService<IAggregateRootRepository<CarState>>();
             var unitofWork = provider.GetRequiredService<IUnitOfWork>();
             var serializer = provider.GetRequiredService<IEventSerializer>();
+             
 
-
-
-          //  await AddNewCar(provider, mediatR);
-            //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
-
-             await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
+            //  await AddNewCar(provider, mediatR);
+            //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6"); 
+            // await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
 
 
             // await ChangeModelYear(provider, mediatR, 2014, "b7887eba-896c-4f9d-9d56-7156de817b8d");
