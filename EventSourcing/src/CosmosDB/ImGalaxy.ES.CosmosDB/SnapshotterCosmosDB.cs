@@ -52,7 +52,7 @@ namespace ImGalaxy.ES.CosmosDB
             await _cosmosDbClient.CreateItemAsync(newSnapshot,
                             this._cosmosDBConfigurations.SnapshotCollectionName);
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
 
        

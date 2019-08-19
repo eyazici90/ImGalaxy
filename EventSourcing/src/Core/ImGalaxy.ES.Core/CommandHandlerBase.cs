@@ -39,7 +39,7 @@ namespace ImGalaxy.ES.Core
 
             await postAction(aggregate);
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
         private async Task<Optional<TAggregateRoot>> FindByIdAsync(TKey id) => await _rootRepository.GetAsync(id.ToString()); 
 

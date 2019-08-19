@@ -77,7 +77,7 @@ namespace ImGalaxy.ES.CosmosDB
                 eventPosition++;
             }
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
     
 
@@ -126,7 +126,7 @@ namespace ImGalaxy.ES.CosmosDB
             await _cosmosClient.CreateItemAsync(newStream.ToCosmosStreamDocument(),
                             this._cosmosDBConfigurations.StreamCollectionName);
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
 
         private async Task<Optional<StreamDocument>> GetStreamDocumentByIdAsync(string id)

@@ -87,7 +87,7 @@ namespace ImGalaxy.ES.EventStore
 
            await _connection.AppendToStreamAsync(snapShotStreamName, ExpectedVersion.Any, changes);
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
         
     }

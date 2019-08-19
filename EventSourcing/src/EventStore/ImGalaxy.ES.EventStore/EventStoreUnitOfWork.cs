@@ -98,7 +98,7 @@ namespace ImGalaxy.ES.EventStore
                     throw;
                 }
             }
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
 
         public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
@@ -109,7 +109,7 @@ namespace ImGalaxy.ES.EventStore
             await DispatchNotificationsAsync();
             DetachAllAggregates();
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
         private void DetachAllAggregates() =>
                 _aggregates.Clear();

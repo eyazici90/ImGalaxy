@@ -66,7 +66,7 @@ namespace ImGalaxy.ES.CosmosDB
             await Task.WhenAll(tasks);
         }
 
-        private async Task AppendToStreamAsync()
+        private async Task<IExecutionResult> AppendToStreamAsync()
         { 
             foreach (Aggregate aggregate in GetChanges())
             {
@@ -93,6 +93,7 @@ namespace ImGalaxy.ES.CosmosDB
                     throw;
                 }
             }
+            return ExecutionResult.Success;
         }
         public async Task<IExecutionResult> SaveChangesAsync()
         {
@@ -100,7 +101,7 @@ namespace ImGalaxy.ES.CosmosDB
             await DispatchNotificationsAsync();
             DetachAllAggregates();
 
-            return ExecutionResult.Success();
+            return ExecutionResult.Success;
         }
         private void DetachAllAggregates() =>
             _aggregates.Clear();

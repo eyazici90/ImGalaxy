@@ -21,7 +21,7 @@ namespace TestCosmos.Application.Commands.Handlers
             var newId = Guid.NewGuid().ToString();
 
             return await AddAsync(async () => Car.RegisterCar(newId, request.Name).State, newId)
-                .ToAsync(Unit.Value);
+                .PipeToAsync(Unit.Value);
         }
            
     }

@@ -114,9 +114,9 @@ namespace ImGalaxy.ES.Core
         public static async Task<TDestination> ToAsync<TSource, TDestination>(this TSource @obj, TDestination target) =>
            await ToAsync(@obj, async source => target);
 
-        public static async Task<TDestination> ToAsync<TDestination>(this Task<IExecutionResult> @obj, Func<Task<TDestination>> update) =>
+        public static async Task<TDestination> PipeToAsync<TDestination>(this Task<IExecutionResult> @obj, Func<Task<TDestination>> update) =>
          await update();
-        public static async Task<TDestination> ToAsync<TDestination>(this Task<IExecutionResult> @obj, TDestination target)
+        public static async Task<TDestination> PipeToAsync<TDestination>(this Task<IExecutionResult> @obj, TDestination target)
         {
             await @obj;
             return target;
