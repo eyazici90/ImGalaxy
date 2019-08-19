@@ -52,9 +52,9 @@ namespace ImGalaxy.ES.CosmosDB
                 throw;
             }
             finally
-            {
-                syncSemaphore.Release();
+            {            
                 _lockObjects.TryRemove(streamId, out _);
+                syncSemaphore.Release();
             }
 
             return ExecutionResult.Success;

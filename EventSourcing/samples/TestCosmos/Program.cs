@@ -49,7 +49,7 @@ namespace TestCosmos
             var rootRepo = provider.GetRequiredService<IAggregateRootRepository<CarState>>();
             var unitofWork = provider.GetRequiredService<IUnitOfWork>();
             var serializer = provider.GetRequiredService<IEventSerializer>();
-             
+
 
             //  await AddNewCar(provider, mediatR);
             //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6"); 
@@ -60,6 +60,13 @@ namespace TestCosmos
             //Exception Case for the last state
 
             //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
+
+            for (int i = 0; i < 50; i++)
+            {
+                await Task.Factory.StartNew(()=> {
+                    ChangeCarName(provider, mediatR, "79cd4f7d-67b5-4b93-b603-178179f5f7df").GetAwaiter().GetResult(); 
+                });
+            }
 
             //var snapshotter = new SnapshotterCosmosDB<CarState, CarStateSnapshot>(rootRepo, unitofWork, cosmosClient, configurations,
             //  serializer);
