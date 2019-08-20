@@ -31,7 +31,7 @@ namespace TestCosmos
                     configs.SnapshotCollectionName = "Snapshots";
                     configs.EndpointUri = "https://localhost:8081";
                     configs.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
-                    configs.ReadBatchSize = 100;
+                    configs.ReadBatchSize = 10000;
                     configs.OfferThroughput = 400;
                     configs.IsSnapshottingOn = true;
                     configs.SnapshotStrategy = @event => @event.Position %2 == 0;
@@ -51,7 +51,7 @@ namespace TestCosmos
             var serializer = provider.GetRequiredService<IEventSerializer>();
 
 
-            //  await AddNewCar(provider, mediatR);
+            //await AddNewCar(provider, mediatR);
             //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6"); 
             // await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
 
@@ -61,12 +61,13 @@ namespace TestCosmos
 
             //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
 
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    await Task.Factory.StartNew(()=> {
-            //        ChangeCarName(provider, mediatR, "97d264eb-adfd-45ad-ace6-01408b2b7bc6").GetAwaiter().GetResult(); 
-            //    });
-            //}
+            for (int i = 0; i < 200; i++)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    ChangeCarName(provider, mediatR, "61d072cb-b799-4d3f-8863-d1c31312ec20").GetAwaiter().GetResult();
+                });
+            }
 
             //var snapshotter = new SnapshotterCosmosDB<CarState, CarStateSnapshot>(rootRepo, unitofWork, cosmosClient, configurations,
             //  serializer);

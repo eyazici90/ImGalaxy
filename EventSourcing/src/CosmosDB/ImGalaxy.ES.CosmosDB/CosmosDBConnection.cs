@@ -15,8 +15,8 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBConnection : ICosmosDBConnection
-    {
-        private static readonly ConcurrentDictionary<string, SemaphoreSlim> _lockObjects = new ConcurrentDictionary<string, SemaphoreSlim>();
+    {  
+        private readonly static SemaphoreSlim _locker = new SemaphoreSlim(1,1);
         private readonly ICosmosDBClient _cosmosClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer;
@@ -31,30 +31,25 @@ namespace ImGalaxy.ES.CosmosDB
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamId, long start, int count) =>
             await ReadStreamWithEventsByDirection(streamId, start, count,
-                id => GetEventDocumentsForwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
+                  id => GetEventDocumentsForwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
-        public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count) =>
-              await ReadStreamWithEventsByDirection(streamId, start, count,
-                id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
+
+        public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count)=>
+           await ReadStreamWithEventsByDirection(streamId, start, count,
+                         id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
 
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, long expectedVersion,
           params CosmosEventData[] events)
-        {
-            var syncSemaphore = _lockObjects.GetOrAdd(streamId, new SemaphoreSlim(1, 1)); 
+        { 
+            await _locker.WaitAsync(); 
             try
             {
-                await syncSemaphore.WaitAsync();
                 await AppendToStreamInternalAsync(streamId, expectedVersion, events);
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            } 
             finally
-            {            
-                _lockObjects.TryRemove(streamId, out _);
-                syncSemaphore.Release();
+            { 
+                _locker.Release();
             }
 
             return ExecutionResult.Success;
@@ -84,12 +79,11 @@ namespace ImGalaxy.ES.CosmosDB
 
                 expectedVersion = expectedVersion + events.Length;
 
-                var newVersionedStream = existingStream.Value.ChangeVersion(expectedVersion)
-                                                             .ToCosmosStreamDocument();
+                var newVersionedStream = existingStream.Value.ChangeVersion(expectedVersion);
 
-                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamCollectionName, newVersionedStream);
+                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamCollectionName, newVersionedStream.ToCosmosStreamDocument());
 
-                eventPosition = existingStream.Value.NextEventNumber;
+                eventPosition = newVersionedStream.NextEventNumber;
             }
 
             foreach (var @event in events)
