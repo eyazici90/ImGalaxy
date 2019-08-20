@@ -16,7 +16,7 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBConnection : ICosmosDBConnection
     {
-        private readonly ConcurrentDictionary<string, SemaphoreSlim> _lockObjects = new ConcurrentDictionary<string, SemaphoreSlim>();
+        private static readonly ConcurrentDictionary<string, SemaphoreSlim> _lockObjects = new ConcurrentDictionary<string, SemaphoreSlim>();
         private readonly ICosmosDBClient _cosmosClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer;

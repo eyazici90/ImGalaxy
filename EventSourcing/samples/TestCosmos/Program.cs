@@ -61,12 +61,12 @@ namespace TestCosmos
 
             //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
 
-            for (int i = 0; i < 50; i++)
-            {
-                await Task.Factory.StartNew(()=> {
-                    ChangeCarName(provider, mediatR, "79cd4f7d-67b5-4b93-b603-178179f5f7df").GetAwaiter().GetResult(); 
-                });
-            }
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    await Task.Factory.StartNew(()=> {
+            //        ChangeCarName(provider, mediatR, "97d264eb-adfd-45ad-ace6-01408b2b7bc6").GetAwaiter().GetResult(); 
+            //    });
+            //}
 
             //var snapshotter = new SnapshotterCosmosDB<CarState, CarStateSnapshot>(rootRepo, unitofWork, cosmosClient, configurations,
             //  serializer);
