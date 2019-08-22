@@ -116,3 +116,33 @@ C# library for CQRS, EventSourcing needs with various provider supports. (EventS
             state.ThrowsIf(s=>s.CarItems.Count == 2, new Exception("You cannot add more than 2 items to single car"))
                  .ApplyEvent(new CarItemAddedEvent(state._id, carItemId, desc));
     }
+
+*Command Ex.*
+
+    public class ChangeCarNameCommand : IRequest
+    {
+        public readonly string CarId;
+        public readonly string Name;
+        public ChangeCarNameCommand(string carId, string name)
+        {
+
+            CarId = carId;
+            Name = name;
+        }
+    }
+
+*Command Handler Ex.*
+
+    public class ChangeCarNameCommandHandler : CommandHandlerBase<CarState, CarId>, IRequestHandler<ChangeCarNameCommand>
+    {
+        public ChangeCarNameCommandHandler(IUnitOfWork unitOfWork, 
+            IAggregateRootRepository<CarState> rootRepository) 
+            : base(unitOfWork, rootRepository)
+        {
+        }
+
+        public async Task<Unit> Handle(ChangeCarNameCommand request, CancellationToken cancellationToken)=>
+            await UpdateAsync(new CarId(request.CarId), async car => Car.ChangeName(car, request.Name))
+                .PipeToAsync(Unit.Value);
+        
+    }
