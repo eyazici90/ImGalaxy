@@ -118,16 +118,14 @@ namespace ImGalaxy.ES.CosmosDB
             return new Optional<CosmosStream>(cosmosStream);
 
         }
-
-        //https://github.com/Azure/azure-cosmos-dotnet-v3/issues/8
+         
         private IEnumerable<EventDocument> GetEventDocumentsForwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
             _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderBy(e => e.Position)
                 .Take(count)
                 .ToList()
                 .Skip(start - 1);
-
-        //https://github.com/Azure/azure-cosmos-dotnet-v3/issues/8
+         
         private IEnumerable<EventDocument> GetEventDocumentsBackwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
              _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderByDescending(e => e.Position)

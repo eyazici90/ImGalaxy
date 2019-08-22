@@ -8,7 +8,7 @@
     <Copyright>Copyright 2019</Copyright>
     <PackageTags>EventSourcing; ES; CQRS; DDD; CosmosDB; Cosmos</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.9</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
