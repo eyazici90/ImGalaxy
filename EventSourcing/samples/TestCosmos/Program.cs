@@ -34,26 +34,21 @@ namespace TestCosmos
                     configs.ReadBatchSize = 10000;
                     configs.OfferThroughput = 400;
                     configs.IsSnapshottingOn = true;
-                    configs.SnapshotStrategy = @event => @event.Position %2 == 0;
+                    configs.SnapshotStrategy = @event => @event.Position % 2 == 0;
 
-                }); 
+                });
 
             var provider = services.BuildServiceProvider();
 
             await provider.UseGalaxyESCosmosDBModule();
 
-
             var mediatR = provider.GetRequiredService<IMediator>();
-            var configurations = provider.GetRequiredService<ICosmosDBConfigurations>();
-            var cosmosClient = provider.GetRequiredService<ICosmosDBClient>();
-            var rootRepo = provider.GetRequiredService<IAggregateRootRepository<CarState>>();
-            var unitofWork = provider.GetRequiredService<IUnitOfWork>();
-            var serializer = provider.GetRequiredService<IEventSerializer>();
 
 
-            //await AddNewCar(provider, mediatR);
-            //await AddItem(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6"); 
-            // await ChangeCarName(provider, mediatR, "f8377871-a09f-4b01-9edb-47d44762f6f6");
+
+            await AddNewCar(provider, mediatR);
+             //await AddItem(provider, mediatR, "c0a87ff1-be89-48a6-b0d5-1cddc7d68a4a"); 
+            //await ChangeCarName(provider, mediatR, "c0a87ff1-be89-48a6-b0d5-1cddc7d68a4a");
 
 
             // await ChangeModelYear(provider, mediatR, 2014, "b7887eba-896c-4f9d-9d56-7156de817b8d");
@@ -61,13 +56,13 @@ namespace TestCosmos
 
             //await ChangeModelYear(provider, mediatR, 1990, "642acdb1-38d2-405d-afee-b3a122642cb0");
 
-            for (int i = 0; i < 200; i++)
-            {
-                await Task.Factory.StartNew(() =>
-                {
-                    ChangeCarName(provider, mediatR, "61d072cb-b799-4d3f-8863-d1c31312ec20").GetAwaiter().GetResult();
-                });
-            }
+            //for (int i = 0; i < 200; i++)
+            //{
+            //    await Task.Factory.StartNew(() =>
+            //    {
+            //        ChangeCarName(provider, mediatR, "61d072cb-b799-4d3f-8863-d1c31312ec20").GetAwaiter().GetResult();
+            //    });
+            //}
 
             //var snapshotter = new SnapshotterCosmosDB<CarState, CarStateSnapshot>(rootRepo, unitofWork, cosmosClient, configurations,
             //  serializer);
@@ -99,12 +94,6 @@ namespace TestCosmos
             await mediatR.Send(new CreateCarCommand("BMW")); 
          
         private static async Task AddItem(IServiceProvider provider, IMediator mediatR, string id) => 
-            await mediatR.Send(new AddItemToCarCommand(id, "Excellent Car!!!"));
-
-        private static async Task TakeSnapshots()
-        {
-
-        }
-     
+            await mediatR.Send(new AddItemToCarCommand(id, "Excellent Car!!!")); 
     }
 }

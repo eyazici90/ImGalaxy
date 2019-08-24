@@ -28,7 +28,8 @@ namespace ImGalaxy.ES.EventStore.Modules
         private static IServiceCollection RegisterProviders(this IServiceCollection services) =>
              services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
-                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>();
+                     .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
+                     .AddTransient<ISnapshotReader, SnapshotReaderEventStore>();
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
              services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 
