@@ -12,7 +12,14 @@ namespace ImGalaxy.ES.Core
         private IReadOnlyCollection<object> _events => _eventRecorder?.RecordedEvents;
 
         public AggregateRootState() =>
-            _eventRecorder = _eventRecorder ?? new EventRecorder(); 
+            _eventRecorder = _eventRecorder ?? new EventRecorder();
+
+        public Result ApplyEvent(params object[] @events)
+        {
+            var state = this as TState;
+            @events.ForEach(@event => ApplyEvent(@event));
+            return new Result(state, _events);
+        }
 
         private void ApplyEvent(object @event)
         {
@@ -21,13 +28,6 @@ namespace ImGalaxy.ES.Core
             Play(@event);
             RecordEvent(@event);
             AfterApplyEvent(@event);
-        }
-
-        public Result ApplyEvent(params object[] @events)
-        {
-            var state = this as TState; 
-            @events.ForEach(@event=> ApplyEvent(@event));
-            return new Result(state, _events);
         }
 
         public void ApplyAllEvents() => _events.ForEach(@event => Play(@event));
