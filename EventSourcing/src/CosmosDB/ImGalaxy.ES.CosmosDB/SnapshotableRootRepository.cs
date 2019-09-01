@@ -11,24 +11,24 @@ namespace ImGalaxy.ES.CosmosDB
     {
         private readonly ISnapshotReader _snapshotReader;
         public SnapshotableRootRepository(ISnapshotReader snapshotReader, IEventDeserializer eventDeserializer,
-            IUnitOfWork unitOfWork,
+            IChangeTracker changeTracker,
             ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider)
-            : base(eventDeserializer, unitOfWork, cosmosDBConnection,
+            : base(eventDeserializer, changeTracker, cosmosDBConnection,
                   cosmosDBConfigurator, streamNameProvider) =>
             _snapshotReader = snapshotReader;
 
         public void Add(TAggregateRoot root, string identifier) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task AddAsync(TAggregateRoot root, string identifier) =>
-            this.UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
+            this.ChangeTracker.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
 
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
        
         public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
-            Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
+            Optional<Aggregate> existingAggregate = GetAggregateFromChangeTrackerIfExits(identifier);
 
             if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
@@ -56,7 +56,7 @@ namespace ImGalaxy.ES.CosmosDB
              
             ClearChangesOfRoot(root);
 
-            AttachAggregateToUnitOfWork(identifier, (int)slice.Value.Version, root);
+            AttachAggregateToChangeTracker(identifier, (int)slice.Value.Version, root);
             
             return new Optional<TAggregateRoot>(root);
         }

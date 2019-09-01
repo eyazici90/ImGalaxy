@@ -16,6 +16,7 @@ namespace ImGalaxy.ES.EventStore.Modules
                 var configs = new EventStoreConfigurations().With(c => configurations(c)); 
                 s.RegisterConfigurations(configs)
                  .RegisterProviders()
+                 .RegisterChangeTracker()
                  .RegisterEventStore()
                  .RegisterRepositories()
                  .RegisterSnapshotableRepositories(configs)
@@ -30,6 +31,9 @@ namespace ImGalaxy.ES.EventStore.Modules
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
                      .AddTransient<ISnapshotReader, SnapshotReaderEventStore>();
+        private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
+           services.AddScoped<IChangeTracker, ChangeTracker>();
+
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
              services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
 

@@ -9,7 +9,8 @@ using TestCosmos.Domain.Cars;
 
 namespace TestCosmos.Application.Commands.Handlers
 {
-    public sealed class CreateCarCommandHandler : CommandHandlerBase<CarState, CarId>, IRequestHandler<CreateCarCommand>
+    public sealed class CreateCarCommandHandler : CommandHandlerBase<CarState, CarId>,
+        IRequestHandler<CreateCarCommand>
     {
         public CreateCarCommandHandler(IUnitOfWork unitOfWork, IAggregateRootRepository<CarState> rootRepository) 
             : base(unitOfWork, rootRepository)

@@ -13,18 +13,18 @@ namespace ImGalaxy.ES.CosmosDB
         where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IChangeTracker _changeTracker;
         private readonly ICosmosDBClient _cosmosDbClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer; 
         public SnapshotterCosmosDB(IAggregateRootRepository<TAggregateRoot> rootRepository,
-            IUnitOfWork unitOfWork,
+            IChangeTracker changeTracker,
             ICosmosDBClient cosmosDbClient,
             ICosmosDBConfigurations cosmosDBConfigurations,
             IEventSerializer eventSerializer)
         {
             _rootRepository = rootRepository ?? throw new ArgumentNullException(nameof(rootRepository));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _cosmosDbClient = cosmosDbClient ?? throw new ArgumentNullException(nameof(cosmosDbClient));
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer)); 
@@ -43,7 +43,7 @@ namespace ImGalaxy.ES.CosmosDB
 
             Aggregate aggregate;
 
-            this._unitOfWork.TryGet(stream, out aggregate);
+            this._changeTracker.TryGet(stream, out aggregate);
 
             var serializedState = this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot());
 

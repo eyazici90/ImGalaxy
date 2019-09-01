@@ -14,45 +14,28 @@ namespace ImGalaxy.ES.EventStore
 {
     public class EventStoreUnitOfWork : IUnitOfWork
     {
-        private readonly ConcurrentDictionary<string, Aggregate> _aggregates;
+        private readonly IChangeTracker _changeTracker;
         private readonly IEventStoreConnection _connection;
         private readonly IMediator _mediator;
         private readonly IEventSerializer _eventSerializer;
         private readonly IStreamNameProvider _streamNameProvider;
-        public EventStoreUnitOfWork(IEventStoreConnection connection,
+        public EventStoreUnitOfWork(IChangeTracker changeTracker, 
+            IEventStoreConnection connection,
             IMediator mediator,
             IEventSerializer eventSerializer,
             IStreamNameProvider streamNameProvider)
         {
+            _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
-            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
-            _aggregates = new ConcurrentDictionary<string, Aggregate>();
+            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider)); 
         }
        
-        public void Attach(Aggregate aggregate)
-        {
-            aggregate.ThrowsIfNull(new ArgumentNullException(nameof(aggregate)));
 
-            aggregate.ThrowsIf(a=> !_aggregates.TryAdd(aggregate.Identifier, aggregate),
-                new ArgumentException(
-                    string.Format(CultureInfo.InvariantCulture,
-                        $@"The aggregate of type '{aggregate.Root.GetType().Name}' with identifier '{aggregate.Identifier}' was already added.")));
-           
-        }
-         
-        public bool TryGet(string identifier, out Aggregate aggregate) => _aggregates.TryGetValue(identifier, out aggregate);
- 
-        public bool HasChanges() =>
-             _aggregates.Values.Any(aggregate => aggregate.Root.HasEvents());
-        
-        public IEnumerable<Aggregate> GetChanges() =>
-             _aggregates.Values.Where(aggregate => aggregate.Root.HasEvents());
-
-        public async Task DispatchNotificationsAsync()
+        private async Task DispatchNotificationsAsync()
         {
-            var notifications = this._aggregates.Values.Select(a => (a.Root as IAggregateChangeTracker));
+            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateChangeTracker));
 
             var domainEvents = notifications
                 .SelectMany(x => x.GetEvents())
@@ -72,7 +55,7 @@ namespace ImGalaxy.ES.EventStore
 
         private async Task<IExecutionResult> AppendToStreamAsync()
         { 
-            foreach (Aggregate aggregate in GetChanges())
+            foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
                 EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                .Select(@event => new EventData(
@@ -107,11 +90,9 @@ namespace ImGalaxy.ES.EventStore
         {
             await AppendToStreamAsync();
             await DispatchNotificationsAsync();
-            DetachAllAggregates();
+            _changeTracker.ResetChanges();
 
             return ExecutionResult.Success;
-        }
-        private void DetachAllAggregates() =>
-                _aggregates.Clear();
+        } 
     }
 }

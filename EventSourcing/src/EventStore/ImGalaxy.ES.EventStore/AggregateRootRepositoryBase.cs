@@ -10,18 +10,18 @@ namespace ImGalaxy.ES.EventStore
 {
     public abstract class AggregateRootRepositoryBase<TAggregateRoot> where TAggregateRoot : IAggregateRoot
     {
-        protected readonly IUnitOfWork UnitOfWork;
+        protected readonly IChangeTracker ChangeTracker;
         protected readonly IEventDeserializer EventDeserializer;
         protected readonly IEventStoreConnection EventStoreConnection;
         protected readonly IEventStoreConfigurations EventStoreConfigurations;
         protected readonly IStreamNameProvider StreamNameProvider;
-        public AggregateRootRepositoryBase(IUnitOfWork unitOfWork,
+        public AggregateRootRepositoryBase(IChangeTracker changeTracker,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
             IEventStoreConfigurations eventStoreConfigurations,
             IStreamNameProvider streamNameProvider)
         {
-            UnitOfWork = unitOfWork;
+            ChangeTracker = changeTracker;
             EventDeserializer = eventDeserializer;
             EventStoreConnection = eventStoreConnection;
             EventStoreConfigurations = eventStoreConfigurations;
@@ -36,21 +36,21 @@ namespace ImGalaxy.ES.EventStore
         protected virtual Optional<TAggregateRoot> IntanceOfRoot() => new Optional<TAggregateRoot>((TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true));
         protected virtual Optional<TAggregateRoot> IntanceOfRoot(Aggregate aggregate) => new Optional<TAggregateRoot>((TAggregateRoot)((aggregate).Root));
 
-        protected virtual Optional<Aggregate> GetAggregateFromUnitOfWorkIfExits(string identifier)
+        protected virtual Optional<Aggregate> GetAggregateFromChangeTrackerIfExits(string identifier)
         {
             Aggregate existingAggregate;
 
-            UnitOfWork.TryGet(identifier, out existingAggregate);
+            ChangeTracker.TryGet(identifier, out existingAggregate);
 
             return new Optional<Aggregate>(existingAggregate);
         }
 
         protected virtual void ClearChangesOfRoot(TAggregateRoot root) => root.ClearEvents();
-        protected virtual void AttachAggregateToUnitOfWork(string identifier, int expectedVersion, TAggregateRoot aggregateRoot) =>
+        protected virtual void AttachAggregateToChangeTracker(string identifier, int expectedVersion, TAggregateRoot aggregateRoot) =>
             aggregateRoot.With(root =>
             {
                 var aggregate = new Aggregate(identifier, expectedVersion, root);
-                this.UnitOfWork.Attach(aggregate);
+                this.ChangeTracker.Attach(aggregate);
             });
 
         protected virtual async Task<StreamEventsSlice> ReadStreamEventsForwardAsync(string streamName, long version) =>

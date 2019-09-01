@@ -12,43 +12,26 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBUnitOfWork : IUnitOfWork
     {
+        private readonly IChangeTracker _changeTracker;
         private readonly ICosmosDBConnection _cosmosDBConnection;
-        private readonly IMediator _mediator; 
+        private readonly IMediator _mediator;
         private readonly IStreamNameProvider _streamNameProvider;
-        private readonly ConcurrentDictionary<string, Aggregate> _aggregates;
-        public CosmosDBUnitOfWork(ICosmosDBConnection cosmosDBConnection, 
+        public CosmosDBUnitOfWork(IChangeTracker changeTracker,
+            ICosmosDBConnection cosmosDBConnection,
             IMediator mediator,
             IStreamNameProvider streamNameProvider)
         {
+            _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _cosmosDBConnection = cosmosDBConnection ?? throw new ArgumentNullException(nameof(cosmosDBConnection));
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator)); 
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
-            _aggregates = new ConcurrentDictionary<string, Aggregate>();
         }
-
-        public void Attach(Aggregate aggregate)
-        {
-            aggregate.ThrowsIfNull(new ArgumentNullException(nameof(aggregate)));
-
-            aggregate.ThrowsIf(a => !_aggregates.TryAdd(aggregate.Identifier, aggregate),
-                new ArgumentException(
-                    string.Format(CultureInfo.InvariantCulture,
-                        $@"The aggregate of type '{aggregate.Root.GetType().Name}' with identifier '{aggregate.Identifier}' was already added.")));
-        }
-
-        public bool TryGet(string identifier, out Aggregate aggregate) => _aggregates.TryGetValue(identifier, out aggregate);
-
-        public bool HasChanges() =>
-             _aggregates.Values.Any(aggregate => aggregate.Root.HasEvents());
-
-        public IEnumerable<Aggregate> GetChanges() =>
-             _aggregates.Values.Where(aggregate => aggregate.Root.HasEvents());
-
+         
         public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task DispatchNotificationsAsync()
         {
-            var notifications = this._aggregates.Values.Select(a => (a.Root as IAggregateChangeTracker));
+            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateChangeTracker));
 
             var domainEvents = notifications
                 .SelectMany(x => x.GetEvents())
@@ -67,8 +50,8 @@ namespace ImGalaxy.ES.CosmosDB
         }
 
         private async Task<IExecutionResult> AppendToStreamAsync()
-        { 
-            foreach (Aggregate aggregate in GetChanges())
+        {
+            foreach (Aggregate aggregate in _changeTracker.GetChanges())
             {
                 CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                .Select(@event => new CosmosEventData(
@@ -76,12 +59,12 @@ namespace ImGalaxy.ES.CosmosDB
                                                    @event.GetType().TypeQualifiedName(),
                                                    @event,
                                                       new EventMetadata
-                                                       {
-                                                           TimeStamp = DateTime.Now,
-                                                           AggregateType = aggregate.Root.GetType().Name,
-                                                           AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                           IsSnapshot = false
-                                                       }
+                                                      {
+                                                          TimeStamp = DateTime.Now,
+                                                          AggregateType = aggregate.Root.GetType().Name,
+                                                          AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
+                                                          IsSnapshot = false
+                                                      }
                                                    )).ToArray();
                 try
                 {
@@ -99,11 +82,8 @@ namespace ImGalaxy.ES.CosmosDB
         {
             await AppendToStreamAsync();
             await DispatchNotificationsAsync();
-            DetachAllAggregates();
-
+            _changeTracker.ResetChanges();
             return ExecutionResult.Success;
         }
-        private void DetachAllAggregates() =>
-            _aggregates.Clear();
     }
 }

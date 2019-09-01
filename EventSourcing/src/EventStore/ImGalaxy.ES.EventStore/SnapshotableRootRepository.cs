@@ -14,24 +14,24 @@ namespace ImGalaxy.ES.EventStore
         private readonly ISnapshotReader _snapshotStore;
         public SnapshotableRootRepository(
             ISnapshotReader snapshotStore,
-            IUnitOfWork unitOfWork,
+            IChangeTracker changeTracker,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
             IEventStoreConfigurations eventStoreConfigurator,
             IStreamNameProvider streamNameProvider)
-            : base(unitOfWork, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider) =>
+            : base(changeTracker, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider) =>
             _snapshotStore = snapshotStore;
 
         public void Add(TAggregateRoot root, string identifier = default) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task AddAsync(TAggregateRoot root, string identifier = default) =>
-            this.UnitOfWork.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
+            this.ChangeTracker.Attach(new Aggregate(identifier, (int)ExpectedVersion.NoStream, root));
              
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
-            Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
+            Optional<Aggregate> existingAggregate = GetAggregateFromChangeTrackerIfExits(identifier);
 
             if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
@@ -67,7 +67,7 @@ namespace ImGalaxy.ES.EventStore
 
             ClearChangesOfRoot(root);
 
-            AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root);
+            AttachAggregateToChangeTracker(identifier, (int)slice.LastEventNumber, root);
 
             return new Optional<TAggregateRoot>(root);
         }

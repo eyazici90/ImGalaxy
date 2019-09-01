@@ -12,20 +12,20 @@ namespace ImGalaxy.ES.EventStore
     {
 
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IChangeTracker _changeTracker;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IEventStoreConnection _connection;
         private readonly IEventSerializer _eventSerializer; 
         private readonly Func<ResolvedEvent, bool> _strategy;
         public SnapshotEventStore(IAggregateRootRepository<TAggregateRoot> rootRepository,
-            IUnitOfWork unitOfWork,
+            IChangeTracker changeTracker,
             IStreamNameProvider streamNameProvider,
             IEventStoreConnection connection,
             IEventSerializer eventSerializer, 
             Func<ResolvedEvent, bool> strategy)
         {
             _rootRepository = rootRepository ?? throw new ArgumentNullException(nameof(rootRepository));
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer)); 
@@ -45,7 +45,7 @@ namespace ImGalaxy.ES.EventStore
 
             Aggregate aggregate;
 
-            this._unitOfWork.TryGet(stream, out aggregate); 
+            this._changeTracker.TryGet(stream, out aggregate); 
 
             var changes = new EventData(
                                         Guid.NewGuid(),

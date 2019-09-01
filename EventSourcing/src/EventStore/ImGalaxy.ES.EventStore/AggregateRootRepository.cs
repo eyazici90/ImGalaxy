@@ -11,26 +11,26 @@ namespace ImGalaxy.ES.EventStore
     public class AggregateRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
             where TAggregateRoot : IAggregateRoot
     {
-        public AggregateRootRepository(IUnitOfWork unitOfWork,
+        public AggregateRootRepository(IChangeTracker changeTracker,
             IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
             IEventStoreConfigurations eventStoreConfigurator,
             IStreamNameProvider streamNameProvider)
-            : base(unitOfWork, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider)
+            : base(changeTracker, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider)
         {
         }
          
         public void Add(TAggregateRoot root, string identifier) =>
-            root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
+            root.With(r => ChangeTracker.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
 
         public async Task AddAsync(TAggregateRoot root, string identifier) =>
-            root.With(r => UnitOfWork.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
+            root.With(r => ChangeTracker.Attach(new Aggregate(identifier, (int) ExpectedVersion.NoStream, r)));
 
         public Optional<TAggregateRoot> Get(string identifier) => GetAsync(identifier).ConfigureAwait(false).GetAwaiter().GetResult();
 
         public async Task<Optional<TAggregateRoot>> GetAsync(string identifier)
         {
-            Optional<Aggregate> existingAggregate = GetAggregateFromUnitOfWorkIfExits(identifier);
+            Optional<Aggregate> existingAggregate = GetAggregateFromChangeTrackerIfExits(identifier);
 
             if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
@@ -56,7 +56,7 @@ namespace ImGalaxy.ES.EventStore
 
             ClearChangesOfRoot(root);
 
-            AttachAggregateToUnitOfWork(identifier, (int)slice.LastEventNumber, root);
+            AttachAggregateToChangeTracker(identifier, (int)slice.LastEventNumber, root);
 
             return new Optional<TAggregateRoot>(root); 
         }

@@ -18,6 +18,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
                s.RegisterConfigurations(configs)
                 .RegisterProviders()
+                .RegisterChangeTracker()
                 .RegisterRepositories()
                 .RegisterSnapshotableRepositories(configs)
                 .RegisterUnitOfWork()
@@ -33,6 +34,8 @@ namespace ImGalaxy.ES.CosmosDB.Modules
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
                      .AddTransient<ISnapshotReader, SnapshotReaderCosmosDB>();
+        private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
+            services.AddScoped<IChangeTracker, ChangeTracker>();
 
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
             services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));
