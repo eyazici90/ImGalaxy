@@ -6,6 +6,8 @@ namespace TestApp.Domain.Cars
 { 
     public class CarId
     {
+        public static CarId New => new CarId(Guid.NewGuid().ToString());
+
         public readonly string Id;
         public CarId(string id) => Id = id;
         public override string ToString() => Id;

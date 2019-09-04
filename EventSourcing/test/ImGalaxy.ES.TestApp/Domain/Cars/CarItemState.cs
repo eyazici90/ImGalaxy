@@ -8,8 +8,8 @@ namespace TestApp.Domain.Cars
     public class CarItemState : EntityState<CarItemState>
     {
         public CarItemId _id { get; private set; }
-        public CarId _carId { get; private set; }
-        public string _desciption { get; private set; }
+        public CarId CarId { get; private set; } 
+        public string Desciption { get; private set; }
 
         private CarItemState()
         {
@@ -25,8 +25,8 @@ namespace TestApp.Domain.Cars
             With(this, state=> 
             {
                 state._id = new CarItemId(@event.CarItemId);
-                state._carId = new CarId(@event.CarId);
-                state._desciption = @event.Desciption;
+                state.CarId = new CarId(@event.CarId);
+                state.Desciption = @event.Desciption;
             }); 
     }
 }

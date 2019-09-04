@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentAssertions" Version="5.9.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -15,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+    <ProjectReference Include="..\ImGalaxy.ES.TestBase\ImGalaxy.ES.TestBase.csproj" />
   </ItemGroup>
 
 </Project>

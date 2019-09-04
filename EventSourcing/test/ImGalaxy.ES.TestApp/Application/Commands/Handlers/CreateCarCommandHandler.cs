@@ -17,13 +17,9 @@ namespace TestApp.Application.Commands.Handlers
         {
         }
 
-        public async Task<Unit> Handle(CreateCarCommand request, CancellationToken cancellationToken)
-        {
-            var newId = Guid.NewGuid().ToString();
-
-            return await AddAsync(async () => Car.RegisterCar(newId, request.Name).State, newId)
+        public async Task<Unit> Handle(CreateCarCommand request, CancellationToken cancellationToken) =>
+             await AddAsync(async () => Car.RegisterCar(request.Id, request.Name).State, request.Id)
                 .PipeToAsync(Unit.Value);
-        }
-           
+
     }
 }

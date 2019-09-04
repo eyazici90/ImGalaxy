@@ -10,10 +10,13 @@ namespace TestApp
 {
     public class CarState : AggregateRootState<CarState> , ISnapshotable
     {
-        public CarId _id { get; private set; }
-        public string _name { get; private set; }
-        public int _year { get; private set; } 
-        public List<CarItemState> _carItems { get; private set; }
+        public CarId Id { get; private set; }
+
+        private string _name;
+
+        public int Year { get; private set; }
+
+        private List<CarItemState> _carItems;
         public IReadOnlyCollection<CarItemState> CarItems => _carItems.AsReadOnly();
 
         private CarState()
@@ -22,8 +25,6 @@ namespace TestApp
             RegisterEvent<CarNameChangedEvent>(When);
             RegisterEvent<CarModelRenewedEvent>(When);
             RegisterEvent<CarItemAddedEvent>(When); 
-
-            _carItems = _carItems ?? new List<CarItemState>();
         }
 
         internal CarState(CarId id) : this()
@@ -34,7 +35,7 @@ namespace TestApp
         private void When(CarModelRenewedEvent @event) =>
             With(this, state => 
             {
-                _year = @event.Year;
+                Year = @event.Year;
             });
 
         private void When(CarNameChangedEvent @event) =>
@@ -46,7 +47,7 @@ namespace TestApp
         private void When(CarRegisteredEvent @event) =>
             With(this, state=>
             {
-                state._id = new CarId(@event.Id);
+                state.Id = new CarId(@event.Id);
                 state._name = @event.Name;
             });
 
@@ -64,20 +65,20 @@ namespace TestApp
         public void RestoreSnapshot(object state)
         {
             var snapshot = (CarStateSnapshot)state;
-            this._id = new CarId(snapshot.Id);
+            this.Id = new CarId(snapshot.Id);
             this._name = snapshot.Name;
-            this._year = snapshot.Year;
-
+            this.Year = snapshot.Year;
+            this._carItems = this._carItems ?? new List<CarItemState>();
             this._carItems = snapshot.CarItems?.Select(c => CarItem.Create(c.Id, new CarId(c.CarId), c.Desciption).State).ToList() ?? this._carItems;
         }
 
         public object TakeSnapshot() =>
             new CarStateSnapshot
             {
-                Id = this._id,
+                Id = this.Id,
                 Name = this._name,
-                Year = this._year,
-                CarItems = this._carItems.Select(c=>new CarItemStateSnapshot { CarId = c._carId, Id = c._id, Desciption = c._desciption})
+                Year = this.Year,
+                CarItems = this._carItems?.Select(c=>new CarItemStateSnapshot { CarId = c.CarId, Id = c._id, Desciption = c.Desciption})
                                     .ToList()
             };
 
