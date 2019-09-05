@@ -91,5 +91,10 @@ namespace ImGalaxy.ES.TestBase
             expectedException = exception;
             return this;
         }
+        public ICommandScenarioFor<TAggregateRootState> Throws(Type exception)
+        {
+            expectedException = Activator.CreateInstance(exception) as Exception;
+            return this;
+        }
     }
 }

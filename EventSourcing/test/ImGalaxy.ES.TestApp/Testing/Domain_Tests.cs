@@ -63,10 +63,7 @@ namespace ImGalaxy.ES.TestApp.Testing
                 .Throws(new Exception("model cannot be above than 2019"))
                 .Assert();
         }
-
-
-
-
+         
         public CarState.Result FakeCar
         {
             get

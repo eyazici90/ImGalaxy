@@ -15,6 +15,7 @@ namespace ImGalaxy.ES.TestBase
         ICommandScenarioFor<TAggregateRootState> ThenNone();
         ICommandScenarioFor<TAggregateRootState> Then(params object[] events);
         ICommandScenarioFor<TAggregateRootState> Throws(Exception exception);
+        ICommandScenarioFor<TAggregateRootState> Throws(Type exception);
         void Assert();
         void Assert(Action<TAggregateRootState> assertion);
 
