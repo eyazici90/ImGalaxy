@@ -36,7 +36,7 @@ namespace ImGalaxy.ES.CosmosDB
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count)=>
            await ReadStreamWithEventsByDirection(streamId, start, count,
-                         id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
+                  id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
 
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, long expectedVersion,

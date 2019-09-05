@@ -13,7 +13,8 @@ namespace ImGalaxy.ES.CosmosDB
     {
         public AggregateRootRepository(IEventDeserializer eventDeserializer,
             IChangeTracker changeTracker, 
-            ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
+            ICosmosDBConnection cosmosDBConnection,
+            ICosmosDBConfigurations cosmosDBConfigurator,
             IStreamNameProvider streamNameProvider) 
             : base(eventDeserializer, changeTracker, cosmosDBConnection, cosmosDBConfigurator, streamNameProvider)
         {
