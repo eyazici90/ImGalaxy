@@ -15,9 +15,8 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBConnection : ICosmosDBConnection
-    {  
-        private readonly static object _objectLocker = new object();  
-        private readonly static ConcurrentDictionary<string, SemaphoreSlim> _lockers = new ConcurrentDictionary<string, SemaphoreSlim>(); 
+    {
+        private readonly static SemaphoreSlim _locker = new SemaphoreSlim(1, 1); 
         private readonly ICosmosDBClient _cosmosClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer;
@@ -35,7 +34,7 @@ namespace ImGalaxy.ES.CosmosDB
                   id => GetEventDocumentsForwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
 
-        public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count)=>
+        public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count) =>
            await ReadStreamWithEventsByDirection(streamId, start, count,
                   id => GetEventDocumentsBackwardAsync(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
@@ -43,15 +42,8 @@ namespace ImGalaxy.ES.CosmosDB
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, long expectedVersion,
           params CosmosEventData[] events)
         {
-            SemaphoreSlim _locker;
-
-            lock (_objectLocker)
-            {
-                _locker = _lockers.GetOrAdd(streamId, new SemaphoreSlim(1,1));
-            }
-
-            await _locker.LockAsync(async ()=>
-                 await AppendToStreamInternalAsync(streamId, expectedVersion, events)
+            await _locker.LockAsync(async () =>
+                await AppendToStreamInternalAsync(streamId, expectedVersion, events)
             );
 
             return ExecutionResult.Success;
@@ -120,14 +112,14 @@ namespace ImGalaxy.ES.CosmosDB
             return new Optional<CosmosStream>(cosmosStream);
 
         }
-         
+
         private IEnumerable<EventDocument> GetEventDocumentsForwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
             _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderBy(e => e.Position)
                 .Take(count)
                 .ToList()
                 .Skip(start - 1);
-         
+
         private IEnumerable<EventDocument> GetEventDocumentsBackwardAsync(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
              _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                 .OrderByDescending(e => e.Position)
