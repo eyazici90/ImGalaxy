@@ -8,8 +8,4 @@
     <ProjectReference Include="..\..\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\" />
-  </ItemGroup>
-
 </Project>
