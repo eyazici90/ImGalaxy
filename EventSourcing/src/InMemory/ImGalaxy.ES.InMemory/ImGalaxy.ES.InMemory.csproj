@@ -2,6 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Authors>Emre Yazici</Authors>
+    <Description>EventSourcing, ES, CQRS, DDD</Description>
+    <Copyright>Copyright 2019</Copyright>
+    <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
+    <PackageTags>EventSourcing; ES; CQRS; DDD</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
