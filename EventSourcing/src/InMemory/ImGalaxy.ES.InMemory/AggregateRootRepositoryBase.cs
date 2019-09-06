@@ -20,7 +20,7 @@ namespace ImGalaxy.ES.InMemory
         protected virtual TAggregateRoot ApplyChangesToRoot(TAggregateRoot root, IEnumerable<object> events) =>
           root.With(r => (r as IAggregateRootInitializer).Initialize(events));
         protected virtual IEnumerable<object> DeserializeEventsFromSlice(InMemoryStream slice) =>
-            slice.Events.Select(e => e.Data);
+            slice.Events.Select(e => e.Data.Data);
         protected virtual string GetStreamNameOfRoot(string identifier) => $"{typeof(TAggregateRoot).Name}-{identifier}";
         protected virtual Optional<TAggregateRoot> IntanceOfRoot() => new Optional<TAggregateRoot>((TAggregateRoot)Activator.CreateInstance(typeof(TAggregateRoot), true));
         protected virtual Optional<TAggregateRoot> IntanceOfRoot(Aggregate aggregate) => new Optional<TAggregateRoot>((TAggregateRoot)((aggregate).Root));
