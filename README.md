@@ -1,5 +1,6 @@
 
 
+
 # ImGalaxy
 C# library for CQRS, EventSourcing needs with various provider supports. (EventStore, Azure Cosmos DB)
 
@@ -7,12 +8,13 @@ C# library for CQRS, EventSourcing needs with various provider supports. (EventS
 ##  Features 
  -   Support for EventStore ([https://github.com/EventStore/EventStore](https://github.com/EventStore/EventStore))
  -   Support for Azure Cosmos DB
+ -  InMemory provider support for behaviour testing
  - Stream based persistence & querying
  - Optimistic concurrency for event persistence
  - Event first functional aggregate modelling
  
-## Upcoming Features
- - InMemory provider support for behaviour testing
+  
+ 
  ## Samples
  
  - [OrderContext-EventSourcing](https://github.com/eyazici90/OrderContext-EventSourcing) for Azure CosmosDb as Eventstore
@@ -46,6 +48,12 @@ C# library for CQRS, EventSourcing needs with various provider supports. (EventS
                     configs.ReadBatchSize =   <batch_size>;
                     configs.MaxLiveQueueSize = <your_qlive_size>
                 }); 
+
+***for InMemory provider***
+
+    services.AddImGalaxyESInMemoryModule();
+
+
 
 ## Usages
 
