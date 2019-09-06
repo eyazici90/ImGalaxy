@@ -16,7 +16,7 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBConnection : ICosmosDBConnection
     {
-        private readonly static SemaphoreSlim _locker = new SemaphoreSlim(1, 1); 
+        private readonly static SemaphoreSlim _locker = new SemaphoreSlim(1, 1);
         private readonly ICosmosDBClient _cosmosClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer;
@@ -45,7 +45,6 @@ namespace ImGalaxy.ES.CosmosDB
             await _locker.LockAsync(async () =>
                 await AppendToStreamInternalAsync(streamId, expectedVersion, events)
             );
-
             return ExecutionResult.Success;
         }
         private async Task<IExecutionResult> AppendToStreamInternalAsync(string streamId, long expectedVersion,
