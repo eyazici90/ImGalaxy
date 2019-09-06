@@ -11,12 +11,12 @@ namespace ImGalaxy.ES.InMemory
         public readonly string EventId;
         public readonly long Position;
         public readonly string EventType;
-        public readonly string Data;
+        public readonly InMemoryEventData Data;
         public readonly EventMetadata EventMetadata;
         public readonly DateTime CreatedTime;
 
         private InMemoryEvent(string streamId, string eventId, long position,
-            string eventType, string data, EventMetadata eventMetadata, DateTime createdTime)
+            string eventType, InMemoryEventData data, EventMetadata eventMetadata, DateTime createdTime)
         {
             StreamId = streamId;
             EventId = eventId;
@@ -27,7 +27,7 @@ namespace ImGalaxy.ES.InMemory
             CreatedTime = createdTime;
         }
         public static InMemoryEvent Create(string streamId, string eventId, long position,
-            string eventType, string data, EventMetadata eventMetadata, DateTime createdTime) =>
+            string eventType, InMemoryEventData data, EventMetadata eventMetadata, DateTime createdTime) =>
             new InMemoryEvent(streamId, eventId, position,
             eventType, data, eventMetadata, createdTime);
     }

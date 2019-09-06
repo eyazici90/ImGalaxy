@@ -10,21 +10,13 @@ namespace ImGalaxy.ES.InMemory
     public class InMemoryUnitOfWork : IUnitOfWork
     {
         private readonly IChangeTracker _changeTracker;
-        private readonly IInMemoryConnection _connection; 
-        private readonly IEventSerializer _eventSerializer;
-        private readonly IStreamNameProvider _streamNameProvider;
+        private readonly IInMemoryConnection _connection;  
         public InMemoryUnitOfWork(IChangeTracker changeTracker,
-            IInMemoryConnection connection, 
-            IEventSerializer eventSerializer,
-            IStreamNameProvider streamNameProvider)
+            IInMemoryConnection connection)
         {
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection)); 
-            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
-            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
         }
-         
-
         private async Task<IExecutionResult> AppendToStreamAsync()
         {
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
@@ -44,7 +36,7 @@ namespace ImGalaxy.ES.InMemory
                                                     )).ToArray();
                 try
                 {
-                    await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
+                    await this._connection.AppendToStreamAsync($"{aggregate.Root.GetType().Name}-{aggregate.Identifier}", aggregate.ExpectedVersion, changes);
 
                 }
                 catch (WrongExpectedStreamVersionException)
