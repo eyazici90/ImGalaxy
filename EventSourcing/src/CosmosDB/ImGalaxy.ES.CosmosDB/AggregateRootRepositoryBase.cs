@@ -14,18 +14,15 @@ namespace ImGalaxy.ES.CosmosDB
         protected readonly ICosmosDBConnection CosmosDBConnection;
         protected readonly ICosmosDBConfigurations CosmosDBConfigurator;
         protected readonly IStreamNameProvider StreamNameProvider;
-        public AggregateRootRepositoryBase(IEventDeserializer eventDeserializer, 
-            IChangeTracker changeTracker,
-            ICosmosDBConnection cosmosDBConnection,
-            ICosmosDBConfigurations cosmosDBConfigurator,
-            IStreamNameProvider streamNameProvider)
+        public AggregateRootRepositoryBase(IAggregateRootRepositoryBaseDependencies dependencies)
         {
-            EventDeserializer = eventDeserializer;
-            ChangeTracker = changeTracker;
-            CosmosDBConnection = cosmosDBConnection;
-            CosmosDBConfigurator = cosmosDBConfigurator;
-            StreamNameProvider = streamNameProvider;
+            EventDeserializer = dependencies.EventDeserializer;
+            ChangeTracker = dependencies.ChangeTracker;
+            CosmosDBConnection = dependencies.CosmosDBConnection;
+            CosmosDBConfigurator = dependencies.CosmosDBConfigurator;
+            StreamNameProvider = dependencies.StreamNameProvider;
         }
+
         protected virtual TAggregateRoot ApplyChangesToRoot(TAggregateRoot root, IEnumerable<object> events) =>
           root.With(r => (r as IAggregateRootInitializer).Initialize(events));
         protected virtual IEnumerable<object> DeserializeEventsFromSlice(CosmosStream slice) =>

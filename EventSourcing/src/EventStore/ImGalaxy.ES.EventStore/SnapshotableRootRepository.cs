@@ -14,12 +14,8 @@ namespace ImGalaxy.ES.EventStore
         private readonly ISnapshotReader _snapshotStore;
         public SnapshotableRootRepository(
             ISnapshotReader snapshotStore,
-            IChangeTracker changeTracker,
-            IEventDeserializer eventDeserializer,
-            IEventStoreConnection eventStoreConnection,
-            IEventStoreConfigurations eventStoreConfigurator,
-            IStreamNameProvider streamNameProvider)
-            : base(changeTracker, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider) =>
+            IAggregateRootRepositoryBaseDependencies dependencies)
+            : base(dependencies) =>
             _snapshotStore = snapshotStore;
 
         public void Add(TAggregateRoot root, string identifier = default) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();

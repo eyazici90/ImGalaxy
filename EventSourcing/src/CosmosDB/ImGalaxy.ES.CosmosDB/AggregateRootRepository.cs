@@ -11,12 +11,8 @@ namespace ImGalaxy.ES.CosmosDB
     public class AggregateRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
           where TAggregateRoot : IAggregateRoot
     {
-        public AggregateRootRepository(IEventDeserializer eventDeserializer,
-            IChangeTracker changeTracker, 
-            ICosmosDBConnection cosmosDBConnection,
-            ICosmosDBConfigurations cosmosDBConfigurator,
-            IStreamNameProvider streamNameProvider) 
-            : base(eventDeserializer, changeTracker, cosmosDBConnection, cosmosDBConfigurator, streamNameProvider)
+        public AggregateRootRepository(IAggregateRootRepositoryBaseDependencies dependencies) 
+            : base(dependencies)
         {
         }
 

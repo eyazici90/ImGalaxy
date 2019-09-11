@@ -10,12 +10,9 @@ namespace ImGalaxy.ES.CosmosDB
              where TAggregateRoot : IAggregateRoot, ISnapshotable
     {
         private readonly ISnapshotReader _snapshotReader;
-        public SnapshotableRootRepository(ISnapshotReader snapshotReader, IEventDeserializer eventDeserializer,
-            IChangeTracker changeTracker,
-            ICosmosDBConnection cosmosDBConnection, ICosmosDBConfigurations cosmosDBConfigurator,
-            IStreamNameProvider streamNameProvider)
-            : base(eventDeserializer, changeTracker, cosmosDBConnection,
-                  cosmosDBConfigurator, streamNameProvider) =>
+        public SnapshotableRootRepository(ISnapshotReader snapshotReader,
+           IAggregateRootRepositoryBaseDependencies dependencies)
+            : base(dependencies) =>
             _snapshotReader = snapshotReader;
 
         public void Add(TAggregateRoot root, string identifier) => AddAsync(root, identifier).ConfigureAwait(false).GetAwaiter().GetResult();

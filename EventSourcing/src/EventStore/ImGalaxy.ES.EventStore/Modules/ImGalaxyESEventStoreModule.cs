@@ -11,9 +11,9 @@ namespace ImGalaxy.ES.EventStore.Modules
     public static class ImGalaxyESEventStoreModule
     {
         public static IServiceCollection AddImGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
-            services.With(s=> 
+            services.With(s =>
             {
-                var configs = new EventStoreConfigurations().With(c => configurations(c)); 
+                var configs = new EventStoreConfigurations().With(c => configurations(c));
                 s.RegisterConfigurations(configs)
                  .RegisterProviders()
                  .RegisterChangeTracker()
@@ -22,7 +22,7 @@ namespace ImGalaxy.ES.EventStore.Modules
                  .RegisterSnapshotableRepositories(configs)
                  .RegisterUnitOfWork();
             });
-     
+
 
         private static IServiceCollection RegisterConfigurations(this IServiceCollection services, EventStoreConfigurations configurations) =>
              services.AddSingleton<IEventStoreConfigurations>(provider => configurations);
@@ -30,6 +30,7 @@ namespace ImGalaxy.ES.EventStore.Modules
              services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
+                     .AddTransient<IAggregateRootRepositoryBaseDependencies, AggregateRootRepositoryBaseDependencies>()
                      .AddTransient<ISnapshotReader, SnapshotReaderEventStore>();
         private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
            services.AddScoped<IChangeTracker, ChangeTracker>();
@@ -44,7 +45,7 @@ namespace ImGalaxy.ES.EventStore.Modules
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, EventStoreUnitOfWork>();
 
-        private static IServiceCollection RegisterEventStore(this IServiceCollection services)=> 
+        private static IServiceCollection RegisterEventStore(this IServiceCollection services) =>
             services.AddSingleton<IEventStoreConnection>(ctx =>
             {
                 var confs = ctx.GetRequiredService<IEventStoreConfigurations>();
@@ -59,7 +60,7 @@ namespace ImGalaxy.ES.EventStore.Modules
 
                 return connection;
             });
-        
+
     }
 
 }

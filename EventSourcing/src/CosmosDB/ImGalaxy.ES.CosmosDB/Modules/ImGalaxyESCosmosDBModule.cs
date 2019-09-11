@@ -33,6 +33,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
              services.AddSingleton<IStreamNameProvider, CosmosStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
+                     .AddTransient<IAggregateRootRepositoryBaseDependencies, AggregateRootRepositoryBaseDependencies>()
                      .AddTransient<ISnapshotReader, SnapshotReaderCosmosDB>();
         private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
             services.AddScoped<IChangeTracker, ChangeTracker>();

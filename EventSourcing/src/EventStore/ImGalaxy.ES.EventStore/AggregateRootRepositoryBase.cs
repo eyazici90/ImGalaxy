@@ -15,17 +15,13 @@ namespace ImGalaxy.ES.EventStore
         protected readonly IEventStoreConnection EventStoreConnection;
         protected readonly IEventStoreConfigurations EventStoreConfigurations;
         protected readonly IStreamNameProvider StreamNameProvider;
-        public AggregateRootRepositoryBase(IChangeTracker changeTracker,
-            IEventDeserializer eventDeserializer,
-            IEventStoreConnection eventStoreConnection,
-            IEventStoreConfigurations eventStoreConfigurations,
-            IStreamNameProvider streamNameProvider)
+        public AggregateRootRepositoryBase(IAggregateRootRepositoryBaseDependencies dependencies)
         {
-            ChangeTracker = changeTracker;
-            EventDeserializer = eventDeserializer;
-            EventStoreConnection = eventStoreConnection;
-            EventStoreConfigurations = eventStoreConfigurations;
-            StreamNameProvider = streamNameProvider;
+            ChangeTracker = dependencies.ChangeTracker;
+            EventDeserializer = dependencies.EventDeserializer;
+            EventStoreConnection = dependencies.EventStoreConnection;
+            EventStoreConfigurations = dependencies.EventStoreConfigurations;
+            StreamNameProvider = dependencies.StreamNameProvider;
         }
         protected virtual TAggregateRoot ApplyChangesToRoot(TAggregateRoot root, IEnumerable<object> events) =>
           root.With(r => (r as IAggregateRootInitializer).Initialize(events)); 

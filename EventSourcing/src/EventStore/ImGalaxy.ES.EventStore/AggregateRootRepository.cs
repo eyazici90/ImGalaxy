@@ -11,12 +11,8 @@ namespace ImGalaxy.ES.EventStore
     public class AggregateRootRepository<TAggregateRoot> : AggregateRootRepositoryBase<TAggregateRoot>, IAggregateRootRepository<TAggregateRoot>
             where TAggregateRoot : IAggregateRoot
     {
-        public AggregateRootRepository(IChangeTracker changeTracker,
-            IEventDeserializer eventDeserializer,
-            IEventStoreConnection eventStoreConnection,
-            IEventStoreConfigurations eventStoreConfigurator,
-            IStreamNameProvider streamNameProvider)
-            : base(changeTracker, eventDeserializer, eventStoreConnection, eventStoreConfigurator, streamNameProvider)
+        public AggregateRootRepository(IAggregateRootRepositoryBaseDependencies dependencies)
+            : base(dependencies)
         {
         }
          
