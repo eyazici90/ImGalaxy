@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Core
 {
-    public static class SemaphoreExtensions
+    public static class AsyncExtensions
     {
         public static async Task LockAsync(this SemaphoreSlim @semaphore, Func<Task> task)
         {

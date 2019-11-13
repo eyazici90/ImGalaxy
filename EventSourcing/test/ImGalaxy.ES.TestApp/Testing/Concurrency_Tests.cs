@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.TestApp.Testing
     {
         private readonly string _fakeCarId;
 
-        private readonly IAggregateRootRepository<CarState> _aggregateRootRepository;
+        private readonly IAggregateRootRepository<CarState> _aggregateRootRepository; 
         public Concurrency_Tests()
         {
             _aggregateRootRepository = GetRequiredService<IAggregateRootRepository<CarState>>();
@@ -60,9 +60,9 @@ namespace ImGalaxy.ES.TestApp.Testing
                 });
             };
 
-            func.Should().Throw<Exception>();
-
-
+            func.Should().Throw<Exception>(); 
         }
+
+   
     }
 }
