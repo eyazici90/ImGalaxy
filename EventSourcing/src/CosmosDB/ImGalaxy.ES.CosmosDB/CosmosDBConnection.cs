@@ -63,7 +63,7 @@ namespace ImGalaxy.ES.CosmosDB
                     this._cosmosDBConfigurations.ReadBatchSize);
 
                 existingStream.ThrowsIf(stream => !existingStream.HasValue, new AggregateNotFoundException(streamId))
-                              .ThrowsIf(stream => expectedVersion != stream.Value.Version,
+                              .ThrowsIf(stream => expectedVersion != stream.Value.Version && expectedVersion != ExpectedVersion.SafeStream,
                                                   new WrongExpectedStreamVersionException(expectedVersion.ToString(),
                                                   existingStream.Value.Version.ToString()));
 

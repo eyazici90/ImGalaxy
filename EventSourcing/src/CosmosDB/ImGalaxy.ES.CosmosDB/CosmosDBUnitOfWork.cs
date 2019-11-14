@@ -49,7 +49,35 @@ namespace ImGalaxy.ES.CosmosDB
             await Task.WhenAll(tasks);
         }
 
-        private async Task<IExecutionResult> AppendToStreamAsync()
+        public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
+        { 
+                CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
+                                               .Select(@event => new CosmosEventData(
+                                                   Guid.NewGuid().ToString(),
+                                                   @event.GetType().TypeQualifiedName(),
+                                                   @event,
+                                                      new EventMetadata
+                                                      {
+                                                          TimeStamp = DateTime.Now,
+                                                          AggregateType = aggregate.Root.GetType().Name,
+                                                          AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
+                                                          IsSnapshot = false
+                                                      }
+                                                   )).ToArray();
+                try
+                {
+                    await this._cosmosDBConnection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
+
+                }
+                catch (WrongExpectedStreamVersionException)
+                {
+                    throw;
+                }
+            
+            return ExecutionResult.Success;
+        }
+
+        private async Task<IExecutionResult> AppendChangesToStreamAsync()
         {
             foreach (Aggregate aggregate in _changeTracker.GetChanges())
             {
@@ -79,8 +107,8 @@ namespace ImGalaxy.ES.CosmosDB
             return ExecutionResult.Success;
         }
         public async Task<IExecutionResult> SaveChangesAsync()
-        {
-            await AppendToStreamAsync();
+        { 
+            await AppendChangesToStreamAsync(); 
             await DispatchNotificationsAsync();
             _changeTracker.ResetChanges();
             return ExecutionResult.Success;
