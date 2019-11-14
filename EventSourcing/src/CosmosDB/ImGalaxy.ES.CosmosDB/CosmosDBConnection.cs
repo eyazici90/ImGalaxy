@@ -49,7 +49,7 @@ namespace ImGalaxy.ES.CosmosDB
         {
             var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId);
             var streamType = CosmosStreamNameExtensions.GetStreamType(streamId);
-
+ 
             long eventPosition = EventPosition.Start;
 
             if (expectedVersion == ExpectedVersion.NoStream || expectedVersion == ExpectedVersion.Any)

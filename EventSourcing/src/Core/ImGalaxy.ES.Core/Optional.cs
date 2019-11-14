@@ -8,18 +8,16 @@ namespace ImGalaxy.ES.Core
     public struct Optional<T> : IEnumerable<T>, IEquatable<Optional<T>>
     {
         public static readonly Optional<T> Empty = new Optional<T>();
-
-        private readonly bool _hasValue;
         private readonly T _value;
 
         public Optional(T value)
         {
             _value = value;
-            _hasValue = value == null ? false : true;
+            HasValue = value == null ? false : true;
         }
 
-        public bool HasValue => _hasValue; 
-        public T Value => !HasValue ? throw new InvalidOperationException() : _value; 
+        public bool HasValue { get; }
+        public T Value => !HasValue ? throw new InvalidOperationException($"Optional item doesnt have value") : _value; 
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -43,7 +41,7 @@ namespace ImGalaxy.ES.Core
 
         public bool Equals(Optional<T> other)
         {
-            if (_hasValue.Equals(other._hasValue))
+            if (HasValue.Equals(other.HasValue))
             {
                 if (typeof(IEnumerable).IsAssignableFrom(typeof(T)))
                 {
@@ -86,7 +84,7 @@ namespace ImGalaxy.ES.Core
                 if (enumerable != null)
                 {
                     var enumerator = enumerable.GetEnumerator();
-                    var hashCode = _hasValue.GetHashCode();
+                    var hashCode = HasValue.GetHashCode();
                     while (enumerator.MoveNext())
                     {
                         hashCode ^= EqualityComparer<object>.Default.GetHashCode(enumerator.Current);
@@ -94,7 +92,7 @@ namespace ImGalaxy.ES.Core
                     return hashCode ^ typeof(T).GetHashCode();
                 }
             }
-            return _hasValue.GetHashCode() ^ EqualityComparer<T>.Default.GetHashCode(_value) ^ typeof(T).GetHashCode();
+            return HasValue.GetHashCode() ^ EqualityComparer<T>.Default.GetHashCode(_value) ^ typeof(T).GetHashCode();
         }
     }
 }

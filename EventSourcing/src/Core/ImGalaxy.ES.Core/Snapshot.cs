@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGalaxy.ES.Core
+﻿namespace ImGalaxy.ES.Core
 {
     public class Snapshot
     {
-        public int Version { get; private set; }
+        public int Version { get; }
 
-        public object State { get; private set; }
+        public object State { get; }
 
         public Snapshot(int version, object state)
         {
