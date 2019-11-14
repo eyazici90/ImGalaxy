@@ -53,10 +53,29 @@ namespace ImGalaxy.ES.EventStore
             await Task.WhenAll(tasks);
         }
 
-        private async Task<IExecutionResult> AppendToStreamAsync()
+        private async Task<IExecutionResult> AppendChangesToStreamAsync()
         { 
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
+                await AppendToStreamAsync(aggregate);
+            }
+            return ExecutionResult.Success;
+        }
+
+        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
+        public async Task<IExecutionResult> SaveChangesAsync()
+        {
+            await AppendChangesToStreamAsync();
+            await DispatchNotificationsAsync();
+            _changeTracker.ResetChanges();
+
+            return ExecutionResult.Success;
+        }
+
+        public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
+        {
+           
                 EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                .Select(@event => new EventData(
                                                    Guid.NewGuid(),
@@ -74,25 +93,14 @@ namespace ImGalaxy.ES.EventStore
                 try
                 {
                     await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
-                     
+
                 }
                 catch (WrongExpectedVersionException)
                 {
                     throw;
                 }
-            }
+            
             return ExecutionResult.Success;
         }
-
-        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-
-        public async Task<IExecutionResult> SaveChangesAsync()
-        {
-            await AppendToStreamAsync();
-            await DispatchNotificationsAsync();
-            _changeTracker.ResetChanges();
-
-            return ExecutionResult.Success;
-        } 
     }
 }

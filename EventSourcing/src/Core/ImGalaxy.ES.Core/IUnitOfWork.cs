@@ -9,5 +9,6 @@ namespace ImGalaxy.ES.Core
     {
         IExecutionResult SaveChanges();
         Task<IExecutionResult> SaveChangesAsync(); 
+        Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate);
     }
 }

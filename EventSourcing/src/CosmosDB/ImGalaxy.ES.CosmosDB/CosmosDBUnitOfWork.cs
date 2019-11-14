@@ -79,30 +79,9 @@ namespace ImGalaxy.ES.CosmosDB
 
         private async Task<IExecutionResult> AppendChangesToStreamAsync()
         {
-            foreach (Aggregate aggregate in _changeTracker.GetChanges())
+            foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
-                CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
-                                               .Select(@event => new CosmosEventData(
-                                                   Guid.NewGuid().ToString(),
-                                                   @event.GetType().TypeQualifiedName(),
-                                                   @event,
-                                                      new EventMetadata
-                                                      {
-                                                          TimeStamp = DateTime.Now,
-                                                          AggregateType = aggregate.Root.GetType().Name,
-                                                          AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                          IsSnapshot = false
-                                                      }
-                                                   )).ToArray();
-                try
-                {
-                    await this._cosmosDBConnection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
-
-                }
-                catch (WrongExpectedStreamVersionException)
-                {
-                    throw;
-                }
+                await AppendToStreamAsync(aggregate);
             }
             return ExecutionResult.Success;
         }

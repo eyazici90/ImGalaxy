@@ -17,10 +17,27 @@ namespace ImGalaxy.ES.InMemory
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _connection = connection ?? throw new ArgumentNullException(nameof(connection)); 
         }
-        private async Task<IExecutionResult> AppendToStreamAsync()
+        private async Task<IExecutionResult> AppendChangesToStreamAsync()
         {
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
+                await AppendToStreamAsync(aggregate);
+            }
+            return ExecutionResult.Success;
+        }
+
+        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+
+        public async Task<IExecutionResult> SaveChangesAsync()
+        {
+            await AppendChangesToStreamAsync(); 
+            _changeTracker.ResetChanges();
+
+            return ExecutionResult.Success;
+        }
+
+        public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
+        {
                 InMemoryEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
                                                 .Select(@event => new InMemoryEventData(
                                                     Guid.NewGuid().ToString(),
@@ -43,17 +60,7 @@ namespace ImGalaxy.ES.InMemory
                 {
                     throw;
                 }
-            }
-            return ExecutionResult.Success;
-        }
-
-        public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-
-        public async Task<IExecutionResult> SaveChangesAsync()
-        {
-            await AppendToStreamAsync(); 
-            _changeTracker.ResetChanges();
-
+            
             return ExecutionResult.Success;
         }
     }
