@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+    <ProjectReference Include="..\..\src\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
   </ItemGroup>
 
 </Project>

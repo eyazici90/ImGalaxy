@@ -14,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-   
-    <ProjectReference Include="..\..\src\CosmosDB\ImGalaxy.ES.CosmosDB\ImGalaxy.ES.CosmosDB.csproj" />
+    <ProjectReference Include="..\..\src\ImGalaxy.ES.CosmosDB\ImGalaxy.ES.CosmosDB.csproj" />
     <ProjectReference Include="..\ImGalaxy.ES.TestApp\ImGalaxy.ES.TestApp.csproj" />
   </ItemGroup>
 

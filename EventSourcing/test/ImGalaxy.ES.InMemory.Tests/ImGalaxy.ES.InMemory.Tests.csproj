@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\InMemory\ImGalaxy.ES.InMemory\ImGalaxy.ES.InMemory.csproj" />
+    <ProjectReference Include="..\..\src\ImGalaxy.ES.InMemory\ImGalaxy.ES.InMemory.csproj" />
     <ProjectReference Include="..\ImGalaxy.ES.TestApp\ImGalaxy.ES.TestApp.csproj" />
   </ItemGroup>
 

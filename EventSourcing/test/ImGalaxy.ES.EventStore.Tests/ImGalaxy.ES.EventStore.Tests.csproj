@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\EventStore\ImGalaxy.ES.EventStore\ImGalaxy.ES.EventStore.csproj" />
+    <ProjectReference Include="..\..\src\ImGalaxy.ES.EventStore\ImGalaxy.ES.EventStore.csproj" />
     <ProjectReference Include="..\ImGalaxy.ES.TestApp\ImGalaxy.ES.TestApp.csproj" />
   </ItemGroup>
 

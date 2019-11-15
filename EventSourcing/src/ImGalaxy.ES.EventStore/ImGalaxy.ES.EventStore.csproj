@@ -1,19 +1,23 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <Authors>Emre Yazici</Authors>
-    <Description>EventSourcing, ES, CQRS, DDD</Description>
+    <Description>EventSourcing, ES, CQRS, DDD, EventStore</Description>
     <Copyright>Copyright 2019</Copyright>
     <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
-    <PackageTags>EventSourcing; ES; CQRS; DDD</PackageTags>
+    <PackageTags>EventSourcing; ES; CQRS; DDD; EventStore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EventStore.ClientAPI.NetCore" Version="4.1.0.23" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
-    <ProjectReference Include="..\..\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
   </ItemGroup>
 
 </Project>

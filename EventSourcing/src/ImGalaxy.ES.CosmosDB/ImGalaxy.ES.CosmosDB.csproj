@@ -18,7 +18,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.2.0" />
-    <ProjectReference Include="..\..\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
   </ItemGroup>
 
 </Project>
