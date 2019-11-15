@@ -23,7 +23,7 @@ namespace ImGalaxy.ES.ProtoActor
 
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
-            );
+            ); 
         }
 
         private async Task RecoverStateAsync(IContext ctx)
@@ -40,8 +40,14 @@ namespace ImGalaxy.ES.ProtoActor
         {
             if (!_handlers.TryGetValue(context.Message.GetType(), out var handler))
                 return;
-
-            await handler(context);
+            try
+            {
+                await handler(context);
+            }
+            catch (Exception ex)
+            {
+                var whatHappned = new ExceptionOccuredDuringHandleEvent(ex);
+            }
 
             if (context.Sender != null)
                 context.Respond(State);
@@ -64,11 +70,11 @@ namespace ImGalaxy.ES.ProtoActor
               where TCommand : class
               => _handlers.Add(typeof(TCommand), handler);
 
-        protected void When<TCommand>(Func<TCommand, Task> handler)
-            where TCommand : class
-            => _handlers.Add(
-                typeof(TCommand),
-                ctx => handler(ctx.Message as TCommand));
+        //protected void When<TCommand>(Func<TCommand, Task> handler)
+        //    where TCommand : class
+        //    => _handlers.Add(
+        //        typeof(TCommand),
+        //        ctx => handler(ctx.Message as TCommand));
 
         protected void When<TCommand>(Func<TCommand, string> identifyHandler, Func<TCommand, AggregateRootState<TState>.Result> handler)
             where TCommand : class
