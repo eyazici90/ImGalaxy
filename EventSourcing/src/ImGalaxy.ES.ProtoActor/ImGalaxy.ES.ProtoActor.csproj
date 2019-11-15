@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Proto.Actor" Version="0.2.0" />
+    <PackageReference Include="Proto.Actor.Extensions" Version="0.2.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Core\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+  </ItemGroup>
+
+</Project>
