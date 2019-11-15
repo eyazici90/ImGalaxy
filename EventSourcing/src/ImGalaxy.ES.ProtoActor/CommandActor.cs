@@ -23,7 +23,7 @@ namespace ImGalaxy.ES.ProtoActor
 
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
-            ); 
+            );
         }
 
         private async Task RecoverStateAsync(IContext ctx)
@@ -40,14 +40,8 @@ namespace ImGalaxy.ES.ProtoActor
         {
             if (!_handlers.TryGetValue(context.Message.GetType(), out var handler))
                 return;
-            try
-            {
-                await handler(context);
-            }
-            catch (Exception ex)
-            {
-                var whatHappned = new ExceptionOccuredDuringHandleEvent(ex);
-            }
+
+            await handler(context);
 
             if (context.Sender != null)
                 context.Respond(State);
@@ -59,7 +53,7 @@ namespace ImGalaxy.ES.ProtoActor
         private async Task Apply((string, AggregateRootState<TState>.Result) result) =>
            await AppendToStreamAsync(-1, result.Item1, result.Item2);
 
-        private async Task AppendToStreamAsync(int aggregateVersion, string identifier, AggregateRootState<TState>.Result result) 
+        private async Task AppendToStreamAsync(int aggregateVersion, string identifier, AggregateRootState<TState>.Result result)
         {
             await _unitOfWork.AppendToStreamAsync(new Aggregate(identifier, aggregateVersion, result.State));
 
