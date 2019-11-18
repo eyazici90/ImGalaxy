@@ -7,13 +7,13 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosEvent
     {
-        public readonly string StreamId;
-        public readonly string EventId;
-        public readonly long Position;
-        public readonly string EventType;
-        public readonly string Data;
-        public readonly EventMetadata EventMetadata;
-        public readonly DateTime CreatedTime;
+        public string StreamId { get; }
+        public string EventId { get; }
+        public long Position { get; }
+        public string EventType { get; }
+        public string Data { get; }
+        public EventMetadata EventMetadata { get; }
+        public DateTime CreatedTime { get; }
 
         private CosmosEvent(string streamId, string eventId, long position,
             string eventType, string data, EventMetadata eventMetadata, DateTime createdTime)

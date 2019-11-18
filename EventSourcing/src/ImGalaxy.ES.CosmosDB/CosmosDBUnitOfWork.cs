@@ -13,42 +13,19 @@ namespace ImGalaxy.ES.CosmosDB
     public class CosmosDBUnitOfWork : IUnitOfWork
     {
         private readonly IChangeTracker _changeTracker;
-        private readonly ICosmosDBConnection _cosmosDBConnection;
-        private readonly IMediator _mediator;
+        private readonly ICosmosDBConnection _cosmosDBConnection; 
         private readonly IStreamNameProvider _streamNameProvider;
         public CosmosDBUnitOfWork(IChangeTracker changeTracker,
-            ICosmosDBConnection cosmosDBConnection,
-            IMediator mediator,
+            ICosmosDBConnection cosmosDBConnection, 
             IStreamNameProvider streamNameProvider)
         {
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
-            _cosmosDBConnection = cosmosDBConnection ?? throw new ArgumentNullException(nameof(cosmosDBConnection));
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _cosmosDBConnection = cosmosDBConnection ?? throw new ArgumentNullException(nameof(cosmosDBConnection)); 
             _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
         }
          
         public IExecutionResult SaveChanges() => SaveChangesAsync().ConfigureAwait(false).GetAwaiter().GetResult();
-
-        public async Task DispatchNotificationsAsync()
-        {
-            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateChangeTracker));
-
-            var domainEvents = notifications
-                .SelectMany(x => x.GetEvents())
-                .ToList();
-
-            notifications.ToList()
-                .ForEach(entity => entity.ClearEvents());
-
-            var tasks = domainEvents
-                .Select(async (domainEvent) =>
-                {
-                    await this._mediator.Publish(domainEvent);
-                });
-
-            await Task.WhenAll(tasks);
-        }
-
+         
         public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
         { 
                 CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
@@ -85,10 +62,10 @@ namespace ImGalaxy.ES.CosmosDB
             }
             return ExecutionResult.Success;
         }
+
         public async Task<IExecutionResult> SaveChangesAsync()
         { 
-            await AppendChangesToStreamAsync(); 
-            await DispatchNotificationsAsync();
+            await AppendChangesToStreamAsync();  
             _changeTracker.ResetChanges();
             return ExecutionResult.Success;
         }

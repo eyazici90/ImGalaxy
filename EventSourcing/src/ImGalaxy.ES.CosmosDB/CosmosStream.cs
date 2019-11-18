@@ -8,14 +8,14 @@ namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosStream
     {
-        public readonly string Id;
-        public readonly string Type;
-        public readonly long Version;
-        public readonly StreamReadStatus StreamReadStatus;
-        public readonly ReadDirection ReadDirection;
-        public readonly CosmosEvent[] Events;
-        public readonly long LastEventNumber;
-        public readonly long NextEventNumber;
+        public string Id { get; }
+        public string Type { get; }
+        public long Version { get; }
+        public StreamReadStatus StreamReadStatus { get; }
+        public ReadDirection ReadDirection { get; }
+        public CosmosEvent[] Events { get; }
+        public long LastEventNumber { get; }
+        public long NextEventNumber { get; }
 
         private CosmosStream(string id, string type, long version, StreamReadStatus streamReadStatus,
             ReadDirection readDirection, CosmosEvent[] events)
