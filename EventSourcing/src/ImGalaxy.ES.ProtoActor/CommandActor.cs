@@ -24,6 +24,12 @@ namespace ImGalaxy.ES.ProtoActor
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
             );
+
+            When<ExceptionOccuredDuringHandleEvent>(async ctx => 
+            {
+                if (ctx.Sender != null)
+                    ctx.Respond(ctx.Message);
+            });
         }
 
         private async Task RecoverStateAsync(IContext ctx)

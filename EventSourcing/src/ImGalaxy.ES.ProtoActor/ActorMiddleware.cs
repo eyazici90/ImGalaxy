@@ -1,7 +1,5 @@
 ﻿using Proto;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 
 namespace ImGalaxy.ES.ProtoActor
 {
@@ -14,9 +12,13 @@ namespace ImGalaxy.ES.ProtoActor
                 {
                     await next(context, envelope);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw;
+                    var errorMsg = new ExceptionOccuredDuringHandleEvent(ex);
+
+                    envelope = envelope.WithMessage(errorMsg);
+
+                    await next(context, envelope);  
                 }
             };
     }
