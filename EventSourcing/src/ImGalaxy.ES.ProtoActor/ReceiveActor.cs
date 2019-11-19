@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.ProtoActor
 {
-    public abstract class ReceiveActor<TState> where TState : class, IAggregateRoot
+    public abstract class ReceiveActor<TState> : IActor
+        where TState : class, IAggregateRoot
     {
         protected readonly Dictionary<Type, Func<IContext, Task>> Handlers =  new Dictionary<Type, Func<IContext, Task>>();
         public TState State { get; set; }
