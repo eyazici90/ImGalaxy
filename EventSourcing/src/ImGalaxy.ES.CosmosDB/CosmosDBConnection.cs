@@ -140,7 +140,7 @@ namespace ImGalaxy.ES.CosmosDB
         {
             try
             {
-                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.OriginalId == id, _cosmosDBConfigurations.StreamCollectionName)
+                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.id == id, _cosmosDBConfigurations.StreamCollectionName)
                     .ToList()
                     .SingleOrDefault();
 
