@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.ProtoActor
 {
-    public class CommandActor<TState> : ReciverActor<TState>
+    public class CommandActor<TState> : ReceiveActor<TState>
         where TState : class, IAggregateRoot
     { 
         private readonly IAggregateRootRepository<TState> _aggregateRootRepository;

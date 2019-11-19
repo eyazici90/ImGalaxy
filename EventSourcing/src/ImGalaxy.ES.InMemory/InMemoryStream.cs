@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ImGalaxy.ES.InMemory
 {
     public class InMemoryStream
     {
-        public readonly string Id;
-        public readonly string Type;
-        public readonly long Version; 
-        public readonly InMemoryEvent[] Events;
-        public readonly long LastEventNumber;
-        public readonly long NextEventNumber;
+        public string Id { get; }
+        public string Type { get; }
+        public long Version { get; }
+        public InMemoryEvent[] Events { get; }
+        public long LastEventNumber { get; }
+        public long NextEventNumber { get; }
 
         private InMemoryStream(string id, string type, long version, InMemoryEvent[] events)
         {

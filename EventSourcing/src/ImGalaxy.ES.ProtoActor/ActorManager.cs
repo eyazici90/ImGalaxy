@@ -12,10 +12,8 @@ namespace ImGalaxy.ES.ProtoActor
 
         private readonly IActorFactory _actorFactory;
 
-        public ActorManager(IActorFactory actorFactory)
-        {
-            _actorFactory = actorFactory;
-        }
+        public ActorManager(IActorFactory actorFactory) =>
+            _actorFactory = actorFactory; 
 
         public PID GetActor<TActor>() where TActor : IActor =>
             _actorFactory.GetActor<TActor>();
