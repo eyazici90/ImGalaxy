@@ -1,14 +1,15 @@
-﻿using System;
+﻿using ImGalaxy.ES.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace TestApp.Domain.Cars
 {
-    public class CarItemId
+    public class CarItemId : Identity<string>
     {
-        public readonly string Id;
-        public CarItemId(string id) => Id = id;
-        public override string ToString() => Id;
+        public CarItemId(string id) : base(id)
+        {
+        }
 
         public static implicit operator string(CarItemId self) => self.Id;
 
