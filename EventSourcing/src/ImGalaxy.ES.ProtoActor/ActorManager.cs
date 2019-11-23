@@ -6,7 +6,7 @@ namespace ImGalaxy.ES.ProtoActor
 {
     public class ActorManager : IActorManager
     {
-        private static IRootContext _context => _lazyContext.Value;
+        public IRootContext Context => _lazyContext.Value;
 
         private static Lazy<IRootContext> _lazyContext = new Lazy<IRootContext>(() => new RootContext());
 
@@ -26,14 +26,14 @@ namespace ImGalaxy.ES.ProtoActor
         {
             var actorPId = GetActor<TActor>(actorId);
 
-            return await _context.RequestAsync<T>(actorPId, message);
+            return await Context.RequestAsync<T>(actorPId, message);
         }
 
         public async Task<T> RequestAsync<T>(PID actorId, object message) =>
-            await _context.RequestAsync<T>(actorId, message);
+            await Context.RequestAsync<T>(actorId, message);
 
         public void Send(PID actorId, object message) =>
-            _context.Send(actorId, message);
+            Context.Send(actorId, message);
 
     }
 }

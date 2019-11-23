@@ -6,8 +6,7 @@ namespace ImGalaxy.ES.Core
 {
     public class EventRouter : IEventRouter
     {
-        private readonly Dictionary<Type, Action<object>> _handlers;
-
+        private readonly Dictionary<Type, Action<object>> _handlers; 
         public EventRouter() => _handlers = new Dictionary<Type, Action<object>>();
 
         private void ConfigureRoute(Type @event, Action<object> handler)
@@ -28,7 +27,6 @@ namespace ImGalaxy.ES.Core
 
         public void RegisterEvent<TEvent>(Action<TEvent> handler) => this.ConfigureRoute(handler);
 
-
         public void RegisterEvent(Type @event, Action<object> handler) => this.ConfigureRoute(@event, handler);
 
         public void Route(object @event)
@@ -36,15 +34,12 @@ namespace ImGalaxy.ES.Core
             @event.ThrowsIfNull(new ArgumentNullException(nameof(@event)));
 
             Action<object> handler;
+
             if (_handlers.TryGetValue(@event.GetType(), out handler))
-            {
                 handler(@event);
-            }
+            
         }
 
-        public void Apply(object @event)
-        {
-            this.Route(@event);
-        }
+        public void Apply(object @event) => this.Route(@event);
     }
 }

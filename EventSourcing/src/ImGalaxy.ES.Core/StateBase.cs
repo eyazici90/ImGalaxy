@@ -18,12 +18,11 @@ namespace ImGalaxy.ES.Core
            EventRouter.RegisterEvent(eventType, handler);
 
         public Result EmptyResult() => new Result(this as TState, new List<object>());
-         
-
+           
         public class Result
         {
-            public readonly TState State;
-            public readonly IEnumerable<object> Events;
+            public TState State { get; }
+            public IEnumerable<object> Events { get; }
 
             public Result(TState state, IEnumerable<object> events)
             {

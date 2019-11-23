@@ -10,15 +10,15 @@ namespace ImGalaxy.ES.ProtoActor
     public class CommandActor<TState> : ReceiveActor<TState>
         where TState : class, IAggregateRoot
     { 
-        private readonly IAggregateRootRepository<TState> _aggregateRootRepository;
-        private readonly IUnitOfWork _unitOfWork;
+        public IAggregateRootRepository<TState> AggregateRootRepository { get; }
+        public IUnitOfWork UnitOfWork { get; }
 
         public CommandActor(IAggregateRootRepository<TState> aggregateRootRepository,
             IUnitOfWork unitOfWork)
         {
-            _aggregateRootRepository = aggregateRootRepository;
+            AggregateRootRepository = aggregateRootRepository;
 
-            _unitOfWork = unitOfWork;
+            UnitOfWork = unitOfWork;
 
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
@@ -33,7 +33,7 @@ namespace ImGalaxy.ES.ProtoActor
 
         private async Task RecoverStateAsync(IContext ctx)
         {
-            var state = await _aggregateRootRepository.GetAsync(ctx.Self.Id);
+            var state = await AggregateRootRepository.GetAsync(ctx.Self.Id);
             State = state.HasValue ? state.Value
                                    : (TState)Activator.CreateInstance(typeof(TState), true);
         } 
@@ -46,7 +46,7 @@ namespace ImGalaxy.ES.ProtoActor
 
         private async Task AppendToStreamAsync(int aggregateVersion, string identifier, AggregateRootState<TState>.Result result)
         {
-            await _unitOfWork.AppendToStreamAsync(new Aggregate(identifier, aggregateVersion, result.State));
+            await UnitOfWork.AppendToStreamAsync(new Aggregate(identifier, aggregateVersion, result.State));
 
             (result.State as IAggregateChangeTracker).ClearEvents();
         }
@@ -57,6 +57,7 @@ namespace ImGalaxy.ES.ProtoActor
                typeof(TCommand),
                ctx => Apply(identifyHandler(ctx.Message as TCommand), handler(ctx.Message as TCommand))
            );
+
         protected void When<TCommand>(Func<TCommand, (string, AggregateRootState<TState>.Result)> handler)
                    where TCommand : class
                    => Handlers.Add(

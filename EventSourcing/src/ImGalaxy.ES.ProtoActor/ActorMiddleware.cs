@@ -14,11 +14,9 @@ namespace ImGalaxy.ES.ProtoActor
                 }
                 catch (Exception ex)
                 {
-                    var errorMsg = new ExceptionOccuredDuringHandleEvent(ex);
+                    var errorMsg = new ExceptionOccuredDuringHandleEvent(ex); 
 
-                    envelope = envelope.WithMessage(errorMsg);
-
-                    await next(context, envelope);  
+                    await next(context, envelope.WithMessage(errorMsg));  
                 }
             };
     }

@@ -5,6 +5,7 @@ namespace ImGalaxy.ES.ProtoActor
 {
     public interface IActorManager
     {
+        IRootContext Context { get; }
         PID GetActor<TActor>() where TActor : IActor;
         PID GetActor<TActor>(string id) where TActor : IActor;
         Task<T> RequestAsync<T>(PID actorId, object message);
