@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
+using ImGalaxy.ES.TestApp.Domain.Cars;
 using ImGalaxy.ES.TestBase;
+using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using TestApp;
 using TestApp.Domain.Cars;
 using Xunit;
@@ -12,6 +11,18 @@ namespace ImGalaxy.ES.TestApp.Testing
 {
     public abstract class Domain_Tests
     {
+        private readonly ICarPolicy _carPolicy;
+        public Domain_Tests()
+        {
+            var moqCarPolicy = new Mock<ICarPolicy>();
+
+            moqCarPolicy.Setup(p => p.Apply(It.Is<ModelYearCannotBeAboveThan>(m => m.ModelYear > 2019)))
+                .Throws<Exception>(); 
+
+            _carPolicy = moqCarPolicy.Object;
+             
+        }
+
         [Fact]
         public void creating_new_car_with_valid_state_should_success() =>
             CommandScenarioFor<CarState>.With(
@@ -45,7 +56,7 @@ namespace ImGalaxy.ES.TestApp.Testing
                    fakeCar.State
                    )
                 .GivenNone()
-                .When(state => Car.RenewModel(state, fakeYear))
+                .When(state => Car.RenewModel(state, fakeYear, _carPolicy))
                 .Then(new CarModelRenewedEvent(fakeCar.State.Id, fakeYear))
                 .Assert();
         }
@@ -59,11 +70,11 @@ namespace ImGalaxy.ES.TestApp.Testing
                    fakeCar.State
                    )
                 .GivenNone()
-                .When(state => Car.RenewModel(state, fakeYear))
+                .When(state => Car.RenewModel(state, fakeYear, _carPolicy))
                 .Throws(new Exception("model cannot be above than 2019"))
                 .Assert();
         }
-         
+
         public CarState.Result FakeCar
         {
             get

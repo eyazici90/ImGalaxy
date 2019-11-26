@@ -11,7 +11,7 @@ namespace ImGalaxy.ES.Core
         public static ExecutionResult Fail(IEnumerable<string> errors) => new ExecutionResult(false, errors);
         public static ExecutionResult Fail(params string[] errors) => new ExecutionResult(false, errors);
         public bool IsSuccess { get; }
-        public readonly IEnumerable<string> Errors;  
+        public IEnumerable<string> Errors { get; }  
         private ExecutionResult(bool isSuccess, IEnumerable<string> errors)
         {
             IsSuccess = isSuccess;

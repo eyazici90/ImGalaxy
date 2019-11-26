@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using ImGalaxy.ES.Core;
+using ImGalaxy.ES.TestApp.Domain.Cars;
 using ImGalaxy.ES.TestBase;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,15 @@ namespace ImGalaxy.ES.TestApp.Testing
         private readonly string _fakeCarId;
 
         private readonly IAggregateRootRepository<CarState> _aggregateRootRepository;
+
+        private readonly ICarPolicy _carPolicy;
         public Repository_Tests()
         {
             _aggregateRootRepository = GetRequiredService<IAggregateRootRepository<CarState>>();
 
             _fakeCarId = Guid.NewGuid().ToString();
+
+            _carPolicy = GetRequiredService<ICarPolicy>();
 
             SeedCar().ConfigureAwait(false)
                 .GetAwaiter().GetResult();
@@ -71,7 +76,7 @@ namespace ImGalaxy.ES.TestApp.Testing
             
             var result = await WithUnitOfWorkAsync(async () =>
             {
-                Car.RenewModel(existingCar.Value, fakeYear);
+                Car.RenewModel(existingCar.Value, fakeYear, _carPolicy);
             });
 
             result.IsSuccess.Should().BeTrue();
