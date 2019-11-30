@@ -29,7 +29,12 @@ namespace ImGalaxy.ES.InMemory
 
         public InMemoryStream AppendEvents(IEnumerable<InMemoryEvent> cosmosEvents) =>
              new InMemoryStream(this.Id, this.Type, this.Version, cosmosEvents.ToArray());
-
+        public InMemoryStream AppendEvent(InMemoryEvent @event) 
+        {
+            var list = Events.ToList();
+            list.Add(@event);
+            return AppendEvents(list); 
+        } 
         public InMemoryStream ChangeVersion(long version) =>
             new InMemoryStream(this.Id, this.Type, version, this.Events);
     }
