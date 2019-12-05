@@ -22,13 +22,7 @@ namespace ImGalaxy.ES.ProtoActor
 
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
-            );
-
-            When<ExceptionOccuredDuringHandleEvent>(async ctx => 
-            {
-                if (ctx.Sender != null)
-                    ctx.Respond(ctx.Message);
-            });
+            ); 
         }
 
         private async Task RecoverStateAsync(IContext ctx)
@@ -39,10 +33,10 @@ namespace ImGalaxy.ES.ProtoActor
         } 
 
         private async Task Apply(string identifier, AggregateRootState<TState>.Result result) =>
-            await AppendToStreamAsync(2, identifier, result);
+            await AppendToStreamAsync((int)ExpectedVersion.SafeStream, identifier, result);
 
         private async Task Apply((string, AggregateRootState<TState>.Result) result) =>
-           await AppendToStreamAsync(-1, result.Item1, result.Item2);
+           await AppendToStreamAsync((int)ExpectedVersion.NoStream, result.Item1, result.Item2);
 
         private async Task AppendToStreamAsync(int aggregateVersion, string identifier, AggregateRootState<TState>.Result result)
         {

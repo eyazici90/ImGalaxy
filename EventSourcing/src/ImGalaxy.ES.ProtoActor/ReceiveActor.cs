@@ -13,6 +13,15 @@ namespace ImGalaxy.ES.ProtoActor
         protected readonly Dictionary<Type, Func<IContext, Task>> Handlers =  new Dictionary<Type, Func<IContext, Task>>();
         public TState State { get; set; }
 
+        public ReceiveActor()
+        { 
+            When<ExceptionOccuredDuringHandleEvent>(async ctx =>
+            {
+                if (ctx.Sender != null)
+                    ctx.Respond(ctx.Message);
+            });
+        }
+
         public async Task ReceiveAsync(IContext context)
         {
             if (!Handlers.TryGetValue(context.Message.GetType(), out var handler))
@@ -26,7 +35,6 @@ namespace ImGalaxy.ES.ProtoActor
 
         protected void When<TMessage>(Func<IContext, Task> handler)
          where TMessage : class
-         => Handlers.Add(typeof(TMessage), handler);
-          
+         => Handlers.Add(typeof(TMessage), handler); 
     }
 }

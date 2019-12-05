@@ -1,4 +1,5 @@
-﻿using ImGalaxy.ES.CosmosDB.Enums;
+﻿using ImGalaxy.ES.Core;
+using ImGalaxy.ES.CosmosDB.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
