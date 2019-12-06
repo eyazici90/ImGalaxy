@@ -38,7 +38,6 @@ namespace ImGalaxy.ES.CosmosDB
                                                )).ToArray();
             try
             {
-                aggregate = ApplyVersionStrategy(aggregate);
 
                 await this._cosmosDBConnection.AppendToStreamAsync(
                     _streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
@@ -50,16 +49,6 @@ namespace ImGalaxy.ES.CosmosDB
             }
 
             return ExecutionResult.Success;
-        }
-
-        private Aggregate ApplyVersionStrategy(Aggregate aggregate)
-        {
-            var result = VersionStrategy.IsAppliedByIVersion(aggregate.Root);
-            var version = aggregate.ExpectedVersion;
-            if (result)
-                version = VersionStrategy.VersionOfRoot(aggregate.Root);
-
-            return new Aggregate(aggregate.Identifier, version, aggregate.Root);
         }
 
         private async Task<IExecutionResult> AppendChangesToStreamAsync()
