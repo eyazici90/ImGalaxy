@@ -59,7 +59,7 @@ namespace ImGalaxy.ES.EventStore
                                             AggregateType = typeof(TAggregateRoot).Name,
                                             TimeStamp = DateTime.Now,
                                             IsSnapshot = true,
-                                            Version = aggregate.ExpectedVersion
+                                            Version =Convert.ToInt32(aggregate.ExpectedVersion)  
                                         })
                                        ));
 

@@ -2,6 +2,6 @@
 {
     public interface IVersion
     {
-        string Version { get; } 
+        long Version { get; } 
     }
 }

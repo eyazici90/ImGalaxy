@@ -19,7 +19,7 @@ namespace ImGalaxy.ES.EventStore
         private readonly IMediator _mediator;
         private readonly IEventSerializer _eventSerializer;
         private readonly IStreamNameProvider _streamNameProvider;
-        public EventStoreUnitOfWork(IChangeTracker changeTracker, 
+        public EventStoreUnitOfWork(IChangeTracker changeTracker,
             IEventStoreConnection connection,
             IMediator mediator,
             IEventSerializer eventSerializer,
@@ -29,9 +29,9 @@ namespace ImGalaxy.ES.EventStore
             _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
-            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider)); 
+            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
         }
-       
+
 
         private async Task DispatchNotificationsAsync()
         {
@@ -54,7 +54,7 @@ namespace ImGalaxy.ES.EventStore
         }
 
         private async Task<IExecutionResult> AppendChangesToStreamAsync()
-        { 
+        {
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
                 await AppendToStreamAsync(aggregate);
@@ -75,32 +75,43 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
         {
-           
-                EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
-                                               .Select(@event => new EventData(
-                                                   Guid.NewGuid(),
-                                                   @event.GetType().TypeQualifiedName(),
-                                                   true,
-                                                   Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(@event)),
-                                                   Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
-                                                   {
-                                                       TimeStamp = DateTime.Now,
-                                                       AggregateType = aggregate.Root.GetType().Name,
-                                                       AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                       IsSnapshot = false
-                                                   }))
-                                                   )).ToArray();
-                try
-                {
-                    await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
 
-                }
-                catch (WrongExpectedVersionException)
-                {
-                    throw;
-                }
-            
+            EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
+                                           .Select(@event => new EventData(
+                                               Guid.NewGuid(),
+                                               @event.GetType().TypeQualifiedName(),
+                                               true,
+                                               Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(@event)),
+                                               Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
+                                               {
+                                                   TimeStamp = DateTime.Now,
+                                                   AggregateType = aggregate.Root.GetType().Name,
+                                                   AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
+                                                   IsSnapshot = false
+                                               }))
+                                               )).ToArray();
+            try
+            {
+                aggregate = ApplyVersionStrategy(aggregate);
+                await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
+
+            }
+            catch (WrongExpectedVersionException)
+            {
+                throw;
+            }
+
             return ExecutionResult.Success;
+        }
+
+        private Aggregate ApplyVersionStrategy(Aggregate aggregate)
+        {
+            var result = VersionStrategy.IsAppliedByIVersion(aggregate.Root);
+            var version = aggregate.ExpectedVersion;
+            if (result)
+                version = VersionStrategy.VersionOfRoot(aggregate.Root);
+
+            return new Aggregate(aggregate.Identifier, version, aggregate.Root);
         }
     }
 }

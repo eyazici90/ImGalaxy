@@ -6,16 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.InMemory
-{ 
+{
     public class InMemoryUnitOfWork : IUnitOfWork
     {
         private readonly IChangeTracker _changeTracker;
-        private readonly IInMemoryConnection _connection;  
+        private readonly IInMemoryConnection _connection;
         public InMemoryUnitOfWork(IChangeTracker changeTracker,
             IInMemoryConnection connection)
         {
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection)); 
+            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
         }
         private async Task<IExecutionResult> AppendChangesToStreamAsync()
         {
@@ -30,7 +30,7 @@ namespace ImGalaxy.ES.InMemory
 
         public async Task<IExecutionResult> SaveChangesAsync()
         {
-            await AppendChangesToStreamAsync(); 
+            await AppendChangesToStreamAsync();
             _changeTracker.ResetChanges();
 
             return ExecutionResult.Success;
@@ -38,30 +38,41 @@ namespace ImGalaxy.ES.InMemory
 
         public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
         {
-                InMemoryEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
-                                                .Select(@event => new InMemoryEventData(
-                                                    Guid.NewGuid().ToString(),
-                                                    @event.GetType().TypeQualifiedName(),
-                                                    @event,
-                                                       new EventMetadata
-                                                       {
-                                                           TimeStamp = DateTime.Now,
-                                                           AggregateType = aggregate.Root.GetType().Name,
-                                                           AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                           IsSnapshot = false
-                                                       }
-                                                    )).ToArray();
-                try
-                {
-                    await this._connection.AppendToStreamAsync($"{aggregate.Root.GetType().Name}-{aggregate.Identifier}", aggregate.ExpectedVersion, changes);
+            InMemoryEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
+                                            .Select(@event => new InMemoryEventData(
+                                                Guid.NewGuid().ToString(),
+                                                @event.GetType().TypeQualifiedName(),
+                                                @event,
+                                                   new EventMetadata
+                                                   {
+                                                       TimeStamp = DateTime.Now,
+                                                       AggregateType = aggregate.Root.GetType().Name,
+                                                       AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
+                                                       IsSnapshot = false
+                                                   }
+                                                )).ToArray();
+            try
+            {
+                aggregate = ApplyVersionStrategy(aggregate);
+                await this._connection.AppendToStreamAsync($"{aggregate.Root.GetType().Name}-{aggregate.Identifier}", aggregate.ExpectedVersion, changes);
 
-                }
-                catch (WrongExpectedStreamVersionException)
-                {
-                    throw;
-                }
-            
+            }
+            catch (WrongExpectedStreamVersionException)
+            {
+                throw;
+            }
+
             return ExecutionResult.Success;
+        }
+
+        private Aggregate ApplyVersionStrategy(Aggregate aggregate)
+        {
+            var result = VersionStrategy.IsAppliedByIVersion(aggregate.Root);
+            var version = aggregate.ExpectedVersion;
+            if (result)
+                version = VersionStrategy.VersionOfRoot(aggregate.Root);
+
+            return new Aggregate(aggregate.Identifier, version, aggregate.Root);
         }
     }
 }
