@@ -1,11 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
-using MediatR;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB
@@ -43,7 +38,8 @@ namespace ImGalaxy.ES.CosmosDB
                                                    )).ToArray();
                 try
                 {
-                    await this._cosmosDBConnection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
+                    await this._cosmosDBConnection.AppendToStreamAsync(
+                        _streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
 
                 }
                 catch (WrongExpectedStreamVersionException)

@@ -8,7 +8,7 @@ using TestApp.Domain.Cars.Snapshots;
 
 namespace TestApp
 {
-    public class CarState : AggregateRootState<CarState> , ISnapshotable
+    public class CarState : AggregateRootState<CarState>, ISnapshotable
     {
         public CarId Id { get; private set; }
 
@@ -24,7 +24,7 @@ namespace TestApp
             RegisterEvent<CarRegisteredEvent>(When);
             RegisterEvent<CarNameChangedEvent>(When);
             RegisterEvent<CarModelRenewedEvent>(When);
-            RegisterEvent<CarItemAddedEvent>(When); 
+            RegisterEvent<CarItemAddedEvent>(When);
         }
 
         internal CarState(CarId id) : this()
@@ -33,19 +33,19 @@ namespace TestApp
         }
 
         private void When(CarModelRenewedEvent @event) =>
-            With(this, state => 
+            With(this, state =>
             {
                 Year = @event.Year;
             });
 
         private void When(CarNameChangedEvent @event) =>
-            With(this, state=> 
+            With(this, state =>
             {
                 _name = @event.Name;
             });
 
         private void When(CarRegisteredEvent @event) =>
-            With(this, state=>
+            With(this, state =>
             {
                 state.Id = new CarId(@event.Id);
                 state._name = @event.Name;
@@ -78,7 +78,7 @@ namespace TestApp
                 Id = this.Id,
                 Name = this._name,
                 Year = this.Year,
-                CarItems = this._carItems?.Select(c=>new CarItemStateSnapshot { CarId = c.CarId, Id = c._id, Desciption = c.Desciption})
+                CarItems = this._carItems?.Select(c => new CarItemStateSnapshot { CarId = c.CarId, Id = c._id, Desciption = c.Desciption })
                                     .ToList()
             };
 
