@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Extensions.DependencyInjection; 
 
 namespace ImGalaxy.ES.ProtoActor.Modules
 {
@@ -11,6 +8,7 @@ namespace ImGalaxy.ES.ProtoActor.Modules
             services.RegisterActorManager();
          
         private static IServiceCollection RegisterActorManager(this IServiceCollection services) =>
-             services.AddSingleton<IActorManager, ActorManager>();
+             services.AddSingleton<IActorManager, ActorManager>()
+                     .AddSingleton<IActorRouter, ActorManager>();
     }
 }
