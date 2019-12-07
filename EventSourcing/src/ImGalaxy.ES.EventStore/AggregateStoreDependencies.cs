@@ -1,29 +1,27 @@
 ﻿using EventStore.ClientAPI;
-using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ImGalaxy.ES.Core; 
 
 namespace ImGalaxy.ES.EventStore
 {
-    public class AggregateRootRepositoryBaseDependencies : IAggregateRootRepositoryBaseDependencies
-    {
-        public IChangeTracker ChangeTracker { get; }
+    public class AggregateStoreDependencies : IAggregateStoreDependencies
+    { 
         public IEventDeserializer EventDeserializer { get; }
         public IEventStoreConnection EventStoreConnection { get; }
         public IEventStoreConfigurations EventStoreConfigurations { get; }
         public IStreamNameProvider StreamNameProvider { get; }
-        public AggregateRootRepositoryBaseDependencies(IChangeTracker changeTracker,
-            IEventDeserializer eventDeserializer,
+        public IEventSerializer EventSerializer { get; }
+
+        public AggregateStoreDependencies(IEventDeserializer eventDeserializer,
             IEventStoreConnection eventStoreConnection,
             IEventStoreConfigurations eventStoreConfigurations,
-            IStreamNameProvider streamNameProvider)
+            IStreamNameProvider streamNameProvider,
+            IEventSerializer eventSerializer)
         {
-            ChangeTracker = changeTracker;
             EventDeserializer = eventDeserializer;
             EventStoreConnection = eventStoreConnection;
             EventStoreConfigurations = eventStoreConfigurations;
             StreamNameProvider = streamNameProvider;
+            EventSerializer = eventSerializer;
         }
     }
 }

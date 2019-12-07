@@ -1,11 +1,4 @@
-﻿using ImGalaxy.ES.CosmosDB.Enums;
-using Microsoft.Azure.Documents;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGalaxy.ES.CosmosDB.Documents
+﻿namespace ImGalaxy.ES.CosmosDB.Documents
 {
     public abstract class BaseDocument 
     {
@@ -16,7 +9,7 @@ namespace ImGalaxy.ES.CosmosDB.Documents
         {
             OriginalId = originalId;
             id = OriginalId;
-            Type = type;    
+            Type = type;     
         }
     }
 }

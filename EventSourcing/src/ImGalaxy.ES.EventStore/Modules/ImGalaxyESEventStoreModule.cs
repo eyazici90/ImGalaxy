@@ -18,6 +18,7 @@ namespace ImGalaxy.ES.EventStore.Modules
                  .RegisterProviders()
                  .RegisterChangeTracker()
                  .RegisterEventStore()
+                 .RegisterAggregateStore()
                  .RegisterRepositories()
                  .RegisterSnapshotableRepositories(configs)
                  .RegisterUnitOfWork();
@@ -30,7 +31,7 @@ namespace ImGalaxy.ES.EventStore.Modules
              services.AddSingleton<IStreamNameProvider, EventStoreStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
-                     .AddTransient<IAggregateRootRepositoryBaseDependencies, AggregateRootRepositoryBaseDependencies>()
+                     .AddTransient<IAggregateStoreDependencies, AggregateStoreDependencies>()
                      .AddTransient<ISnapshotReader, SnapshotReaderEventStore>();
         private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
            services.AddScoped<IChangeTracker, ChangeTracker>();
@@ -46,7 +47,7 @@ namespace ImGalaxy.ES.EventStore.Modules
              services.AddScoped<IUnitOfWork, EventStoreUnitOfWork>();
 
         private static IServiceCollection RegisterEventStore(this IServiceCollection services) =>
-            services.AddSingleton<IEventStoreConnection>(ctx =>
+            services.AddSingleton(ctx =>
             {
                 var confs = ctx.GetRequiredService<IEventStoreConfigurations>();
 
@@ -60,6 +61,9 @@ namespace ImGalaxy.ES.EventStore.Modules
 
                 return connection;
             });
+
+        private static IServiceCollection RegisterAggregateStore(this IServiceCollection services) =>
+              services.AddTransient<IAggregateStore, AggregateStore>();
 
     }
 

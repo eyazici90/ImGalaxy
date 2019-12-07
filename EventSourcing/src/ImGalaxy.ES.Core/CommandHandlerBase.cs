@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class CommandHandlerBase<TAggregateRoot, TKey> 
-        where TAggregateRoot :  IAggregateRoot
+    public abstract class CommandHandlerBase<TAggregateRoot, TKey>
+        where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot
     {
         public readonly IUnitOfWork _unitOfWork;
         public readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;

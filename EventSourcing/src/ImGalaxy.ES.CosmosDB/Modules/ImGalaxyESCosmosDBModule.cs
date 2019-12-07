@@ -19,6 +19,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
                s.RegisterConfigurations(configs)
                 .RegisterProviders()
                 .RegisterChangeTracker()
+                .RegisterAggregateStore()
                 .RegisterRepositories()
                 .RegisterSnapshotableRepositories(configs)
                 .RegisterUnitOfWork()
@@ -33,7 +34,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
              services.AddSingleton<IStreamNameProvider, CosmosStreamNameProvider>()
                      .AddSingleton<IEventSerializer, NewtonsoftJsonSerializer>()
                      .AddSingleton<IEventDeserializer, NewtonsoftJsonSerializer>()
-                     .AddTransient<IAggregateRootRepositoryBaseDependencies, AggregateRootRepositoryBaseDependencies>()
+                     .AddTransient<IAggregateStoreDependencies, AggregateStoreDependencies>()
                      .AddTransient<ISnapshotReader, SnapshotReaderCosmosDB>();
         private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
             services.AddScoped<IChangeTracker, ChangeTracker>();
@@ -60,6 +61,8 @@ namespace ImGalaxy.ES.CosmosDB.Modules
               })
               .AddSingleton<ICosmosDBClient, CosmosDBClient>();
 
+        private static IServiceCollection RegisterAggregateStore(this IServiceCollection services) =>
+              services.AddTransient<IAggregateStore, AggregateStore>();
 
         public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider)
         {
@@ -78,6 +81,6 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
             return provider;
         }
-
+        
     }
 }

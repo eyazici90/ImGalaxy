@@ -13,8 +13,8 @@ namespace ImGalaxy.ES.CosmosDB
               identifier;
 
         public string GetStreamName(object aggregateRoot, string identifier) =>
-          CosmosStreamNameExtensions.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
+          CosmosStreamNameStrategy.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
         public string GetStreamName(Type aggregateRootType, string identifier)=>
-            CosmosStreamNameExtensions.GetFullStreamName(aggregateRootType.ToString(), identifier);
+            CosmosStreamNameStrategy.GetFullStreamName(aggregateRootType.ToString(), identifier);
     }
 }

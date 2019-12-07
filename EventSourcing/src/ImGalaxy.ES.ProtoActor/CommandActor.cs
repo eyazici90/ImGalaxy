@@ -8,17 +8,13 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.ProtoActor
 {
     public class CommandActor<TState> : ReceiveActor<TState>
-        where TState : class, IAggregateRoot
-    { 
-        public IAggregateRootRepository<TState> AggregateRootRepository { get; }
-        public IUnitOfWork UnitOfWork { get; }
+        where TState : class, IAggregateRootState<TState>, IAggregateRoot
+    {   
+        public IAggregateStore AggregateStore { get; }
 
-        public CommandActor(IAggregateRootRepository<TState> aggregateRootRepository,
-            IUnitOfWork unitOfWork)
+        public CommandActor(IAggregateStore aggregateStore)
         {
-            AggregateRootRepository = aggregateRootRepository;
-
-            UnitOfWork = unitOfWork;
+            AggregateStore = aggregateStore; 
 
             When<Started>(async ctx =>
                 await RecoverStateAsync(ctx)
@@ -27,9 +23,8 @@ namespace ImGalaxy.ES.ProtoActor
 
         private async Task RecoverStateAsync(IContext ctx)
         {
-            var state = await AggregateRootRepository.GetAsync(ctx.Self.Id);
-            State = state.HasValue ? state.Value
-                                   : (TState)Activator.CreateInstance(typeof(TState), true);
+            var state = await AggregateStore.Load<TState>(ctx.Self.Id);
+            State = state.Root as TState;
         } 
 
         private async Task Apply(string identifier, AggregateRootState<TState>.Result result) =>
@@ -40,7 +35,7 @@ namespace ImGalaxy.ES.ProtoActor
 
         private async Task AppendToStreamAsync(int aggregateVersion, string identifier, AggregateRootState<TState>.Result result)
         {
-            await UnitOfWork.AppendToStreamAsync(new Aggregate(identifier, aggregateVersion, result.State));
+            await AggregateStore.Save(new Aggregate(identifier, aggregateVersion, result.State));
 
             (result.State as IAggregateChangeTracker).ClearEvents();
         }

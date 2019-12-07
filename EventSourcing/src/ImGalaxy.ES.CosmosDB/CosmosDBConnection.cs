@@ -47,8 +47,8 @@ namespace ImGalaxy.ES.CosmosDB
         private async Task<IExecutionResult> AppendToStreamInternalAsync(string streamId, long expectedVersion,
             params CosmosEventData[] events)
         {
-            var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId);
-            var streamType = CosmosStreamNameExtensions.GetStreamType(streamId);
+            var id = CosmosStreamNameStrategy.GetStreamIdentifier(streamId);
+            var streamType = CosmosStreamNameStrategy.GetStreamType(streamId);
  
             long eventPosition = EventPosition.Start;
 
@@ -93,7 +93,7 @@ namespace ImGalaxy.ES.CosmosDB
         private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string, IEnumerable<EventDocument>> eventFunc)
         {
 
-            var id = CosmosStreamNameExtensions.GetStreamIdentifier(streamId);
+            var id = CosmosStreamNameStrategy.GetStreamIdentifier(streamId);
 
             var existingStream = await this.GetStreamDocumentByIdAsync(id);
 

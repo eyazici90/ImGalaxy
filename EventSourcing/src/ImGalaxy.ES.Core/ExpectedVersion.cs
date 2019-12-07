@@ -7,6 +7,6 @@
         public const long EmptyStream = -1;
         public const long StreamExists = -4;
         public const long New = 1;
-        public const long SafeStream = 2; 
+        public const long SafeStream = -5; 
     }
 }

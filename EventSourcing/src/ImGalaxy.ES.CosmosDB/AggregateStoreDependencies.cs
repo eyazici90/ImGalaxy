@@ -5,23 +5,23 @@ using ImGalaxy.ES.Core;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public class AggregateRootRepositoryBaseDependencies : IAggregateRootRepositoryBaseDependencies
+    public class AggregateStoreDependencies : IAggregateStoreDependencies
     {
+        public IEventSerializer EventSerializer { get; }
         public IEventDeserializer EventDeserializer { get; }
-        public IChangeTracker ChangeTracker { get; }
         public ICosmosDBConnection CosmosDBConnection { get; }
-        public ICosmosDBConfigurations CosmosDBConfigurator { get; }
+        public ICosmosDBConfigurations CosmosDBConfigurations { get; }
         public IStreamNameProvider StreamNameProvider { get; }
-        public AggregateRootRepositoryBaseDependencies(IEventDeserializer eventDeserializer,
-            IChangeTracker changeTracker,
+        public AggregateStoreDependencies(IEventSerializer eventSerializer,
+            IEventDeserializer eventDeserializer,
             ICosmosDBConnection cosmosDBConnection,
-            ICosmosDBConfigurations cosmosDBConfigurator,
+            ICosmosDBConfigurations cosmosDBConfigurations,
             IStreamNameProvider streamNameProvider)
         {
+            EventSerializer = eventSerializer;
             EventDeserializer = eventDeserializer;
-            ChangeTracker = changeTracker;
             CosmosDBConnection = cosmosDBConnection;
-            CosmosDBConfigurator = cosmosDBConfigurator;
+            CosmosDBConfigurations = cosmosDBConfigurations;
             StreamNameProvider = streamNameProvider;
         }
     }

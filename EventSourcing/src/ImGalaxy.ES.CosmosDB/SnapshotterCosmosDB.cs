@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.CosmosDB
 {
     public class SnapshotterCosmosDB<TAggregateRoot, TSnapshot> : ISnapshotter
-        where TAggregateRoot : IAggregateRoot, ISnapshotable
+       where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot, ISnapshotable
     {
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
         private readonly IChangeTracker _changeTracker;

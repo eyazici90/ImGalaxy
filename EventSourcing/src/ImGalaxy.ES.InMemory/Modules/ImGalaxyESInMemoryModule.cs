@@ -14,6 +14,7 @@ namespace ImGalaxy.ES.InMemory.Modules
                    s.RegisterProviders()
                     .RegisterChangeTracker()
                     .RegisterInMemoryConnection()
+                    .RegisterAggregateStore()
                     .RegisterRepositories() 
                     .RegisterUnitOfWork();
                });
@@ -30,6 +31,7 @@ namespace ImGalaxy.ES.InMemory.Modules
         private static IServiceCollection RegisterUnitOfWork(this IServiceCollection services) =>
              services.AddScoped<IUnitOfWork, InMemoryUnitOfWork>();
 
-
+        private static IServiceCollection RegisterAggregateStore(this IServiceCollection services) =>
+            services.AddTransient<IAggregateStore, AggregateStore>();
     }
 }

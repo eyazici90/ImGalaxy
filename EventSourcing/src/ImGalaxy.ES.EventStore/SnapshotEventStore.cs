@@ -9,7 +9,7 @@ using ExpectedVersion = ImGalaxy.ES.Core.ExpectedVersion;
 namespace ImGalaxy.ES.EventStore
 {
     public class SnapshotEventStore<TAggregateRoot, TSnapshot> : ISnapshotter
-        where TAggregateRoot : IAggregateRoot, ISnapshotable
+       where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot, ISnapshotable
     {
 
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;

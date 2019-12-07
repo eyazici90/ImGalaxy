@@ -1,19 +1,13 @@
 ﻿using EventStore.ClientAPI;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ImGalaxy.ES.Core; 
 
 namespace ImGalaxy.ES.EventStore
 {
-    public interface IEventStoreConfigurations
+    public interface IEventStoreConfigurations : IAggregateStoreConfiguration
     {
         IEventStoreConnection Connection { get; set; }
         string Username { get; set; }
         string Password { get; set; }
-        string Uri { get; set; }
-        int MaxLiveQueueSize { get; set; }
-        int ReadBatchSize { get; set; }
-        
-        bool IsSnapshottingOn { get; set; }
+        string Uri { get; set; } 
     }
 }

@@ -3,9 +3,6 @@ using EventStore.ClientAPI.Exceptions;
 using ImGalaxy.ES.Core;
 using MediatR;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,22 +11,16 @@ namespace ImGalaxy.ES.EventStore
 {
     public class EventStoreUnitOfWork : IUnitOfWork
     {
+        private readonly IAggregateStore _aggregateStore;
         private readonly IChangeTracker _changeTracker;
-        private readonly IEventStoreConnection _connection;
         private readonly IMediator _mediator;
-        private readonly IEventSerializer _eventSerializer;
-        private readonly IStreamNameProvider _streamNameProvider;
-        public EventStoreUnitOfWork(IChangeTracker changeTracker,
-            IEventStoreConnection connection,
-            IMediator mediator,
-            IEventSerializer eventSerializer,
-            IStreamNameProvider streamNameProvider)
+        public EventStoreUnitOfWork(IAggregateStore aggregateStore,
+            IChangeTracker changeTracker,
+            IMediator mediator)
         {
+            _aggregateStore = aggregateStore ?? throw new ArgumentNullException(nameof(aggregateStore));
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
-            _connection = connection ?? throw new ArgumentNullException(nameof(connection));
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
-            _streamNameProvider = streamNameProvider ?? throw new ArgumentNullException(nameof(streamNameProvider));
         }
 
 
@@ -57,7 +48,7 @@ namespace ImGalaxy.ES.EventStore
         {
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
-                await AppendToStreamAsync(aggregate);
+                await _aggregateStore.Save(aggregate);
             }
             return ExecutionResult.Success;
         }
@@ -71,37 +62,6 @@ namespace ImGalaxy.ES.EventStore
             _changeTracker.ResetChanges();
 
             return ExecutionResult.Success;
-        }
-
-        public async Task<IExecutionResult> AppendToStreamAsync(Aggregate aggregate)
-        {
-
-            EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
-                                           .Select(@event => new EventData(
-                                               Guid.NewGuid(),
-                                               @event.GetType().TypeQualifiedName(),
-                                               true,
-                                               Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(@event)),
-                                               Encoding.UTF8.GetBytes(this._eventSerializer.Serialize(new EventMetadata
-                                               {
-                                                   TimeStamp = DateTime.Now,
-                                                   AggregateType = aggregate.Root.GetType().Name,
-                                                   AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                   IsSnapshot = false
-                                               }))
-                                               )).ToArray();
-            try
-            {
-                await this._connection.AppendToStreamAsync(_streamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier), aggregate.ExpectedVersion, changes);
-
-            }
-            catch (WrongExpectedVersionException)
-            {
-                throw;
-            }
-
-            return ExecutionResult.Success;
-        }
-
+        }  
     }
 }

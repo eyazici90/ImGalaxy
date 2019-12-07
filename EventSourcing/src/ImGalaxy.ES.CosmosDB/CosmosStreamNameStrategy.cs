@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public class CosmosStreamNameExtensions
+    public class CosmosStreamNameStrategy
     {
         public static string GetFullStreamName(string type, string identifier) =>
             $"{type}-{identifier}";

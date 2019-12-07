@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Core
 {
-    public interface IAggregateRootRepository<TAggregateRoot>   where TAggregateRoot : IAggregateRoot
+    public interface IAggregateRootRepository<TAggregateRoot> 
+        where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot
     {
         Optional<TAggregateRoot>  Get(string identifier);
         Task<Optional<TAggregateRoot>> GetAsync(string identifier); 

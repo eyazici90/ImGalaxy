@@ -1,9 +1,9 @@
 ﻿using EventStore.ClientAPI;
 using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
+using System; 
 using System.Text;
 using System.Threading.Tasks;
+using StreamPosition = ImGalaxy.ES.Core.StreamPosition;
 
 namespace ImGalaxy.ES.EventStore
 {
