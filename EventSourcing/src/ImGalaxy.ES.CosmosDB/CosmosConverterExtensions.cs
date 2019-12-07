@@ -2,8 +2,7 @@
 using ImGalaxy.ES.CosmosDB.Enums;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq; 
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -14,7 +13,10 @@ namespace ImGalaxy.ES.CosmosDB
                 ReadDirection.Forward,
                 eventDocs.Select(e=> CosmosEvent.Create(e.StreamId, e.OriginalId, e.Position, e.Type, e.Data, e.EventMetadata, DateTime.Now))
                     .ToArray());
-        
+        public static CosmosStream ToCosmosStream(this StreamDocument document) =>
+             CosmosStream.Create(document.OriginalId, document.Type, document.Version, StreamReadStatus.Success,
+                ReadDirection.Forward, default);
+
         public static StreamDocument ToCosmosStreamDocument(this CosmosStream stream) =>
              new StreamDocument(stream.Id, stream.Version, stream.Version, stream.Type);
         
