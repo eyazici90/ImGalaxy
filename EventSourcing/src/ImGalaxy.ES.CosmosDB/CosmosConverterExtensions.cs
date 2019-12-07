@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.CosmosDB
                     .ToArray());
         public static CosmosStream ToCosmosStream(this StreamDocument document) =>
              CosmosStream.Create(document.OriginalId, document.Type, document.Version, StreamReadStatus.Success,
-                ReadDirection.Forward, default);
+                ReadDirection.Forward, Array.Empty<CosmosEvent>());
 
         public static StreamDocument ToCosmosStreamDocument(this CosmosStream stream) =>
              new StreamDocument(stream.Id, stream.Version, stream.Version, stream.Type);
