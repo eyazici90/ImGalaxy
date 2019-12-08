@@ -9,7 +9,9 @@ namespace ImGalaxy.ES.CosmosDB
     public static class CosmosConverterExtensions
     {
         public static CosmosStream ToCosmosStream(this StreamDocument document, IEnumerable<EventDocument> eventDocs) =>
-             CosmosStream.Create(document.OriginalId, document.Type, document.Version, StreamReadStatus.Success, 
+             CosmosStream.Create(document.OriginalId, document.Type, 
+                new Core.Version(document.Version).WithMetaData(document.Etag),
+                StreamReadStatus.Success, 
                 ReadDirection.Forward,
                 eventDocs.Select(e=> CosmosEvent.Create(e.StreamId, e.OriginalId, e.Position, e.Type, e.Data, e.EventMetadata, DateTime.Now))
                     .ToArray());
@@ -18,7 +20,7 @@ namespace ImGalaxy.ES.CosmosDB
                 ReadDirection.Forward, Array.Empty<CosmosEvent>());
 
         public static StreamDocument ToCosmosStreamDocument(this CosmosStream stream) =>
-             new StreamDocument(stream.Id, stream.Version, stream.Version, stream.Type);
+             new StreamDocument(stream.Id, stream.Version, stream.Version, stream.Type, stream.Version.MetaData);
         
         public static CosmosEvent ToCosmosEvent(this EventDocument document) =>
              CosmosEvent.Create(document.StreamId, document.OriginalId, document.Position, document.Type,
@@ -26,8 +28,6 @@ namespace ImGalaxy.ES.CosmosDB
         
         public static EventDocument ToCosmosEventDocument(this CosmosEvent document) =>
              new EventDocument(document.EventId, document.StreamId, document.Position,
-                document.Data, document.EventMetadata, document.EventType);
-        
-
+                document.Data, document.EventMetadata, document.EventType); 
     }
 }

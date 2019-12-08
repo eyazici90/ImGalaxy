@@ -20,9 +20,14 @@ namespace ImGalaxy.ES.Core
         {
         }
 
-        public void WithMetaData(string metaData) =>
+        public Version WithMetaData(string metaData) =>
             new Version(this.Value, metaData);
 
+        public Version WithVersion(long version) =>
+            new Version(version, this.MetaData);
+
         public static implicit operator long(Version self) => self.Value;
+
+        public static implicit operator Version(long value) => new Version(value);
     }
 }

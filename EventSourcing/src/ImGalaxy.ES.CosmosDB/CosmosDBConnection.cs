@@ -1,11 +1,13 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
 using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -33,7 +35,7 @@ namespace ImGalaxy.ES.CosmosDB
                   id => GetEventDocumentsBackward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
 
-        public async Task<IExecutionResult> AppendToStreamAsync(string streamId, long expectedVersion,
+        public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion,
           params CosmosEventData[] events)
         {
             var locker = AsyncStreamLockers.Get(streamId);
@@ -44,7 +46,7 @@ namespace ImGalaxy.ES.CosmosDB
 
             return ExecutionResult.Success;
         }
-        private async Task<IExecutionResult> AppendToStreamInternalAsync(string streamId, long expectedVersion,
+        private async Task<IExecutionResult> AppendToStreamInternalAsync(string streamId, Version expectedVersion,
             params CosmosEventData[] events)
         {
             var id = CosmosStreamNameStrategy.GetStreamIdentifier(streamId);
@@ -65,7 +67,7 @@ namespace ImGalaxy.ES.CosmosDB
 
                 var existingStream = streamDoc.Value.ToCosmosStream();
 
-                existingStream.ThrowsIf(stream => expectedVersion != stream.Version && expectedVersion != ExpectedVersion.SafeStream,
+                existingStream.ThrowsIf(stream => expectedVersion.Value != stream.Version.Value && expectedVersion != ExpectedVersion.SafeStream,
                                            new WrongExpectedStreamVersionException(expectedVersion.ToString(),
                                            existingStream.Version.ToString()));
 
@@ -74,11 +76,13 @@ namespace ImGalaxy.ES.CosmosDB
 
                 existingStream = existingStream.AppendEvents(streamEvents.Select(e => e.ToCosmosEvent()));
 
-                expectedVersion = expectedVersion + events.Length;
+                expectedVersion = expectedVersion.WithVersion(expectedVersion + events.Length); 
 
                 var newVersionedStream = existingStream.ChangeVersion(expectedVersion);
 
-                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamCollectionName, newVersionedStream.ToCosmosStreamDocument());
+                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamCollectionName,
+                    newVersionedStream.ToCosmosStreamDocument(),
+                    expectedVersion.MetaData);
 
                 eventPosition = newVersionedStream.NextEventNumber;
             }

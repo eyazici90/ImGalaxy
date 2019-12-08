@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -31,11 +32,11 @@ namespace ImGalaxy.ES.CosmosDB
 
             ClearChangesOfRoot(root);
 
-            return new Aggregate(id, slice.Value.LastEventNumber, root as IAggregateRoot);
+            return new Aggregate(id, slice.Value.Version, root as IAggregateRoot);
         }
 
 
-        public async Task<IExecutionResult> Save<T>(string identifer, long version, StateBase<T>.Result update) where T : class, IAggregateRootState<T>
+        public async Task<IExecutionResult> Save<T>(string identifer, Version version, StateBase<T>.Result update) where T : class, IAggregateRootState<T>
         {
             CosmosEventData[] changes = update.Events
                                             .Select(@event => new CosmosEventData(
@@ -75,7 +76,7 @@ namespace ImGalaxy.ES.CosmosDB
               aggregate.ExpectedVersion, changes);
         }
 
-        private async Task<IExecutionResult> AppendToStreamInternalAsync(string stream, long expectedVersion, CosmosEventData[] events)
+        private async Task<IExecutionResult> AppendToStreamInternalAsync(string stream, Version expectedVersion, CosmosEventData[] events)
         {
             try
             {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.TestBase
 {
-    public abstract class ImGalaxyIntegrationTestBase: IDisposable
+    public abstract class ImGalaxyIntegrationTestBase : IDisposable
     {
         protected IServiceProvider ServiceProvider { get; private set; }
 
@@ -32,19 +32,18 @@ namespace ImGalaxy.ES.TestBase
         protected abstract IServiceCollection ConfigureServices(IServiceCollection services);
 
         protected virtual void Configure(IServiceProvider app)
-        {
-
+        { 
         }
 
-        protected virtual T GetService<T>()
-        {
-            return ServiceProvider.GetService<T>();
-        }
+        protected virtual T GetService<T>() =>
+            ServiceProvider.GetService<T>();
 
-        protected virtual T GetRequiredService<T>()
-        {
-            return ServiceProvider.GetRequiredService<T>();
-        }
+        protected virtual T The<T>() =>
+            ServiceProvider.GetService<T>(); 
+
+        protected virtual T GetRequiredService<T>() =>
+            ServiceProvider.GetRequiredService<T>();
+
 
         public virtual void Dispose()
         {

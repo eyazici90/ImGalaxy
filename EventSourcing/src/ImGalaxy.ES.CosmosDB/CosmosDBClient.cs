@@ -29,9 +29,19 @@ namespace ImGalaxy.ES.CosmosDB
               new FeedOptions { EnableCrossPartitionQuery = true, MaxItemCount = _cosmosDBConfigurations.ReadBatchSize })
                  .Where(predicate);
 
-        public async Task UpdateItemAsync<T>(string id, string collectionName, T item) => 
-              await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_cosmosDBConfigurations.DatabaseId,
-                  collectionName, id), item);
+        public async Task UpdateItemAsync<T>(string id, string collectionName, T item, string etag)
+        {
+            RequestOptions requestOptions = null;
+            if (!string.IsNullOrEmpty(etag))
+                requestOptions = new RequestOptions
+                {
+                    AccessCondition = new AccessCondition { Condition = etag, Type = AccessConditionType.IfMatch }
+                };
+
+            await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_cosmosDBConfigurations.DatabaseId,
+                    collectionName, id), item, requestOptions);
+        }
+            
 
         public async Task CreateDatabaseIfNotExistsAsync()
         {

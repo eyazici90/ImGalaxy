@@ -18,6 +18,5 @@ namespace ImGalaxy.ES.CosmosDB.Documents
             EventPosition = eventPosition;
         }
 
-
     }
 }

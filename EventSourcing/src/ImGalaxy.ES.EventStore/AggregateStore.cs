@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using StreamPosition = ImGalaxy.ES.Core.StreamPosition;
+using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.EventStore
 {
@@ -46,7 +47,7 @@ namespace ImGalaxy.ES.EventStore
         }
 
 
-        public async Task<IExecutionResult> Save<T>(string identifer, long version, AggregateRootState<T>.Result update) where T : class, IAggregateRootState<T>
+        public async Task<IExecutionResult> Save<T>(string identifer, Version version, AggregateRootState<T>.Result update) where T : class, IAggregateRootState<T>
         {
             EventData[] changes = update.Events
                                           .Select(@event => new EventData(

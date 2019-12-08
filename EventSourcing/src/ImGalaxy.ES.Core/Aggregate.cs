@@ -8,13 +8,13 @@ namespace ImGalaxy.ES.Core
     {
         public string Identifier { get; }
 
-        public long ExpectedVersion { get; }
+        public Version ExpectedVersion { get; }
 
         public string RootType { get; }
 
         public IAggregateRoot Root { get; }
 
-        public Aggregate(string identifier, long expectedVersion, IAggregateRoot root)
+        public Aggregate(string identifier, Version expectedVersion, IAggregateRoot root)
         {
             this.Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
             this.ExpectedVersion = expectedVersion;

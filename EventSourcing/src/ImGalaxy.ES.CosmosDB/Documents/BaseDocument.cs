@@ -5,11 +5,12 @@
         public readonly string OriginalId; 
         public readonly string id;
         public readonly string Type;
-        public BaseDocument(string originalId, string type)
+        public BaseDocument(string originalId, 
+            string type)
         {
             OriginalId = originalId;
             id = OriginalId;
-            Type = type;     
+            Type = type;
         }
     }
 }

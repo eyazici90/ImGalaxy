@@ -7,7 +7,7 @@ namespace ImGalaxy.ES.Core
     {
         Task<IExecutionResult> Save<T>(
            string identifer,
-           long version,
+           Version version,
            AggregateRootState<T>.Result update)
            where T : class, IAggregateRootState<T>;
 

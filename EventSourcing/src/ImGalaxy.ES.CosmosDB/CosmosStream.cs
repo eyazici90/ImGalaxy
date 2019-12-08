@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -11,14 +12,14 @@ namespace ImGalaxy.ES.CosmosDB
     {
         public string Id { get; }
         public string Type { get; }
-        public long Version { get; }
+        public Version Version { get; }
         public StreamReadStatus StreamReadStatus { get; }
         public ReadDirection ReadDirection { get; }
         public CosmosEvent[] Events { get; }
         public long LastEventNumber { get; }
         public long NextEventNumber { get; }
 
-        private CosmosStream(string id, string type, long version, StreamReadStatus streamReadStatus,
+        private CosmosStream(string id, string type, Version version, StreamReadStatus streamReadStatus,
             ReadDirection readDirection, CosmosEvent[] events)
         {
             Id = id;
@@ -30,7 +31,7 @@ namespace ImGalaxy.ES.CosmosDB
             LastEventNumber = Events.Length;
             NextEventNumber = LastEventNumber + 1;
         }
-        public static CosmosStream Create(string id, string type, long version, StreamReadStatus streamReadStatus,
+        public static CosmosStream Create(string id, string type, Version version, StreamReadStatus streamReadStatus,
             ReadDirection readDirection, CosmosEvent[] events) =>
             new CosmosStream(id, type, version, streamReadStatus, readDirection, events);
 
@@ -40,7 +41,7 @@ namespace ImGalaxy.ES.CosmosDB
         public CosmosStream AppendEvents(IEnumerable<CosmosEvent> cosmosEvents) =>
              new CosmosStream(this.Id, this.Type, this.Version, this.StreamReadStatus, this.ReadDirection, cosmosEvents.ToArray());
 
-        public CosmosStream ChangeVersion(long version) =>
+        public CosmosStream ChangeVersion(Version version) =>
             new CosmosStream(this.Id, this.Type, version, this.StreamReadStatus, this.ReadDirection, this.Events);
 
 

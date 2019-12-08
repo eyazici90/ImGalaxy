@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.InMemory
 {
@@ -54,7 +55,7 @@ namespace ImGalaxy.ES.InMemory
         }
 
 
-        public async Task<IExecutionResult> Save<T>(string identifer, long version, StateBase<T>.Result update) where T : class, IAggregateRootState<T>
+        public async Task<IExecutionResult> Save<T>(string identifer, Version version, StateBase<T>.Result update) where T : class, IAggregateRootState<T>
         {
             InMemoryEventData[] changes = update.Events
                                            .Select(@event => new InMemoryEventData(
