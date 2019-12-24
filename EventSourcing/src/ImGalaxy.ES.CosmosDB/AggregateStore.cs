@@ -6,7 +6,7 @@ using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public class AggregateStore :  AggregateStoreBase, IAggregateStore
+    public class AggregateStore : AggregateStoreBase, IAggregateStore
     {
         private readonly IAggregateStoreDependencies _aggregateStoreDependencies;
         public AggregateStore(IAggregateStoreDependencies dependencies)
@@ -39,18 +39,7 @@ namespace ImGalaxy.ES.CosmosDB
         public async Task<IExecutionResult> Save<T>(string identifer, Version version, StateBase<T>.Result update) where T : class, IAggregateRootState<T>
         {
             CosmosEventData[] changes = update.Events
-                                            .Select(@event => new CosmosEventData(
-                                                Guid.NewGuid().ToString(),
-                                                @event.GetType().TypeQualifiedName(),
-                                                @event,
-                                                   new EventMetadata
-                                                   {
-                                                       TimeStamp = DateTime.Now,
-                                                       AggregateType = update.State.GetType().Name,
-                                                       AggregateAssemblyQualifiedName = update.State.GetType().AssemblyQualifiedName,
-                                                       IsSnapshot = false
-                                                   }
-                                                )).ToArray();
+                                              .ToCosmosEventData(update.State.GetType());
 
             return await AppendToStreamInternalAsync(_aggregateStoreDependencies.StreamNameProvider.GetStreamName(update.State, identifer),
               version, changes);
@@ -58,19 +47,9 @@ namespace ImGalaxy.ES.CosmosDB
 
         public async Task<IExecutionResult> Save(Aggregate aggregate)
         {
-            CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
-                                           .Select(@event => new CosmosEventData(
-                                               Guid.NewGuid().ToString(),
-                                               @event.GetType().TypeQualifiedName(),
-                                               @event,
-                                                  new EventMetadata
-                                                  {
-                                                      TimeStamp = DateTime.Now,
-                                                      AggregateType = aggregate.Root.GetType().Name,
-                                                      AggregateAssemblyQualifiedName = aggregate.Root.GetType().AssemblyQualifiedName,
-                                                      IsSnapshot = false
-                                                  }
-                                               )).ToArray();
+            CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker)
+                                                                            .GetEvents()
+                                                                            .ToCosmosEventData(aggregate.Root.GetType());
 
             return await AppendToStreamInternalAsync(_aggregateStoreDependencies.StreamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier),
               aggregate.ExpectedVersion, changes);
