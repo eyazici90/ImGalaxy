@@ -6,16 +6,16 @@ namespace ImGalaxy.ES.Core
     public abstract class CommandHandlerBase<TAggregateRoot, TKey>
         where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot
     {
-        public readonly IUnitOfWork _unitOfWork;
-        public readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
+        public IUnitOfWork UnitOfWork { get; }
+        public IAggregateRootRepository<TAggregateRoot> RootRepository { get; }
         public CommandHandlerBase(IUnitOfWork unitOfWork, IAggregateRootRepository<TAggregateRoot> rootRepository)
         {
-            _unitOfWork = unitOfWork;
-            _rootRepository = rootRepository;
+            UnitOfWork = unitOfWork;
+            RootRepository = rootRepository;
         }
         public virtual async Task<IExecutionResult> AddAsync(Func<Task<TAggregateRoot>> factory, string id) =>
-            await AwaitTaskWithPrePostAction(factory, async root => await _rootRepository.AddAsync(root, id),
-                        async root => await _unitOfWork.SaveChangesAsync());
+            await AwaitTaskWithPrePostAction(factory, async root => await RootRepository.AddAsync(root, id),
+                        async root => await UnitOfWork.SaveChangesAsync());
 
      
         public virtual async Task<IExecutionResult> UpdateAsync(TKey id, Func<TAggregateRoot, Task> when) =>
@@ -26,7 +26,7 @@ namespace ImGalaxy.ES.Core
                 return existingRoot.Value;
             },
             async a => await when(a),
-            async root => await _unitOfWork.SaveChangesAsync());
+            async root => await UnitOfWork.SaveChangesAsync());
 
 
         private async Task<IExecutionResult> AwaitTaskWithPrePostAction(Func<Task<TAggregateRoot>> preAction,
@@ -41,7 +41,7 @@ namespace ImGalaxy.ES.Core
 
             return ExecutionResult.Success;
         }
-        private async Task<Optional<TAggregateRoot>> FindByIdAsync(TKey id) => await _rootRepository.GetAsync(id.ToString()); 
+        private async Task<Optional<TAggregateRoot>> FindByIdAsync(TKey id) => await RootRepository.GetAsync(id.ToString()); 
 
     }
 }
