@@ -6,12 +6,14 @@ using System.Threading;
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public static class AsyncStreamLockers
+    internal static class AsyncStreamLockers
     {
-        public static ConcurrentDictionary<string, SemaphoreSlim> Lockers { get; } 
-            = new ConcurrentDictionary<string, SemaphoreSlim>();
+        internal static ConcurrentDictionary<string, SemaphoreSlim> Lockers => _lazyLockers.Value;
+        
+        private static Lazy<ConcurrentDictionary<string, SemaphoreSlim>> _lazyLockers =
+            new Lazy<ConcurrentDictionary<string, SemaphoreSlim>>();
 
-        public static SemaphoreSlim Get(string key)=>
+        internal static SemaphoreSlim Get(string key) =>
             Lockers.GetOrAdd(key, _ => new SemaphoreSlim(1, 1));
     }
 }
