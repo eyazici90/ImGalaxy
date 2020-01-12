@@ -36,7 +36,7 @@ namespace ImGalaxy.ES.CosmosDB.Tests.Connection
             _fakeCarId = Guid.NewGuid().ToString();
 
             SeedCar().ConfigureAwait(false)
-                .GetAwaiter().GetResult();
+                .GetAwaiter().GetResult(); 
         }
 
         private async Task SeedCar()

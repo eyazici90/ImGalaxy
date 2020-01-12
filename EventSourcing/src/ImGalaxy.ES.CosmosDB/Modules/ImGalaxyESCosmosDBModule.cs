@@ -1,4 +1,5 @@
 ﻿using ImGalaxy.ES.Core;
+using ImGalaxy.ES.CosmosDB.Internal;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace ImGalaxy.ES.CosmosDB.Modules
 {
     public static class ImGalaxyESCosmoStoreModule
-    { 
+    {
         public static IServiceCollection AddImGalaxyESCosmosDBModule(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
            services.With(s =>
            {
@@ -20,11 +21,13 @@ namespace ImGalaxy.ES.CosmosDB.Modules
                 .RegisterProviders()
                 .RegisterChangeTracker()
                 .RegisterAggregateStore()
+                .RegisterOperations()
                 .RegisterRepositories()
                 .RegisterSnapshotableRepositories(configs)
                 .RegisterUnitOfWork()
                 .RegisterCosmosDbConnection()
-                .RegisterCosmosClient(); 
+                .RegisterCosmosClient();
+
            });
 
 
@@ -53,7 +56,7 @@ namespace ImGalaxy.ES.CosmosDB.Modules
            services.AddSingleton<ICosmosDBConnection, CosmosDBConnection>();
 
         private static IServiceCollection RegisterCosmosClient(this IServiceCollection services) =>
-              services.AddSingleton<IDocumentClient>(ctx => 
+              services.AddSingleton<IDocumentClient>(ctx =>
               {
                   var confs = ctx.GetRequiredService<ICosmosDBConfigurations>();
 
@@ -63,6 +66,15 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
         private static IServiceCollection RegisterAggregateStore(this IServiceCollection services) =>
               services.AddTransient<IAggregateStore, AggregateStore>();
+
+        private static IServiceCollection RegisterOperations(this IServiceCollection services)
+        {
+            services.AddTransient<OperationFactory>(p => p.GetService);
+
+            services.AddSingleton<IOperationDispatcher, OperationDispatcher>();
+             
+            return services;
+        }
 
         public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider)
         {
@@ -81,6 +93,6 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
             return provider;
         }
-        
+
     }
 }

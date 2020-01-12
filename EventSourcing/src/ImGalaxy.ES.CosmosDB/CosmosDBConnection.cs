@@ -1,5 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
+using ImGalaxy.ES.CosmosDB.Internal;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using System;
@@ -38,7 +39,7 @@ namespace ImGalaxy.ES.CosmosDB
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion,
           params CosmosEventData[] events)
         {
-            var locker = AsyncStreamLockers.Get(streamId);
+            var locker = AsyncStreamLockers.Get(streamId).SemaphoreSlim;
 
             await locker.LockAsync(async () =>
                 await AppendToStreamInternalAsync(streamId, expectedVersion, events)
