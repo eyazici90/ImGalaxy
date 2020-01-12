@@ -1,5 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Internal;
+using ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,8 +72,8 @@ namespace ImGalaxy.ES.CosmosDB.Modules
         {
             services.AddTransient<OperationFactory>(p => p.GetService);
 
-            services.AddSingleton<IOperationDispatcher, OperationDispatcher>();
-             
+            services.AddSingleton<IOperationDispatcher, OperationDispatcher>(); 
+
             return services;
         }
 

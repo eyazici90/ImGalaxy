@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB.Internal
 {
-    internal interface IOperationDispatcher
+    public interface IOperationDispatcher
     {
-        Task<IExecutionResult> Dispatch<TOperation>(TOperation operation); 
+        IExecutionResult RegisterHandler<TOperation>(Func<object> handler);
+
+        IExecutionResult RegisterPipeline<TOperation>(Func<object> handler);
+
+        Task<IExecutionResult> Dispatch<TOperation>(TOperation operation);
+
+        Task<TResult> Dispatch<TOperation, TResult>(TOperation operation);
+
+        Task<IExecutionResult> Dispatch(object operation);
     }
 }

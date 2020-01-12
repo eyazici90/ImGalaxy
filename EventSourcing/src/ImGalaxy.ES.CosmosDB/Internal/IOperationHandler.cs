@@ -4,8 +4,16 @@ using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB.Internal
 {
-    internal interface IOperationHandler<TOperation>
+    internal interface IOperationHandler<TOperation,  TResult> 
     {
-        Task<IExecutionResult> Handle(TOperation operation, CancellationToken cancellationToken = default);
+        Task<TResult> Handle(TOperation operation, CancellationToken cancellationToken = default);
+    } 
+
+    internal interface IOperationHandler<TOperation> : IOperationHandler<TOperation, IExecutionResult>
+    { 
+    }
+
+    internal interface IOperationHandler : IOperationHandler<object>
+    {
     }
 }

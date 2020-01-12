@@ -27,7 +27,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal
             return asyncSemaphoreSlimWrapper;
         }
          
-        internal static void Release(AsyncSemaphoreSlimWrapper asyncSemaphoreSlimWrapper)
+        internal static void Release(ref AsyncSemaphoreSlimWrapper asyncSemaphoreSlimWrapper)
         {
             asyncSemaphoreSlimWrapper.DecreaseRef();
 
