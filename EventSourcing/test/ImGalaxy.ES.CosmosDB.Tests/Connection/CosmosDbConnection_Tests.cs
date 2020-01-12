@@ -57,9 +57,9 @@ namespace ImGalaxy.ES.CosmosDB.Tests.Connection
             var existingCar = await _aggregateRootRepository.GetAsync(_fakeCarId);
 
 
-            var taskList = new Task[100];
+            var taskList = new Task[30];
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 30; i++)
             {
                 taskList[i] = Task.Run(() =>
                 {

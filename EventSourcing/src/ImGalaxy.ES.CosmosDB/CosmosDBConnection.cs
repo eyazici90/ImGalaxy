@@ -39,29 +39,20 @@ namespace ImGalaxy.ES.CosmosDB
 
             _operationDispatcher.RegisterPipeline<AppendToStreamAsync>(() => new AppendToStreamAsyncPipeline());
         }
+        public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion, params CosmosEventData[] events) =>
+            await _operationDispatcher.Dispatch(new AppendToStreamAsync(streamId, expectedVersion, events));
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamId, long start, int count) =>
             await ReadStreamWithEventsByDirection(streamId, start, count,
                   id => GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
-
-
+         
         public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count) =>
            await ReadStreamWithEventsByDirection(streamId, start, count,
                   id => GetEventDocumentsBackward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
-
-
-        public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion,
-          params CosmosEventData[] events) =>
-           await _operationDispatcher.Dispatch(new AppendToStreamAsync(streamId, expectedVersion, events));
-
-
+         
         private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string, IEnumerable<EventDocument>> eventFunc) =>
             await _operationDispatcher.Dispatch<ReadStreamWithEventsByDirection, Optional<CosmosStream>>
                 (new ReadStreamWithEventsByDirection(streamId, start, count, eventFunc));
-         
-        private async Task<Optional<StreamDocument>> GetStreamDocumentByIdAsync(string id) =>
-            await _operationDispatcher.Dispatch<GetStreamDocumentByIdAsync, Optional<StreamDocument>>
-                (new GetStreamDocumentByIdAsync(id));
 
         private IEnumerable<EventDocument> GetEventDocumentsForward(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
            _operationDispatcher
@@ -74,8 +65,6 @@ namespace ImGalaxy.ES.CosmosDB
                 .OrderByDescending(e => e.Position)
                 .Take(count)
                 .ToList()
-                .Skip(start - 1);
-
-
+                .Skip(start - 1); 
     }
 }
