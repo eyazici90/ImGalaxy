@@ -2,10 +2,7 @@
 using ImGalaxy.ES.TestApp.Domain.Cars;
 using ImGalaxy.ES.TestApp.Infrastructure.Cars;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.DependencyInjection; 
 using TestApp.Application.Commands.Handlers;
 
 namespace ImGalaxy.ES.CosmosDB.Tests
@@ -21,11 +18,11 @@ namespace ImGalaxy.ES.CosmosDB.Tests
                          configs.EventCollectionName = "Events";
                          configs.StreamCollectionName = "Streams";
                          configs.SnapshotCollectionName = "Snapshots";
-                         configs.EndpointUri = "https://localhost:8081";
-                         configs.PrimaryKey = "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==";
+                         configs.EndpointUri = ".";
+                         configs.PrimaryKey = ".";
                          configs.ReadBatchSize = 1000;
                          configs.IsSnapshottingOn = true;
-                         configs.OfferThroughput = 10000;
+                         configs.OfferThroughput = 400;
                      });
     }
 }

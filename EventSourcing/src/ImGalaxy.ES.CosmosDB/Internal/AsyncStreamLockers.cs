@@ -11,7 +11,29 @@ namespace ImGalaxy.ES.CosmosDB.Internal
         private static Lazy<ConcurrentDictionary<string, AsyncSemaphoreSlimWrapper>> _lazyLockers =
             new Lazy<ConcurrentDictionary<string, AsyncSemaphoreSlimWrapper>>();
 
-        internal static AsyncSemaphoreSlimWrapper Get(string key) =>
-            Lockers.GetOrAdd(key, _ => new AsyncSemaphoreSlimWrapper(new SemaphoreSlim(1, 1)));
+        internal static AsyncSemaphoreSlimWrapper GetOrCreate(string key)
+        {
+            AsyncSemaphoreSlimWrapper asyncSemaphoreSlimWrapper;
+
+            if (Lockers.TryGetValue(key, out asyncSemaphoreSlimWrapper))
+                asyncSemaphoreSlimWrapper.IncreaseRef();
+
+            else
+            {
+                asyncSemaphoreSlimWrapper = new AsyncSemaphoreSlimWrapper(key, new SemaphoreSlim(1, 1));
+                Lockers.TryAdd(key, asyncSemaphoreSlimWrapper);
+            }
+
+            return asyncSemaphoreSlimWrapper;
+        }
+         
+        internal static void Release(AsyncSemaphoreSlimWrapper asyncSemaphoreSlimWrapper)
+        {
+            asyncSemaphoreSlimWrapper.DecreaseRef();
+
+            if (asyncSemaphoreSlimWrapper.RefCount <= 0)
+                Lockers.TryRemove(asyncSemaphoreSlimWrapper.Key, out var removed);
+        }
+            
     }
 }

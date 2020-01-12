@@ -39,11 +39,13 @@ namespace ImGalaxy.ES.CosmosDB
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion,
           params CosmosEventData[] events)
         {
-            var locker = AsyncStreamLockers.Get(streamId).SemaphoreSlim;
+            var asyncLockerWrapper = AsyncStreamLockers.GetOrCreate(streamId);
 
-            await locker.LockAsync(async () =>
+            await asyncLockerWrapper.SemaphoreSlim.LockAsync(async () =>
                 await AppendToStreamInternalAsync(streamId, expectedVersion, events)
             );
+
+            AsyncStreamLockers.Release(asyncLockerWrapper);
 
             return ExecutionResult.Success;
         }

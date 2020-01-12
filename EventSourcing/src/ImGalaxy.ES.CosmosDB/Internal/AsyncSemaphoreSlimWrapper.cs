@@ -5,12 +5,15 @@ using System.Threading;
 
 namespace ImGalaxy.ES.CosmosDB.Internal
 {
-    internal class AsyncSemaphoreSlimWrapper
+    internal struct AsyncSemaphoreSlimWrapper
     {
+        internal string Key { get; }
         internal SemaphoreSlim SemaphoreSlim { get; }
         internal int RefCount { get; private set; }
-        internal AsyncSemaphoreSlimWrapper(SemaphoreSlim semaphoreSlim)
+        internal AsyncSemaphoreSlimWrapper(string key,
+            SemaphoreSlim semaphoreSlim)
         {
+            Key = key;
             SemaphoreSlim = semaphoreSlim;
             RefCount = 1;
         }
