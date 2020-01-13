@@ -50,8 +50,8 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
                 var existingStream = streamDoc.Value.ToCosmosStream();
 
                 existingStream.ThrowsIf(stream => operation.ExpectedVersion.Value != stream.Version.Value && operation.ExpectedVersion != ExpectedVersion.SafeStream,
-                                           new WrongExpectedStreamVersionException(operation.ExpectedVersion.ToString(),
-                                           existingStream.Version.ToString()));
+                                           new WrongExpectedStreamVersionException(operation.ExpectedVersion.Value.ToString(),
+                                           existingStream.Version.Value.ToString()));
 
                 var streamEvents = await _operationDispatcher
                     .Dispatch<GetEventDocumentsForward, IEnumerable<EventDocument>>
