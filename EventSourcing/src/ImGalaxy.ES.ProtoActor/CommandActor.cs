@@ -12,6 +12,8 @@ namespace ImGalaxy.ES.ProtoActor
     {   
         public IAggregateStore AggregateStore { get; }
 
+        public string ActorId { get; private set; }
+
         public CommandActor(IAggregateStore aggregateStore)
         {
             AggregateStore = aggregateStore; 
@@ -23,6 +25,7 @@ namespace ImGalaxy.ES.ProtoActor
 
         private async Task RecoverStateAsync(IContext ctx)
         {
+            ActorId = ctx.Self.Id;
             var state = await AggregateStore.Load<TState>(ctx.Self.Id);
             State = state.Root as TState;
         } 
