@@ -15,8 +15,7 @@ namespace ImGalaxy.ES.Core
         }
         public virtual async Task<IExecutionResult> AddAsync(Func<Task<TAggregateRoot>> factory, string id) =>
             await AwaitTaskWithPrePostAction(factory, async root => await RootRepository.AddAsync(root, id),
-                        async root => await UnitOfWork.SaveChangesAsync());
-
+                        async root => await UnitOfWork.SaveChangesAsync()); 
      
         public virtual async Task<IExecutionResult> UpdateAsync(TKey id, Func<TAggregateRoot, Task> when) =>
             await AwaitTaskWithPrePostAction(async () =>
@@ -26,8 +25,7 @@ namespace ImGalaxy.ES.Core
                 return existingRoot.Value;
             },
             async a => await when(a),
-            async root => await UnitOfWork.SaveChangesAsync());
-
+            async root => await UnitOfWork.SaveChangesAsync()); 
 
         private async Task<IExecutionResult> AwaitTaskWithPrePostAction(Func<Task<TAggregateRoot>> preAction,
             Func<TAggregateRoot, Task> realAction, 

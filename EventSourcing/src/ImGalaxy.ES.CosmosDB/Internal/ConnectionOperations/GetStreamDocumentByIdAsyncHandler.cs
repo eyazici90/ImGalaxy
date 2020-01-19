@@ -19,7 +19,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             _cosmosClient = cosmosClient;
             _cosmosDBConfigurations = cosmosDBConfigurations;
-        } 
+        }
 
         async Task<Optional<StreamDocument>> IOperationHandler<GetStreamDocumentByIdAsync, Optional<StreamDocument>>.Handle(GetStreamDocumentByIdAsync operation, CancellationToken cancellationToken)
         {

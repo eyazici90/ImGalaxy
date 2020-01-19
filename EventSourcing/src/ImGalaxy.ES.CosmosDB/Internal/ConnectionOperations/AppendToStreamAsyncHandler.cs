@@ -28,6 +28,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
         }
 
+
         async Task<IExecutionResult> IOperationHandler<AppendToStreamAsync, IExecutionResult>.Handle(AppendToStreamAsync operation, CancellationToken cancellationToken)
         {
             var id = CosmosStreamNameStrategy.GetStreamIdentifier(operation.StreamId);
@@ -84,6 +85,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
             }
 
             return ExecutionResult.Success;
-        }
+        } 
+
     }
 }

@@ -10,6 +10,6 @@ namespace ImGalaxy.ES.CosmosDB.Internal
 
     internal interface IOperationPipeline<TOperation, TResult>
     {
-        Task<TResult> Handle(TOperation operation, Func<TOperation, Task<TResult>> next);
+        Task<TResult> Handle(TOperation operation, Func<TOperation, Task<TResult>> next); 
     }
 }

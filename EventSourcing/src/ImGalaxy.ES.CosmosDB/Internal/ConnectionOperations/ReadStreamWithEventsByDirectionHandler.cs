@@ -10,16 +10,15 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 {
     internal class ReadStreamWithEventsByDirectionHandler : IOperationHandler<ReadStreamWithEventsByDirection, Optional<CosmosStream>>
     {
-        private readonly IOperationDispatcher _operationDispatcher;
-        public ReadStreamWithEventsByDirectionHandler(IOperationDispatcher operationDispatcher) =>
-            _operationDispatcher = operationDispatcher; 
+        private readonly Func<GetStreamDocumentByIdAsync, Task<Optional<StreamDocument>>> _getStreamDocumentByIdAsync;
+        public ReadStreamWithEventsByDirectionHandler(Func<GetStreamDocumentByIdAsync, Task<Optional<StreamDocument>>> getStreamDocumentByIdAsync) =>
+            _getStreamDocumentByIdAsync = getStreamDocumentByIdAsync; 
 
         async Task<Optional<CosmosStream>> IOperationHandler<ReadStreamWithEventsByDirection, Optional<CosmosStream>>.Handle(ReadStreamWithEventsByDirection operation, CancellationToken cancellationToken)
         {
             var id = CosmosStreamNameStrategy.GetStreamIdentifier(operation.StreamId);
 
-            var existingStream = await _operationDispatcher
-                .Dispatch<GetStreamDocumentByIdAsync, Optional<StreamDocument>>(new GetStreamDocumentByIdAsync(id));
+            var existingStream = await _getStreamDocumentByIdAsync(new GetStreamDocumentByIdAsync(id)); 
 
             if (!existingStream.HasValue)
                 return Optional<CosmosStream>.Empty;
