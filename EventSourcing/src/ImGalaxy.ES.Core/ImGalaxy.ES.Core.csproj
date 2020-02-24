@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
     <Copyright>Copyright 2019</Copyright>
     <PackageTags>EventSourcing; ES; CQRS; DDD</PackageTags>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
   </PropertyGroup>
 
 </Project>

@@ -16,7 +16,7 @@ namespace ImGalaxy.ES.CosmosDB
         private readonly IChangeTracker _changeTracker;
         private readonly ICosmosDBClient _cosmosDbClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
-        private readonly IEventSerializer _eventSerializer; 
+        private readonly IEventSerializer _eventSerializer;
         public SnapshotterCosmosDB(IAggregateRootRepository<TAggregateRoot> rootRepository,
             IChangeTracker changeTracker,
             ICosmosDBClient cosmosDbClient,
@@ -27,12 +27,12 @@ namespace ImGalaxy.ES.CosmosDB
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));
             _cosmosDbClient = cosmosDbClient ?? throw new ArgumentNullException(nameof(cosmosDbClient));
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
-            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer)); 
+            _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
         }
-         
+
 
         public bool ShouldTakeSnapshot(Type aggregateType, object @event) =>
-            typeof(ISnapshotable).IsAssignableFrom(aggregateType) 
+            typeof(ISnapshotable).IsAssignableFrom(aggregateType)
                             && _cosmosDBConfigurations.SnapshotStrategy(@event as EventDocument);
 
         public async Task<IExecutionResult> TakeSnapshotAsync(string stream)
@@ -47,7 +47,7 @@ namespace ImGalaxy.ES.CosmosDB
 
             var serializedState = this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot());
 
-            var newSnapshot = new SnapshotDocument(aggregate.Identifier, serializedState, aggregate.ExpectedVersion.ToString(), null, typeof(TSnapshot).TypeQualifiedName());
+            var newSnapshot = new SnapshotDocument(aggregate.Identifier, serializedState, aggregate.ExpectedVersion.Value.ToString(), null, typeof(TSnapshot).TypeQualifiedName());
 
             await _cosmosDbClient.CreateItemAsync(newSnapshot,
                             this._cosmosDBConfigurations.SnapshotCollectionName);
@@ -55,6 +55,6 @@ namespace ImGalaxy.ES.CosmosDB
             return ExecutionResult.Success;
         }
 
-       
+
     }
 }

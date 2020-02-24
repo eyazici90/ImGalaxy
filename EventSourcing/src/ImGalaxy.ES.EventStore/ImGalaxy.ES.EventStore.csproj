@@ -8,7 +8,7 @@
     <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
     <PackageTags>EventSourcing; ES; CQRS; DDD; EventStore</PackageTags>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.4.1</Version>
+    <Version>1.4.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
