@@ -39,7 +39,7 @@ namespace ImGalaxy.ES.TestBase
             ServiceProvider.GetService<T>();
 
         protected virtual T The<T>() =>
-            ServiceProvider.GetService<T>(); 
+            GetService<T>(); 
 
         protected virtual T GetRequiredService<T>() =>
             ServiceProvider.GetRequiredService<T>();
