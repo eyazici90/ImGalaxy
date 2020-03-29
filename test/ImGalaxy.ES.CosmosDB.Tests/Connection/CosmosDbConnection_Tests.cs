@@ -30,9 +30,9 @@ namespace ImGalaxy.ES.CosmosDB.Tests.Connection
         private readonly string _fakeCarId;
         public CosmosDbConnection_Tests()
         {
-            _cosmosDBConnection = GetRequiredService<ICosmosDBConnection>();
-            _aggregateRootRepository = GetRequiredService<IAggregateRootRepository<CarState>>();
-            _streamNameProvider = GetRequiredService<IStreamNameProvider>();
+            _cosmosDBConnection = The<ICosmosDBConnection>();
+            _aggregateRootRepository = The<IAggregateRootRepository<CarState>>();
+            _streamNameProvider = The<IStreamNameProvider>();
             _fakeCarId = Guid.NewGuid().ToString();
 
             SeedCar().ConfigureAwait(false)

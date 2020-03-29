@@ -21,11 +21,11 @@ namespace ImGalaxy.ES.TestApp.Testing
         private readonly ICarPolicy _carPolicy;
         public Repository_Tests()
         {
-            _aggregateRootRepository = GetRequiredService<IAggregateRootRepository<CarState>>();
+            _aggregateRootRepository = The<IAggregateRootRepository<CarState>>();
 
             _fakeCarId = Guid.NewGuid().ToString();
 
-            _carPolicy = GetRequiredService<ICarPolicy>();
+            _carPolicy = The<ICarPolicy>();
 
             SeedCar().ConfigureAwait(false)
                 .GetAwaiter().GetResult();

@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using ImGalaxy.ES.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.TestBase
 {
@@ -11,6 +10,7 @@ namespace ImGalaxy.ES.TestBase
       where TAggregateRootState : class, IAggregateRootState<TAggregateRootState>, IAggregateRoot
     {
         public static CommandScenarioFor<TAggregateRootState> With(TAggregateRootState sut) => new CommandScenarioFor<TAggregateRootState>(sut);
+        public static CommandScenarioFor<TAggregateRootState> With(Task<TAggregateRootState> sut) => With(sut.ConfigureAwait(false).GetAwaiter().GetResult());
         public static CommandScenarioFor<TAggregateRootState> With(Func<TAggregateRootState> sutFactory) => new CommandScenarioFor<TAggregateRootState>(sutFactory);
 
         public readonly Func<TAggregateRootState> _sutFactory;
@@ -59,6 +59,14 @@ namespace ImGalaxy.ES.TestBase
 
             return this;
         }
+        public ICommandScenarioFor<TAggregateRootState> When(Func<TAggregateRootState, Task> command) =>
+            When(state =>
+                command(state)
+                    .ConfigureAwait(false)
+                    .GetAwaiter()
+                    .GetResult());
+
+
         public ICommandScenarioFor<TAggregateRootState> ThenNone()
         {
             _thenEvents = null;

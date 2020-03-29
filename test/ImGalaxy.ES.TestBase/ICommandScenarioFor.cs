@@ -1,7 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
+using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.TestBase
 {
@@ -12,6 +11,7 @@ namespace ImGalaxy.ES.TestBase
         ICommandScenarioFor<TAggregateRootState> Given(params object[] events);
         ICommandScenarioFor<TAggregateRootState> WhenNone();
         ICommandScenarioFor<TAggregateRootState> When(Action<TAggregateRootState> command);
+        ICommandScenarioFor<TAggregateRootState> When(Func<TAggregateRootState, Task> command);
         ICommandScenarioFor<TAggregateRootState> ThenNone();
         ICommandScenarioFor<TAggregateRootState> Then(params object[] events);
         ICommandScenarioFor<TAggregateRootState> Throws(Exception exception);

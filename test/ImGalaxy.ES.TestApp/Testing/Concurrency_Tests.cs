@@ -18,7 +18,7 @@ namespace ImGalaxy.ES.TestApp.Testing
         private readonly IAggregateRootRepository<CarState> _aggregateRootRepository; 
         public Concurrency_Tests()
         {
-            _aggregateRootRepository = GetRequiredService<IAggregateRootRepository<CarState>>();
+            _aggregateRootRepository = The<IAggregateRootRepository<CarState>>();
 
             _fakeCarId = Guid.NewGuid().ToString();
 
