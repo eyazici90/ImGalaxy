@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Authors>Emre Yazici</Authors>
+    <Description>EventSourcing, ES, CQRS, DDD, ProtoActor</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
+    <PackageTags>EventSourcing; ES; CQRS; DDD: Protoactor</PackageTags>
+    <Version>1.2.4</Version>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Proto.Actor" Version="0.2.0" />
+    <PackageReference Include="Proto.Actor.Extensions" Version="0.2.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\ImGalaxy.ES.Core\ImGalaxy.ES.Core.csproj" />
+  </ItemGroup>
+
+</Project>

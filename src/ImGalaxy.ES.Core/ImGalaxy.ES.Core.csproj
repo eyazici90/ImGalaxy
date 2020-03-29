@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Emre Yazici</Authors>
+    <Description>EventSourcing, ES, CQRS, DDD</Description>
+    <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
+    <Copyright>Copyright 2019</Copyright>
+    <PackageTags>EventSourcing; ES; CQRS; DDD</PackageTags>
+    <Version>1.2.3</Version>
+  </PropertyGroup>
+
+</Project>
