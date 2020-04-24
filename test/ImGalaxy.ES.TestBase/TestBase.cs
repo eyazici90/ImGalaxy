@@ -17,10 +17,8 @@ namespace ImGalaxy.ES.TestBase
 
         }
 
-        protected virtual IServiceCollection ConfigureServices(IServiceCollection services)
-        {
-            return services;
-        }
+        protected virtual IServiceCollection ConfigureServices(IServiceCollection services) =>
+            services;
 
         protected virtual void Configure(IServiceProvider app)
         {
@@ -32,7 +30,6 @@ namespace ImGalaxy.ES.TestBase
             return ServiceProvider.GetService<T>();
         }
 
-
         protected virtual T The<T>() =>
                  GetService<T>();
 
@@ -40,14 +37,31 @@ namespace ImGalaxy.ES.TestBase
             ServiceCollection.AddTransient<T>();
 
         protected virtual IServiceCollection UseThe<T>(T valueToSet) where T : class =>
-             ServiceCollection.AddTransient(provider => valueToSet);
+             UseTheInternal(valueToSet, ServiceLifetime.Transient);
+        protected virtual IServiceCollection UseThe<T>(Func<T> valueToSet) where T : class =>
+          UseTheInternal(valueToSet(), ServiceLifetime.Transient);
+        protected virtual IServiceCollection UseThe(Action<IServiceCollection> use)
+        {
+            use(ServiceCollection);
+            return ServiceCollection;
+        }
+
+        private IServiceCollection UseTheInternal<T>(T valueToSet,
+            ServiceLifetime serviceLifetime)
+        {
+            var serviceDescriptor = new ServiceDescriptor(typeof(T),
+                _ => valueToSet,
+                serviceLifetime);
+
+            ServiceCollection.Add(serviceDescriptor);
+
+            return ServiceCollection;
+        }
 
         protected void EnsureContainerInitialized()
         {
             if (ServiceProvider == null)
-            {
                 InitializeContainer();
-            }
         }
 
         private void InitializeContainer()
@@ -55,8 +69,6 @@ namespace ImGalaxy.ES.TestBase
             ServiceProvider = ServiceCollection.BuildServiceProvider();
             Configure(ServiceProvider);
         }
-
-
         public void Dispose()
         {
             Dispose(true);

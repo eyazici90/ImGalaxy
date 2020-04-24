@@ -1,24 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System; 
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.TestBase
 {
-    public abstract class GivenWhenThen : TestBase
+    public abstract class GivenWhenThen : GivenBase
     {
-        public void Given(Action action)
+        private Func<object, Task> _whenLaterResultAsync;
+
+        private Func<Task> _whenLaterAsync;
+
+        public Func<object, Task> WhenResultAction
         {
-            EnsureContainerInitialized();
-
-            action();
+            get { return _whenLaterResultAsync; }
+            set
+            {
+                EnsureContainerInitialized();
+                _whenLaterResultAsync = value;
+            }
         }
-
-        public void Given(Func<Task> givenFunc)
+        public Func<Task> WhenAction
         {
-            Given(() => givenFunc().ConfigureAwait(false).GetAwaiter().GetResult());
+            get { return _whenLaterAsync; }
+            set
+            {
+                EnsureContainerInitialized();
+                _whenLaterAsync = value;
+            }
         }
-
         protected virtual void When(Func<Task> whenFunc)
         {
             EnsureContainerInitialized();
@@ -39,7 +47,6 @@ namespace ImGalaxy.ES.TestBase
                      .GetResult();
         }
 
-
         protected virtual void When<TCommand>(TCommand cmd, Func<TCommand, Task> whenFunc)
         {
             EnsureContainerInitialized();
@@ -48,6 +55,15 @@ namespace ImGalaxy.ES.TestBase
              .ConfigureAwait(false)
              .GetAwaiter()
              .GetResult();
-        } 
+        }
+        protected virtual void WhenLater(Func<Task> whenLaterFunc)
+        {
+            this.WhenAction = async () => await whenLaterFunc();
+        }
+        protected virtual void WhenLater<TCommand>(TCommand cmd, Func<TCommand, Task> whenLaterFunc)
+        {
+            this.WhenResultAction = async c => await whenLaterFunc(cmd);
+        }
+
     }
 }
