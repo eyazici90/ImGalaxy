@@ -1,12 +1,8 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Internal;
-using ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB.Modules
@@ -57,11 +53,11 @@ namespace ImGalaxy.ES.CosmosDB.Modules
            services.AddSingleton<ICosmosDBConnection, CosmosDBConnection>();
 
         private static IServiceCollection RegisterCosmosClient(this IServiceCollection services) =>
-              services.AddSingleton<IDocumentClient>(ctx =>
+              services.AddSingleton(ctx =>
               {
                   var confs = ctx.GetRequiredService<ICosmosDBConfigurations>();
 
-                  return new DocumentClient(new Uri(confs.EndpointUri), confs.PrimaryKey);
+                  return new CosmosClient(confs.EndpointUri, confs.PrimaryKey);
               })
               .AddSingleton<ICosmosDBClient, CosmosDBClient>();
 
@@ -72,12 +68,14 @@ namespace ImGalaxy.ES.CosmosDB.Modules
         {
             services.AddTransient<OperationFactory>(p => p.GetService);
 
-            services.AddSingleton<IOperationDispatcher, OperationDispatcher>(); 
+            services.AddSingleton<IOperationDispatcher, OperationDispatcher>();
 
             return services;
         }
 
-        public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider)
+        [Obsolete]
+        public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider,
+            string partitionKeyPath)
         {
             var confs = provider.GetRequiredService<ICosmosDBConfigurations>();
 
@@ -85,12 +83,12 @@ namespace ImGalaxy.ES.CosmosDB.Modules
 
             await cosmosClient.CreateDatabaseIfNotExistsAsync();
 
-            await cosmosClient.CreateCollectionIfNotExistsAsync(confs.StreamCollectionName);
+            await cosmosClient.CreateContainerIfNotExistsAsync(confs.StreamCollectionName, partitionKeyPath);
 
-            await cosmosClient.CreateCollectionIfNotExistsAsync(confs.EventCollectionName);
+            await cosmosClient.CreateContainerIfNotExistsAsync(confs.EventCollectionName, partitionKeyPath);
 
             if (confs.IsSnapshottingOn)
-                await cosmosClient.CreateCollectionIfNotExistsAsync(confs.SnapshotCollectionName);
+                await cosmosClient.CreateContainerIfNotExistsAsync(confs.SnapshotCollectionName, partitionKeyPath);
 
             return provider;
         }

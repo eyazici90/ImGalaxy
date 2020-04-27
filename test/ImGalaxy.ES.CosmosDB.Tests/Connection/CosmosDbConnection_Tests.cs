@@ -18,10 +18,7 @@ namespace ImGalaxy.ES.CosmosDB.Tests.Connection
     {
         protected override IServiceCollection ConfigureServices(IServiceCollection services) =>
           ImGalaxyCosmosDBTestConfigurator.Configure(services);
-
-        protected override void Configure(IServiceProvider app) =>
-            app.UseGalaxyESCosmosDBModule().ConfigureAwait(false)
-                .GetAwaiter().GetResult();
+         
 
 
         private readonly ICosmosDBConnection _cosmosDBConnection;

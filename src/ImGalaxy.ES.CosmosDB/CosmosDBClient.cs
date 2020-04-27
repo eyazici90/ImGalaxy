@@ -1,80 +1,53 @@
-﻿using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+﻿using Microsoft.Azure.Cosmos;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB
 {
     public class CosmosDBClient : ICosmosDBClient
     {
-        private readonly IDocumentClient _client;
+        private readonly CosmosClient _client;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
-        public CosmosDBClient(IDocumentClient client, ICosmosDBConfigurations cosmosDBConfigurations)
+        public CosmosDBClient(CosmosClient client,
+            ICosmosDBConfigurations cosmosDBConfigurations)
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
         }
-             
-        public async Task CreateItemAsync<T>(T item, string collectionName) =>
-         await _client.CreateDocumentAsync(
-            UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId, collectionName), item as object);
 
-        public IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string collectionId) =>
-          _client.CreateDocumentQuery<T>(
-              UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId, collectionId),
-              new FeedOptions { EnableCrossPartitionQuery = true, MaxItemCount = _cosmosDBConfigurations.ReadBatchSize })
-                 .Where(predicate);
+        public async Task CreateItemAsync<T>(T item, string containerName) =>
+            await GetContainer(containerName).CreateItemAsync(item);
 
-        public async Task UpdateItemAsync<T>(string id, string collectionName, T item, string etag)
+        public IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string containerName) =>
+              GetContainer(containerName).GetItemLinqQueryable<T>(true)
+                                         .Where(predicate);
+
+        private Container GetContainer(string containerName) =>
+          _client.GetContainer(_cosmosDBConfigurations.DatabaseId, containerName);
+
+        public async Task UpdateItemAsync<T>(string id, string containerName, T item, string etag)
         {
-            RequestOptions requestOptions = null;
+            ItemRequestOptions requestOptions = null;
             if (!string.IsNullOrEmpty(etag))
-                requestOptions = new RequestOptions
-                {
-                    AccessCondition = new AccessCondition { Condition = etag, Type = AccessConditionType.IfMatch }
-                };
+                requestOptions = new ItemRequestOptions { IfMatchEtag = etag };
 
-            await _client.ReplaceDocumentAsync(UriFactory.CreateDocumentUri(_cosmosDBConfigurations.DatabaseId,
-                    collectionName, id), item, requestOptions);
-        }
-            
-
-        public async Task CreateDatabaseIfNotExistsAsync()
-        {
-            try
-            {
-                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_cosmosDBConfigurations.DatabaseId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    await _client.CreateDatabaseAsync(new Database { Id = _cosmosDBConfigurations.DatabaseId });
-                else
-                    throw;
-            }
+            await GetContainer(containerName).ReplaceItemAsync(item, id, requestOptions: requestOptions);
         }
 
-        public async Task CreateCollectionIfNotExistsAsync(string collectionId)
+
+        public async Task CreateDatabaseIfNotExistsAsync() =>
+            await _client.CreateDatabaseIfNotExistsAsync(_cosmosDBConfigurations.DatabaseId);
+
+
+        public async Task CreateContainerIfNotExistsAsync(string containerName, string partitionPath)
         {
-            try
-            {
-                await _client.ReadDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(_cosmosDBConfigurations.DatabaseId
-                            , collectionId));
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    await _client.CreateDocumentCollectionAsync(
-                        UriFactory.CreateDatabaseUri(_cosmosDBConfigurations.DatabaseId),
-                        new DocumentCollection { Id = collectionId },
-                        new RequestOptions { OfferThroughput = _cosmosDBConfigurations.OfferThroughput });
-                else
-                    throw;
-            }
+            var database = _client.GetDatabase(_cosmosDBConfigurations.DatabaseId);
+
+            ContainerProperties containerProperties = new ContainerProperties { Id = containerName };
+
+            await database.CreateContainerIfNotExistsAsync(containerProperties);
         }
     }
 }

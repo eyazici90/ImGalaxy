@@ -1,10 +1,8 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using Microsoft.Azure.Documents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Azure.Cosmos;
+using System; 
+using System.Linq; 
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB
@@ -46,7 +44,7 @@ namespace ImGalaxy.ES.CosmosDB
 
                 return new Optional<SnapshotDocument>(document);
             }
-            catch (DocumentClientException)
+            catch (CosmosException)
             {
                 return Optional<SnapshotDocument>.Empty;
             }

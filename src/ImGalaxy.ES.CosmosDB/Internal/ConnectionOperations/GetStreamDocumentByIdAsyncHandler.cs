@@ -1,10 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using Microsoft.Azure.Documents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.Azure.Cosmos;
+using System.Linq; 
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -31,7 +28,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
                 return new Optional<StreamDocument>(document);
             }
-            catch (DocumentClientException)
+            catch (CosmosException)
             {
                 return Optional<StreamDocument>.Empty;
             }

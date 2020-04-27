@@ -11,9 +11,9 @@
     <Version>2.0.0</Version>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.10.1" />
-    <PackageReference Include="MediatR" Version="8.0.1" />
+  <ItemGroup> 
+    <PackageReference Include="MediatR" Version="8.0.1" /> 
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.8.0" />
   </ItemGroup>
 
   <ItemGroup>

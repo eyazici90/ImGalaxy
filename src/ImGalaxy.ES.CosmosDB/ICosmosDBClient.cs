@@ -1,9 +1,6 @@
-﻿using Microsoft.Azure.Documents.Client;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.CosmosDB
@@ -15,6 +12,6 @@ namespace ImGalaxy.ES.CosmosDB
         Task UpdateItemAsync<T>(string id, string collectionName,
             T item, string etag);
         Task CreateDatabaseIfNotExistsAsync();
-        Task CreateCollectionIfNotExistsAsync(string collectionId);
+        Task CreateContainerIfNotExistsAsync(string containerName, string partitionPath);
     }
 }
