@@ -15,7 +15,15 @@ namespace ImGalaxy.ES.Core
             }
             return ReferenceEquals(left, null) || left.Equals(right);
         }
+        public static bool operator ==(ValueObject left, ValueObject right)
+        {
+            return EqualOperator(left, right);
+        }
 
+        public static bool operator !=(ValueObject left, ValueObject right)
+        {
+            return NotEqualOperator(left, right);
+        }
         protected static bool NotEqualOperator(ValueObject left, ValueObject right)
         {
             return !(EqualOperator(left, right));
@@ -29,9 +37,11 @@ namespace ImGalaxy.ES.Core
             {
                 return false;
             }
+
             ValueObject other = (ValueObject)obj;
             IEnumerator<object> thisValues = GetAtomicValues().GetEnumerator();
             IEnumerator<object> otherValues = other.GetAtomicValues().GetEnumerator();
+
             while (thisValues.MoveNext() && otherValues.MoveNext())
             {
                 if (ReferenceEquals(thisValues.Current, null) ^ ReferenceEquals(otherValues.Current, null))
@@ -57,5 +67,7 @@ namespace ImGalaxy.ES.Core
         {
             return this.MemberwiseClone() as ValueObject;
         }
+
+
     }
 }
