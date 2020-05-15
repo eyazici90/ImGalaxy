@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/eyazici90/ImGalaxy</PackageProjectUrl>
     <PackageTags>EventSourcing; ES; CQRS; DDD: Protoactor</PackageTags>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
   </PropertyGroup>
 
 
