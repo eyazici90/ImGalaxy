@@ -1,13 +1,13 @@
 ﻿using ImGalaxy.ES.Core;
+using ImGalaxy.ES.CosmosDB;
 using ImGalaxy.ES.CosmosDB.Internal;
-using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Azure.Cosmos; 
 using System;
 using System.Threading.Tasks;
 
-namespace ImGalaxy.ES.CosmosDB.Modules
+namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ImGalaxyESCosmoStoreModule
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddImGalaxyESCosmosDBModule(this IServiceCollection services, Action<ICosmosDBConfigurations> configurations) =>
            services.With(s =>

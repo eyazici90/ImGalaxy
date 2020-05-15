@@ -31,11 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.InMemory", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Projector", "src\ImGalaxy.ES.Projector\ImGalaxy.ES.Projector.csproj", "{28B6F7D7-F337-4D43-91CE-48B15CE41A7C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Projector.CosmosDB", "src\ImGalaxy.ES.Projector.CosmosDB\ImGalaxy.ES.Projector.CosmosDB.csproj", "{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Projector.Tests", "test\ImGalaxy.ES.Projector.Tests\ImGalaxy.ES.Projector.Tests.csproj", "{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGalaxy.ES.Projector.CosmosDB.Tests", "test\ImGalaxy.ES.Projector.CosmosDB.Tests\ImGalaxy.ES.Projector.CosmosDB.Tests.csproj", "{41A6D823-D35E-43E8-81B2-912C28292FF0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,18 +87,10 @@ Global
 		{28B6F7D7-F337-4D43-91CE-48B15CE41A7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28B6F7D7-F337-4D43-91CE-48B15CE41A7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28B6F7D7-F337-4D43-91CE-48B15CE41A7C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41A6D823-D35E-43E8-81B2-912C28292FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41A6D823-D35E-43E8-81B2-912C28292FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41A6D823-D35E-43E8-81B2-912C28292FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41A6D823-D35E-43E8-81B2-912C28292FF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -120,9 +108,7 @@ Global
 		{2B98DA69-74C1-4661-A30A-A6DC3A17E777} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{7B0CD614-B144-4840-8C6F-0BB3CF7AC300} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{28B6F7D7-F337-4D43-91CE-48B15CE41A7C} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
-		{C3D35CCF-0A3D-499A-A5BC-41837BF50C2A} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9} = {F27CA9CD-0F07-4711-A97B-7DDD0A960A0A}
-		{41A6D823-D35E-43E8-81B2-912C28292FF0} = {F27CA9CD-0F07-4711-A97B-7DDD0A960A0A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8D35453-D24C-4CDD-92C1-B417E845699C}

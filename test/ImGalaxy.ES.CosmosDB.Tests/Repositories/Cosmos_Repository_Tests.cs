@@ -1,9 +1,5 @@
-﻿using ImGalaxy.ES.CosmosDB.Modules;
-using ImGalaxy.ES.TestApp.Testing;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ImGalaxy.ES.TestApp.Testing;
+using Microsoft.Extensions.DependencyInjection; 
 
 namespace ImGalaxy.ES.CosmosDB.Tests.Repositories
 {

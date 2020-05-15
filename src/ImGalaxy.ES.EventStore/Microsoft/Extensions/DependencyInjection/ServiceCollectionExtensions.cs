@@ -1,14 +1,12 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using ImGalaxy.ES.Core;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ImGalaxy.ES.EventStore; 
+using System; 
 
-namespace ImGalaxy.ES.EventStore.Modules
+namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ImGalaxyESEventStoreModule
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddImGalaxyESEventStoreModule(this IServiceCollection services, Action<IEventStoreConfigurations> configurations) =>
             services.With(s =>

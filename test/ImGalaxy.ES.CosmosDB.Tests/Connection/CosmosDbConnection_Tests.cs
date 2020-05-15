@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
-using ImGalaxy.ES.Core;
-using ImGalaxy.ES.CosmosDB.Modules;
+using ImGalaxy.ES.Core; 
 using ImGalaxy.ES.TestBase;
 using Microsoft.Extensions.DependencyInjection;
 using System;

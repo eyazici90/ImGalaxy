@@ -1,8 +1,5 @@
-﻿using ImGalaxy.ES.CosmosDB.Modules;
-using ImGalaxy.ES.CosmosDB.Tests;
-using ImGalaxy.ES.TestApp.Testing.Commands;
+﻿using ImGalaxy.ES.TestApp.Testing.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace ImGalaxy.ES.CosmosDB.Tests.Application.Commands
 {

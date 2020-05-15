@@ -1,5 +1,4 @@
-﻿using ImGalaxy.ES.CosmosDB.Modules;
-using ImGalaxy.ES.TestApp.Domain.Cars;
+﻿using ImGalaxy.ES.TestApp.Domain.Cars;
 using ImGalaxy.ES.TestApp.Infrastructure.Cars;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection; 

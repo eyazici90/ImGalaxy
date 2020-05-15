@@ -1,11 +1,7 @@
-﻿using ImGalaxy.ES.EventStore.Modules;
-using ImGalaxy.ES.TestApp.Domain.Cars;
+﻿using ImGalaxy.ES.TestApp.Domain.Cars;
 using ImGalaxy.ES.TestApp.Infrastructure.Cars;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Microsoft.Extensions.DependencyInjection; 
 using TestApp.Application.Commands.Handlers;
 
 namespace ImGalaxy.ES.EventStore.Tests

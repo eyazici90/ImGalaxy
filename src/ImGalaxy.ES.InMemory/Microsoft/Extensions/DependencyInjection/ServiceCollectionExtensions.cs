@@ -1,12 +1,9 @@
 ﻿using ImGalaxy.ES.Core;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ImGalaxy.ES.InMemory;
 
-namespace ImGalaxy.ES.InMemory.Modules
+namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ImGalaxyESInMemoryModule
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddImGalaxyESInMemoryModule(this IServiceCollection services) =>
                services.With(s =>

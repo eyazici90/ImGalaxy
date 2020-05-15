@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection; 
+﻿using ImGalaxy.ES.ProtoActor;
 
-namespace ImGalaxy.ES.ProtoActor.Modules
+namespace Microsoft.Extensions.DependencyInjection
 {
-    public static class ImGalaxyESProtoActorModule
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddImGalaxyESProtoActorModule(this IServiceCollection services) =>
             services.RegisterActorManager();
