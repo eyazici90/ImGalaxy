@@ -1,41 +1,57 @@
 ﻿using System;
-using System.Collections.Generic; 
-using System.Threading.Tasks;
-using static ImGalaxy.ES.Projector.ProjectorDelegates;
+using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks; 
 
 namespace ImGalaxy.ES.Projector
 {
-    public abstract class Projection<T> : IProjection<T>
-      where T : class
+    public abstract class Projection<T> : IProjection<T> where T : class
     {
-        private readonly Dictionary<Type, Func<object, T, Task<T>>> _handlers = new Dictionary<Type, Func<object, T, Task<T>>>();
-
-        protected virtual void When<TMessage>(Func<TMessage, T, Task<T>> handler)
-         where TMessage : class
-            => _handlers.Add(typeof(TMessage), async (@event, state) => await handler(@event as TMessage, state));
-
+        private readonly ConcurrentDictionary<Type, Collection<Handle<T>>> _handlers = new ConcurrentDictionary<Type, Collection<Handle<T>>>();
         protected virtual void When<TMessage>(Func<TMessage, T, Task> handler)
-         where TMessage : class
-            => _handlers.Add(typeof(TMessage), async (@event, state)
-                =>
-            {
-                await handler(@event as TMessage, state);
-                return state;
-            });
+         where TMessage : class =>
+           _handlers.AddOrUpdate(typeof(TMessage),
+                   _ =>
+                   {
+                       var mutators = new Collection<Handle<T>>();
+                       mutators.Add((async (@event, state) => await handler(@event as TMessage, state)));
+                       return mutators;
+                   },
+                   (_, existingHandler) =>
+                   {
+                       existingHandler.Add(async (@event, state) => await handler(@event as TMessage, state));
+                       return existingHandler;
+                   });
 
-        public virtual async Task HandleAsync<TMessage>(UpdateOrInsert updateOrInsert,
-            TMessage message,
-            T state,
-            Type type)
+
+        protected virtual void When(Type messageType,
+            Handle<T> handler) =>
+           _handlers.AddOrUpdate(messageType,
+                     _ =>
+                     {
+                         var mutators = new Collection<Handle<T>>();
+                         mutators.Add(handler);
+                         return mutators;
+                     },
+                     (_, existingHandler) =>
+                     {
+                         existingHandler.Add(handler);
+                         return existingHandler;
+                     });
+
+
+        public virtual async Task HandleAsync<TMessage>(TMessage message,
+            T connector)
         {
-            _handlers.TryGetValue(type, out var handler);
+            _handlers.TryGetValue(message.GetType(), out var mutators);
 
-            if (handler == default)
-                throw new ArgumentNullException($"handler type could not found of {type.Name}");
+            if (mutators == default)
+                throw new ProjectionHandlerNotFoundException(message.GetType().Name);
 
-            var newState = await handler(message, state);
-
-            await updateOrInsert(newState);
+            foreach (var mutator in mutators)
+            {
+                await mutator(message, connector).ConfigureAwait(false);
+            }
         }
     }
 }

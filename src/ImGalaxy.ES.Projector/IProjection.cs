@@ -1,14 +1,10 @@
-﻿using System; 
-using System.Threading.Tasks;
-using static ImGalaxy.ES.Projector.ProjectorDelegates;
+﻿using System.Threading.Tasks; 
 
 namespace ImGalaxy.ES.Projector
 {
     public interface IProjection<T> where T : class
     {
-        Task HandleAsync<TMessage>(UpdateOrInsert updateOrInsert,
-            TMessage message,
-            T state,
-            Type type);
+        Task HandleAsync<TMessage>(TMessage message,
+               T connector);
     }
 }
