@@ -19,4 +19,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ImGalaxy.ES.Projector\ImGalaxy.ES.Projector.csproj" />
+    <ProjectReference Include="..\ImGalaxy.ES.TestApp\ImGalaxy.ES.TestApp.csproj" />
+  </ItemGroup>
+
 </Project>
