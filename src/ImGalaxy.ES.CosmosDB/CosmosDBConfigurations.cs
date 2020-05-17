@@ -11,10 +11,10 @@ namespace ImGalaxy.ES.CosmosDB
         public int MaxLiveQueueSize { get; set; }
         public int ReadBatchSize { get; set; } = 50;
         public bool IsSnapshottingOn { get; set; }
-        public string StreamCollectionName { get; set; }
-        public string EventCollectionName { get; set; }
+        public string StreamContainerName { get; set; } = $"Streams";
+        public string EventContainerName { get; set; } = $"Events";
+        public string SnapshotContainerName { get; set; }
         public int OfferThroughput { get; set; }
-        public string SnapshotCollectionName { get; set; }
         public Func<EventDocument, bool> SnapshotStrategy { get; set; }
     }
 }

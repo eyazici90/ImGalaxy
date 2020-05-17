@@ -83,12 +83,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             await cosmosClient.CreateDatabaseIfNotExistsAsync();
 
-            await cosmosClient.CreateContainerIfNotExistsAsync(confs.StreamCollectionName, partitionKeyPath);
+            await cosmosClient.CreateContainerIfNotExistsAsync(confs.StreamContainerName, partitionKeyPath);
 
-            await cosmosClient.CreateContainerIfNotExistsAsync(confs.EventCollectionName, partitionKeyPath);
+            await cosmosClient.CreateContainerIfNotExistsAsync(confs.EventContainerName, partitionKeyPath);
 
             if (confs.IsSnapshottingOn)
-                await cosmosClient.CreateContainerIfNotExistsAsync(confs.SnapshotCollectionName, partitionKeyPath);
+                await cosmosClient.CreateContainerIfNotExistsAsync(confs.SnapshotContainerName, partitionKeyPath);
 
             return provider;
         }

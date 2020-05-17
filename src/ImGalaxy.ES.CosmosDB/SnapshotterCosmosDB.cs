@@ -46,7 +46,7 @@ namespace ImGalaxy.ES.CosmosDB
             var newSnapshot = new SnapshotDocument(aggregate.Identifier, serializedState, aggregate.ExpectedVersion.Value.ToString(), null, typeof(TSnapshot).TypeQualifiedName());
 
             await _cosmosDbClient.CreateItemAsync(newSnapshot,
-                            this._cosmosDBConfigurations.SnapshotCollectionName);
+                            this._cosmosDBConfigurations.SnapshotContainerName);
 
             return ExecutionResult.Success;
         }

@@ -26,7 +26,7 @@ namespace ImGalaxy.ES.CosmosDB
             _operationDispatcher = operationDispatcher ?? throw new ArgumentNullException(nameof(operationDispatcher));
 
             _operationDispatcher.RegisterHandler<CreateNewStream>(() =>
-                new CreateNewStreamHandler(async doc => await _cosmosClient.CreateItemAsync(doc, _cosmosDBConfigurations.StreamCollectionName)));
+                new CreateNewStreamHandler(async doc => await _cosmosClient.CreateItemAsync(doc, _cosmosDBConfigurations.StreamContainerName)));
 
             _operationDispatcher.RegisterHandler<GetStreamDocumentByIdAsync>(() => new GetStreamDocumentByIdAsyncHandler(cosmosClient, cosmosDBConfigurations));
 
@@ -65,7 +65,7 @@ namespace ImGalaxy.ES.CosmosDB
         private async Task<IEnumerable<EventDocument>> GetEventDocumentsBackward(Expression<Func<EventDocument, bool>> predicate, int start, int count)
         {
             var skipCount = start < 1 ? 0 : start - 1;
-            return await Task.FromResult(_cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
+            return await Task.FromResult(_cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventContainerName)
                  .OrderByDescending(e => e.Position)
                  .Skip(skipCount)
                  .Take(count)

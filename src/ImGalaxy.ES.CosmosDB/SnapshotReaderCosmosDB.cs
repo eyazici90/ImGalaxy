@@ -37,7 +37,7 @@ namespace ImGalaxy.ES.CosmosDB
             try
             {
                 var document = _cosmosDbClient
-                    .GetDocumentQuery<SnapshotDocument>(stream => stream.StreamId == id, _cosmosDBConfigurations.SnapshotCollectionName)
+                    .GetDocumentQuery<SnapshotDocument>(stream => stream.StreamId == id, _cosmosDBConfigurations.SnapshotContainerName)
                     .OrderByDescending(s => s.EventPosition)
                     .ToList()
                     .FirstOrDefault();

@@ -10,9 +10,9 @@ namespace ImGalaxy.ES.CosmosDB
         string PrimaryKey { get; set; }
         string DatabaseId { get; set; }
         Func<EventDocument, bool> SnapshotStrategy { get; set; }
-        string StreamCollectionName { get; set; }
-        string EventCollectionName { get; set; }
-        string SnapshotCollectionName { get; set; }
+        string StreamContainerName { get; set; }
+        string EventContainerName { get; set; }
+        string SnapshotContainerName { get; set; }
         int OfferThroughput { get; set; }
     }
 }

@@ -23,7 +23,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             var skipCount = operation.Start < 1 ? 0 : operation.Start - 1;
 
-            return _cosmosClient.GetDocumentQuery(operation.Predicate, _cosmosDBConfigurations.EventCollectionName)
+            return _cosmosClient.GetDocumentQuery(operation.Predicate, _cosmosDBConfigurations.EventContainerName)
                  .OrderBy(e => e.Position)
                  .Skip(skipCount)
                  .Take(operation.Count)

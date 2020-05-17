@@ -22,7 +22,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             try
             {
-                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.id == operation.Id, _cosmosDBConfigurations.StreamCollectionName)
+                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.id == operation.Id, _cosmosDBConfigurations.StreamContainerName)
                     .ToList()
                     .SingleOrDefault();
 
