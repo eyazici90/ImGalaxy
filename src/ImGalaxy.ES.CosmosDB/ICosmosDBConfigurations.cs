@@ -1,8 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 
 namespace ImGalaxy.ES.CosmosDB
 {

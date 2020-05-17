@@ -53,24 +53,23 @@ namespace ImGalaxy.ES.CosmosDB
            await ReadStreamWithEventsByDirection(streamId, start, count,
                   id => GetEventDocumentsBackward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
 
-        private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string, IEnumerable<EventDocument>> eventFunc) =>
+        private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string, Task<IEnumerable<EventDocument>>> eventFunc) =>
             await _operationDispatcher.Dispatch<ReadStreamWithEventsByDirection, Optional<CosmosStream>>
                 (new ReadStreamWithEventsByDirection(streamId, start, count, eventFunc));
 
-        private IEnumerable<EventDocument> GetEventDocumentsForward(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
-           _operationDispatcher
+        private async Task<IEnumerable<EventDocument>> GetEventDocumentsForward(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
+         await _operationDispatcher
             .Dispatch<GetEventDocumentsForward, IEnumerable<EventDocument>>(new GetEventDocumentsForward(predicate, start, count))
-            .ConfigureAwait(false)
-            .GetAwaiter().GetResult();
+            .ConfigureAwait(false);
 
-        private IEnumerable<EventDocument> GetEventDocumentsBackward(Expression<Func<EventDocument, bool>> predicate, int start, int count)
+        private async Task<IEnumerable<EventDocument>> GetEventDocumentsBackward(Expression<Func<EventDocument, bool>> predicate, int start, int count)
         {
             var skipCount = start < 1 ? 0 : start - 1;
-            return _cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
+            return await Task.FromResult(_cosmosClient.GetDocumentQuery(predicate, _cosmosDBConfigurations.EventCollectionName)
                  .OrderByDescending(e => e.Position)
                  .Skip(skipCount)
                  .Take(count)
-                 .ToList();
+                 .ToList());
         }
 
     }

@@ -12,18 +12,18 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
     {
         private readonly Func<GetStreamDocumentByIdAsync, Task<Optional<StreamDocument>>> _getStreamDocumentByIdAsync;
         public ReadStreamWithEventsByDirectionHandler(Func<GetStreamDocumentByIdAsync, Task<Optional<StreamDocument>>> getStreamDocumentByIdAsync) =>
-            _getStreamDocumentByIdAsync = getStreamDocumentByIdAsync; 
+            _getStreamDocumentByIdAsync = getStreamDocumentByIdAsync;
 
         async Task<Optional<CosmosStream>> IOperationHandler<ReadStreamWithEventsByDirection, Optional<CosmosStream>>.Handle(ReadStreamWithEventsByDirection operation, CancellationToken cancellationToken)
         {
             var id = CosmosStreamNameStrategy.GetStreamIdentifier(operation.StreamId);
 
-            var existingStream = await _getStreamDocumentByIdAsync(new GetStreamDocumentByIdAsync(id)); 
+            var existingStream = await _getStreamDocumentByIdAsync(new GetStreamDocumentByIdAsync(id));
 
             if (!existingStream.HasValue)
                 return Optional<CosmosStream>.Empty;
 
-            var existingEvents = operation.EventFunc(id);
+            var existingEvents = await operation.EventFunc(id).ConfigureAwait(false);
 
             var cosmosStream = existingStream.Value
                                              .ToCosmosStream(existingEvents);

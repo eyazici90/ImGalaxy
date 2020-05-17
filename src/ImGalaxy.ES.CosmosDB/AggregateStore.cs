@@ -1,6 +1,4 @@
-﻿using ImGalaxy.ES.Core;
-using System;
-using System.Linq;
+﻿using ImGalaxy.ES.Core; 
 using System.Threading.Tasks;
 using Version = ImGalaxy.ES.Core.Version;
 
