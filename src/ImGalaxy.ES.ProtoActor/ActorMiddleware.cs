@@ -1,5 +1,5 @@
 ﻿using Proto;
-using System; 
+using System;
 
 namespace ImGalaxy.ES.ProtoActor
 {
@@ -7,17 +7,17 @@ namespace ImGalaxy.ES.ProtoActor
     {
         public static Receiver Exception(Receiver next, string actorType) =>
             async (context, envelope) =>
-            { 
+            {
                 try
                 {
                     await next(context, envelope);
                 }
                 catch (Exception ex)
                 {
-                    var errorMsg = new ExceptionOccuredDuringHandleEvent(ex); 
+                    var errorMsg = new ExceptionOccuredDuringHandleEvent(ex);
 
-                    await next(context, envelope.WithMessage(errorMsg));  
+                    await next(context, envelope.WithMessage(errorMsg));
                 }
-            };
+            }; 
     }
 }

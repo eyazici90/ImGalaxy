@@ -12,8 +12,8 @@
 
 
   <ItemGroup>
-    <PackageReference Include="Proto.Actor" Version="0.2.0" />
-    <PackageReference Include="Proto.Actor.Extensions" Version="0.2.0" />
+    <PackageReference Include="Proto.Actor" Version="0.3.0" />
+    <PackageReference Include="Proto.Actor.Extensions" Version="0.3.0" />
   </ItemGroup>
 
 

@@ -1,19 +1,18 @@
 ﻿using Proto;
-using System;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.ProtoActor
 {
     public class ActorManager : IActorManager
     {
-        public IRootContext RootContext => _lazyRootContext.Value;
-
-        private static Lazy<IRootContext> _lazyRootContext = new Lazy<IRootContext>(() => new RootContext());
-
         private readonly IActorFactory _actorFactory;
-
-        public ActorManager(IActorFactory actorFactory) =>
+        private readonly ActorSystem _actorSystem;
+        public ActorManager(IActorFactory actorFactory,
+            ActorSystem actorSystem)
+        {
+            _actorSystem = actorSystem;
             _actorFactory = actorFactory;
+        }
 
         public PID GetActor<TActor>() where TActor : IActor =>
             _actorFactory.GetActor<TActor>();
@@ -26,14 +25,14 @@ namespace ImGalaxy.ES.ProtoActor
         {
             var actorPId = GetActor<TActor>(actorId);
 
-            return await RootContext.RequestAsync<T>(actorPId, message);
+            return await _actorSystem.Root.RequestAsync<T>(actorPId, message);
         }
 
         public async Task<T> RequestAsync<T>(PID actorId, object message) =>
-            await RootContext.RequestAsync<T>(actorId, message);
+            await _actorSystem.Root.RequestAsync<T>(actorId, message);
 
         public void Send(PID actorId, object message) =>
-            RootContext.Send(actorId, message);
+            _actorSystem.Root.Send(actorId, message);
 
     }
 }
