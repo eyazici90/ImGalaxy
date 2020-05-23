@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{33EA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.Examples.CosmosDB", "samples\ImGalaxy.ES.Examples.CosmosDB\ImGalaxy.ES.Examples.CosmosDB.csproj", "{F3F73757-B937-4022-A2F2-936EB93A708C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImGalaxy.ES.Examples.Projector", "samples\ImGalaxy.ES.Examples.Projector\ImGalaxy.ES.Examples.Projector.csproj", "{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{F3F73757-B937-4022-A2F2-936EB93A708C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3F73757-B937-4022-A2F2-936EB93A708C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3F73757-B937-4022-A2F2-936EB93A708C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{28B6F7D7-F337-4D43-91CE-48B15CE41A7C} = {646DE223-74A1-4DDE-A7A4-2F9B3B548FCB}
 		{B3F14EB9-5A73-45F1-9145-AAEE01B3D0A9} = {F27CA9CD-0F07-4711-A97B-7DDD0A960A0A}
 		{F3F73757-B937-4022-A2F2-936EB93A708C} = {33EAE6B6-E6F6-4972-943B-93EBB79D68D3}
+		{9C1B0809-1DAB-4C82-B9AB-3379B07BA0A1} = {33EAE6B6-E6F6-4972-943B-93EBB79D68D3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E8D35453-D24C-4CDD-92C1-B417E845699C}
