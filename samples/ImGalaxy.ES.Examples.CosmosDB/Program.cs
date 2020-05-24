@@ -18,13 +18,14 @@ namespace ImGalaxy.ES.Examples.CosmosDB
 
             var result = Product.Create(productId, new Product.ProductCode("P012")); 
 
-            await aggregateStore.Save(result.State.ProductId, ExpectedVersion.NoStream, result).ConfigureAwait(false);
+            //Persisting events from aggregate
+            await aggregateStore.Save(productId, ExpectedVersion.NoStream, result).ConfigureAwait(false);
 
+
+            // loading aggregate from event Store
             var aggregate = await aggregateStore.Load<Product.State>(productId).ConfigureAwait(false);
 
-            var state = aggregate.Root as Product.State;
-
-
+            var state = aggregate.Root as Product.State; 
 
             Console.WriteLine($"Product Code : {state.ProductCode}");
             Console.ReadLine();
