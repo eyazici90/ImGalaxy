@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ImGalaxy.ES.Core
+﻿namespace ImGalaxy.ES.Core
 {
     public class Version
     {
@@ -21,10 +17,10 @@ namespace ImGalaxy.ES.Core
         }
 
         public Version WithMetaData(string metaData) =>
-            new Version(this.Value, metaData);
+            new Version(Value, metaData);
 
         public Version WithVersion(long version) =>
-            new Version(version, this.MetaData);
+            new Version(version, MetaData);
 
         public static implicit operator long(Version self) => self.Value;
 

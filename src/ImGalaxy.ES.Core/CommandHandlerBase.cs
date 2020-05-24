@@ -24,7 +24,7 @@ namespace ImGalaxy.ES.Core
         }
 
         public CommandHandlerBase(IAggregateRootRepository<TAggregateRoot> rootRepository)
-             : this(async () => ExecutionResult.Success, rootRepository)
+             : this(async () => await Task.FromResult(ExecutionResult.Success), rootRepository)
         {
         }
 

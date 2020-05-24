@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq; 
 
 namespace ImGalaxy.ES.Core
 {
@@ -11,8 +10,7 @@ namespace ImGalaxy.ES.Core
         private readonly IEventRecorder _eventRecorder;
         private IReadOnlyCollection<object> _events => _eventRecorder?.RecordedEvents;
 
-        public AggregateRootState() =>
-            _eventRecorder = _eventRecorder ?? new EventRecorder();
+        public AggregateRootState() => _eventRecorder ??= new EventRecorder();
 
         public Result ApplyEvent(params object[] @events)
         {

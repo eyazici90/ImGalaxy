@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Generic; 
 
 namespace ImGalaxy.ES.Core
 {
-    public abstract class StateBase<TState>  where TState: class
+    public abstract class StateBase<TState> where TState : class
     {
-        protected readonly IEventRouter EventRouter;
+        protected IEventRouter EventRouter { get; }
 
-        public StateBase() =>
-            EventRouter = EventRouter ?? new EventRouter();
-         
+        public StateBase() => EventRouter ??= new EventRouter();
+
         public void RegisterEvent<TEvent>(Action<TEvent> handler) =>
             EventRouter.RegisterEvent(handler);
 
@@ -18,7 +16,7 @@ namespace ImGalaxy.ES.Core
            EventRouter.RegisterEvent(eventType, handler);
 
         public Result EmptyResult() => new Result(this as TState, new List<object>());
-           
+
         public class Result
         {
             public TState State { get; }
@@ -45,8 +43,7 @@ namespace ImGalaxy.ES.Core
         {
         }
 
-        protected void Play(object @event) =>
-            EventRouter.Route(@event);
+        protected void Play(object @event) => EventRouter.Route(@event);
 
     }
 }
