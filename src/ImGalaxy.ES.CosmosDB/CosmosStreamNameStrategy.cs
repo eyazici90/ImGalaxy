@@ -2,7 +2,7 @@
 
 namespace ImGalaxy.ES.CosmosDB
 {
-    public class CosmosStreamNameStrategy
+    public static class CosmosStreamNameStrategy
     {
         public static string GetFullStreamName(string type, string identifier) =>
             $"{type}-{identifier}";

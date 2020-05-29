@@ -7,16 +7,16 @@ namespace ImGalaxy.ES.CosmosDB.Internal
 {
     internal class OperationDispatcher : IOperationDispatcher
     {
-        private readonly ConcurrentDictionary<Type, Func<object>> _handlers = new ConcurrentDictionary<Type, Func<object>>();
-        private readonly ConcurrentDictionary<Type, Func<object>> _handlerPipelines = new ConcurrentDictionary<Type, Func<object>>();
+        private readonly ConcurrentDictionary<Type, object> _handlers = new ConcurrentDictionary<Type, object>();
+        private readonly ConcurrentDictionary<Type, object> _handlerPipelines = new ConcurrentDictionary<Type, object>();
 
-        IExecutionResult IOperationDispatcher.RegisterHandler<TOperation>(Func<object> handler)
+        IExecutionResult IOperationDispatcher.RegisterHandler<TOperation>(object handler)
         {
             _handlers.TryAdd(typeof(TOperation), handler);
 
             return ExecutionResult.Success;
         }
-        IExecutionResult IOperationDispatcher.RegisterPipeline<TOperation>(Func<object> handler)
+        IExecutionResult IOperationDispatcher.RegisterPipeline<TOperation>(object handler)
         {
             _handlerPipelines.TryAdd(typeof(TOperation), handler);
 
@@ -37,14 +37,12 @@ namespace ImGalaxy.ES.CosmosDB.Internal
 
             _handlerPipelines.TryGetValue(typeof(TOperation), out var handlerPipeline);
 
-            Func<TOperation, Task<TResult>> handleOpt = async oprt => await (handler() as IOperationHandler<TOperation, TResult>).Handle(oprt);
+            Func<TOperation, Task<TResult>> handleOpt = async oprt => await (handler as IOperationHandler<TOperation, TResult>).Handle(oprt);
 
-            if (handlerPipeline is null)
-                return await handleOpt(operation);
+            if (handlerPipeline is null) return await handleOpt(operation).ConfigureAwait(false);
 
             else
-                return await (handlerPipeline() as IOperationPipeline<TOperation, TResult>)
-                     .Handle(operation, async opt => await handleOpt(opt));
+                return await (handlerPipeline as IOperationPipeline<TOperation, TResult>).Handle(operation, async opt => await handleOpt(opt).ConfigureAwait(false)).ConfigureAwait(false);
         }
     }
 }

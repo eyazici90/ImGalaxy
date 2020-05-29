@@ -23,10 +23,8 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
             _eventSerializer = eventSerializer ?? throw new ArgumentNullException(nameof(eventSerializer));
             _cosmosClient = cosmosClient ?? throw new ArgumentNullException(nameof(cosmosClient));
             _cosmosDBConfigurations = cosmosDBConfigurations ?? throw new ArgumentNullException(nameof(cosmosDBConfigurations));
-            _operationDispatcher = operationDispatcher ?? throw new ArgumentNullException(nameof(operationDispatcher));
-
-        }
-
+            _operationDispatcher = operationDispatcher ?? throw new ArgumentNullException(nameof(operationDispatcher)); 
+        } 
 
         async Task<IExecutionResult> IOperationHandler<AppendToStreamAsync, IExecutionResult>.Handle(AppendToStreamAsync operation, CancellationToken cancellationToken)
         {
@@ -56,8 +54,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
                 var streamEvents = await _operationDispatcher
                     .Dispatch<GetEventDocumentsForward, IEnumerable<EventDocument>>
                     (
-                        new GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(StreamPosition.Start),
-                         _cosmosDBConfigurations.ReadBatchSize)
+                        new GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(StreamPosition.Start),  _cosmosDBConfigurations.ReadBatchSize)
                     ).ConfigureAwait(false);
 
                 existingStream = existingStream.AppendEvents(streamEvents.Select(e => e.ToCosmosEvent()));
@@ -66,8 +63,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
                 var newVersionedStream = existingStream.ChangeVersion(operation.ExpectedVersion);
 
-                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamContainerName,
-                    newVersionedStream.ToCosmosStreamDocument(),
+                await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamContainerName,  newVersionedStream.ToCosmosStreamDocument(),
                      operation.ExpectedVersion.MetaData).ConfigureAwait(false);
 
                 eventPosition = newVersionedStream.NextEventNumber;

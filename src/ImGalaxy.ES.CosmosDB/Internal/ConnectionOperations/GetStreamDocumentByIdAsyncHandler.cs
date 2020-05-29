@@ -1,7 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using Microsoft.Azure.Cosmos;
-using System.Linq; 
+using Microsoft.Azure.Cosmos; 
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,11 +21,9 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             try
             {
-                var document = _cosmosClient.GetDocumentQuery<StreamDocument>(stream => stream.id == operation.Id, _cosmosDBConfigurations.StreamContainerName)
-                    .ToList()
-                    .SingleOrDefault();
+                var result = await _cosmosClient.ReadItemAsync<StreamDocument>(operation.Id, PartitionKey.None, _cosmosDBConfigurations.StreamContainerName).ConfigureAwait(false);
 
-                return new Optional<StreamDocument>(document);
+                return new Optional<StreamDocument>(result.Resource);
             }
             catch (CosmosException)
             {

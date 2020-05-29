@@ -23,8 +23,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
             var existingEvents = await operation.EventFunc(id).ConfigureAwait(false);
 
-            var cosmosStream = existingStream.Value
-                                             .ToCosmosStream(existingEvents);
+            var cosmosStream = existingStream.Value.ToCosmosStream(existingEvents);
 
             return new Optional<CosmosStream>(cosmosStream);
         }

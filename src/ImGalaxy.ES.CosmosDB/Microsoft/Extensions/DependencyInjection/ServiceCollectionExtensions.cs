@@ -1,7 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB;
 using ImGalaxy.ES.CosmosDB.Internal;
-using Microsoft.Azure.Cosmos; 
+using Microsoft.Azure.Cosmos;
 using System;
 using System.Threading.Tasks;
 
@@ -64,14 +64,9 @@ namespace Microsoft.Extensions.DependencyInjection
         private static IServiceCollection RegisterAggregateStore(this IServiceCollection services) =>
               services.AddTransient<IAggregateStore, AggregateStore>();
 
-        private static IServiceCollection RegisterOperations(this IServiceCollection services)
-        {
-            services.AddTransient<OperationFactory>(p => p.GetService);
-
-            services.AddSingleton<IOperationDispatcher, OperationDispatcher>();
-
-            return services;
-        }
+        private static IServiceCollection RegisterOperations(this IServiceCollection services) =>
+              services.AddSingleton<IOperationDispatcher, OperationDispatcher>();
+         
 
         [Obsolete]
         public static async Task<IServiceProvider> UseGalaxyESCosmosDBModule(this IServiceProvider provider,

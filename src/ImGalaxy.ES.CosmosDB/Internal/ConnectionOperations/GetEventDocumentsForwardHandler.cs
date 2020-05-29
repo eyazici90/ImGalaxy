@@ -1,6 +1,7 @@
-﻿using ImGalaxy.ES.CosmosDB.Documents; 
+﻿using ImGalaxy.ES.CosmosDB.Documents;
+using ImGalaxy.ES.CosmosDB.Internal.Extensions;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,12 +21,16 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         async Task<IEnumerable<EventDocument>> IOperationHandler<GetEventDocumentsForward, IEnumerable<EventDocument>>.Handle(GetEventDocumentsForward operation, CancellationToken cancellationToken)
         {
             var skipCount = operation.Start < 1 ? 0 : operation.Start - 1;
+            var result = new List<EventDocument>();
 
-            return _cosmosClient.GetDocumentQuery(operation.Predicate, _cosmosDBConfigurations.EventContainerName)
+            await _cosmosClient.GetDocumentQuery(operation.Predicate, _cosmosDBConfigurations.EventContainerName)
                  .OrderBy(e => e.Position)
                  .Skip(skipCount)
                  .Take(operation.Count)
-                 .ToList();
+                 .ToFeedIterator(eDoc => result.Add(eDoc))
+                 .ConfigureAwait(false);
+
+            return result;
         }
 
 

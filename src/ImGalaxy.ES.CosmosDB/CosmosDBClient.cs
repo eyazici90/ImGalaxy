@@ -23,31 +23,33 @@ namespace ImGalaxy.ES.CosmosDB
         public IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string containerName) =>
               GetContainer(containerName).GetItemLinqQueryable<T>(true)
                                          .Where(predicate);
-
+        public async Task<ItemResponse<T>> ReadItemAsync<T>(string identifer, PartitionKey partitionKey, string containerName) =>
+              await GetContainer(containerName).ReadItemAsync<T>(identifer, partitionKey).ConfigureAwait(false);
+        public IQueryable<T> GetDocumentQuery<T>(Expression<Func<T, bool>> predicate, string containerName, string partitionKey) =>
+              GetContainer(containerName).GetItemLinqQueryable<T>(allowSynchronousQueryExecution: true, requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionKey) })
+                                         .Where(predicate);
         private Container GetContainer(string containerName) =>
           _client.GetContainer(_cosmosDBConfigurations.DatabaseId, containerName);
 
         public async Task UpdateItemAsync<T>(string id, string containerName, T item, string etag)
         {
             ItemRequestOptions requestOptions = null;
-            if (!string.IsNullOrEmpty(etag))
-                requestOptions = new ItemRequestOptions { IfMatchEtag = etag };
+
+            if (!string.IsNullOrEmpty(etag)) requestOptions = new ItemRequestOptions { IfMatchEtag = etag };
 
             await GetContainer(containerName).ReplaceItemAsync(item, id, requestOptions: requestOptions);
-        }
-
+        } 
 
         public async Task CreateDatabaseIfNotExistsAsync() =>
-            await _client.CreateDatabaseIfNotExistsAsync(_cosmosDBConfigurations.DatabaseId);
-
-
+            await _client.CreateDatabaseIfNotExistsAsync(_cosmosDBConfigurations.DatabaseId).ConfigureAwait(false);
+         
         public async Task CreateContainerIfNotExistsAsync(string containerName, string partitionPath)
         {
             var database = _client.GetDatabase(_cosmosDBConfigurations.DatabaseId);
 
             ContainerProperties containerProperties = new ContainerProperties { Id = containerName };
 
-            await database.CreateContainerIfNotExistsAsync(containerProperties);
+            await database.CreateContainerIfNotExistsAsync(containerProperties).ConfigureAwait(false);
         }
     }
 }
