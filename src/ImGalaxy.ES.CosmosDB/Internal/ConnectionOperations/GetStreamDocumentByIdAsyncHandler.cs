@@ -1,6 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using Microsoft.Azure.Cosmos; 
+using Microsoft.Azure.Cosmos;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 

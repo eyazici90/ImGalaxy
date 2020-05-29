@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic; 
 
-namespace ImGalaxy.ES.Core
+namespace System
 {
     public struct Optional<T> : IEnumerable<T>, IEquatable<Optional<T>>
     {

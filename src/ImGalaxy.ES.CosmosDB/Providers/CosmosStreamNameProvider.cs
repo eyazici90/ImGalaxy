@@ -8,10 +8,9 @@ namespace ImGalaxy.ES.CosmosDB
         public string GetSnapshotStreamName(object aggregateRoot, string identifier) =>
               identifier;
         public string GetSnapshotStreamName(Type aggregateRootType, string identifier) =>
-              identifier;
-
+              identifier; 
         public string GetStreamName(object aggregateRoot, string identifier) =>
-            CosmosStreamNameStrategy.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
+              GetStreamName(aggregateRoot.GetType(), identifier);
         public string GetStreamName(Type aggregateRootType, string identifier)=>
             CosmosStreamNameStrategy.GetFullStreamName(aggregateRootType.ToString(), identifier);
     }

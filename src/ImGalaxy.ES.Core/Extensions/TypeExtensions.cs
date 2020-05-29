@@ -11,11 +11,8 @@ namespace ImGalaxy.ES.Core
 
         public static string TypeQualifiedName(this Type type)
         {
-            if (s_shortenedTypeNames.TryGetValue(type, out string shortened))
-            {
-                return shortened;
-            }
-
+            if (s_shortenedTypeNames.TryGetValue(type, out string shortened)) return shortened;
+             
             string assemblyName = type.GetTypeInfo().Assembly.GetName().Name;
             shortened = assemblyName.Equals(s_coreAssemblyName)
                 ? type.GetTypeInfo().FullName

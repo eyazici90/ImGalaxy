@@ -1,4 +1,6 @@
-﻿namespace ImGalaxy.ES.Core
+﻿using System;
+
+namespace ImGalaxy.ES.Core
 {
     public interface IPolicy<TResult, T>
     {

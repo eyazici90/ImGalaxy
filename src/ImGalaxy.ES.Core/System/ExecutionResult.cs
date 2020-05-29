@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic; 
 
-namespace ImGalaxy.ES.Core
+namespace System
 {
     public class ExecutionResult : IExecutionResult
     { 
