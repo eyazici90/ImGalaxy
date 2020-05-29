@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace ImGalaxy.ES.Core
+﻿namespace ImGalaxy.ES.Core
 {
     public interface IPolicy<TResult, T>
     {

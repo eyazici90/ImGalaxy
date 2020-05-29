@@ -43,19 +43,19 @@ namespace ImGalaxy.ES.CosmosDB
         }
 
         public async Task<IExecutionResult> AppendToStreamAsync(string streamId, Version expectedVersion, params CosmosEventData[] events) =>
-            await _operationDispatcher.Dispatch(new AppendToStreamAsync(streamId, expectedVersion, events));
+            await _operationDispatcher.Dispatch(new AppendToStreamAsync(streamId, expectedVersion, events)).ConfigureAwait(false);
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamId, long start, int count) =>
             await ReadStreamWithEventsByDirection(streamId, start, count,
-                  id => GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
+                  id => GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count)).ConfigureAwait(false);
 
         public async Task<Optional<CosmosStream>> ReadStreamEventsBackwardAsync(string streamId, long start, int count) =>
            await ReadStreamWithEventsByDirection(streamId, start, count,
-                  id => GetEventDocumentsBackward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count));
+                  id => GetEventDocumentsBackward(eDoc => eDoc.StreamId == id, Convert.ToInt32(start), count)).ConfigureAwait(false);
 
         private async Task<Optional<CosmosStream>> ReadStreamWithEventsByDirection(string streamId, long start, int count, Func<string, Task<IEnumerable<EventDocument>>> eventFunc) =>
             await _operationDispatcher.Dispatch<ReadStreamWithEventsByDirection, Optional<CosmosStream>>
-                (new ReadStreamWithEventsByDirection(streamId, start, count, eventFunc));
+                (new ReadStreamWithEventsByDirection(streamId, start, count, eventFunc)).ConfigureAwait(false);
 
         private async Task<IEnumerable<EventDocument>> GetEventDocumentsForward(Expression<Func<EventDocument, bool>> predicate, int start, int count) =>
          await _operationDispatcher

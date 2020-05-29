@@ -1,9 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
-using ImGalaxy.ES.CosmosDB.Enums;
-using System;
+using ImGalaxy.ES.CosmosDB.Enums; 
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq; 
 using Version = ImGalaxy.ES.Core.Version;
 
 namespace ImGalaxy.ES.CosmosDB

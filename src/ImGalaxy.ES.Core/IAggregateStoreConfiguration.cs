@@ -1,6 +1,4 @@
-﻿
-
-namespace ImGalaxy.ES.Core
+﻿namespace ImGalaxy.ES.Core
 {
     public interface IAggregateStoreConfiguration
     {

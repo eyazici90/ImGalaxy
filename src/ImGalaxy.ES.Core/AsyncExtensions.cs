@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System; 
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,7 +8,7 @@ namespace ImGalaxy.ES.Core
     {
         public static async Task LockAsync(this SemaphoreSlim @semaphore, Func<Task> task)
         {
-            await @semaphore.WaitAsync();
+            await @semaphore.WaitAsync().ConfigureAwait(false);
             try
             {
                 await task();

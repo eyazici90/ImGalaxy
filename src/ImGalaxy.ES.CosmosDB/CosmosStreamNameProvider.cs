@@ -1,7 +1,5 @@
 ﻿using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -13,7 +11,7 @@ namespace ImGalaxy.ES.CosmosDB
               identifier;
 
         public string GetStreamName(object aggregateRoot, string identifier) =>
-          CosmosStreamNameStrategy.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
+            CosmosStreamNameStrategy.GetFullStreamName(aggregateRoot.GetType().ToString(), identifier);
         public string GetStreamName(Type aggregateRootType, string identifier)=>
             CosmosStreamNameStrategy.GetFullStreamName(aggregateRootType.ToString(), identifier);
     }

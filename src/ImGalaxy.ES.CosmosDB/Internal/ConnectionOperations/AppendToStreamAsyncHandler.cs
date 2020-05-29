@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq; 
 using System.Threading;
 using System.Threading.Tasks;
 using ImGalaxy.ES.Core;
@@ -38,13 +37,13 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
             if (operation.ExpectedVersion == ExpectedVersion.NoStream || operation.ExpectedVersion == ExpectedVersion.Any)
             {
-                await _operationDispatcher.Dispatch(new CreateNewStream(id, streamType, operation.Events));
+                await _operationDispatcher.Dispatch(new CreateNewStream(id, streamType, operation.Events)).ConfigureAwait(false);
                 eventPosition++;
             }
             else
             {
                 var streamDoc = await _operationDispatcher
-                         .Dispatch<GetStreamDocumentByIdAsync, Optional<StreamDocument>>(new GetStreamDocumentByIdAsync(id));
+                         .Dispatch<GetStreamDocumentByIdAsync, Optional<StreamDocument>>(new GetStreamDocumentByIdAsync(id)).ConfigureAwait(false);
 
                 streamDoc.ThrowsIf(stream => !stream.HasValue, new AggregateNotFoundException(operation.StreamId));
 
@@ -58,8 +57,8 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
                     .Dispatch<GetEventDocumentsForward, IEnumerable<EventDocument>>
                     (
                         new GetEventDocumentsForward(eDoc => eDoc.StreamId == id, Convert.ToInt32(StreamPosition.Start),
-                         this._cosmosDBConfigurations.ReadBatchSize)
-                    );
+                         _cosmosDBConfigurations.ReadBatchSize)
+                    ).ConfigureAwait(false);
 
                 existingStream = existingStream.AppendEvents(streamEvents.Select(e => e.ToCosmosEvent()));
 
@@ -69,7 +68,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
 
                 await _cosmosClient.UpdateItemAsync(id, _cosmosDBConfigurations.StreamContainerName,
                     newVersionedStream.ToCosmosStreamDocument(),
-                     operation.ExpectedVersion.MetaData);
+                     operation.ExpectedVersion.MetaData).ConfigureAwait(false);
 
                 eventPosition = newVersionedStream.NextEventNumber;
             }
@@ -79,7 +78,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
                 var newEvent = new EventDocument(@event.EventId, id, eventPosition, this._eventSerializer.Serialize(@event.Data),
                     @event.EventMetadata, @event.EventType);
 
-                await _cosmosClient.CreateItemAsync(newEvent, this._cosmosDBConfigurations.EventContainerName);
+                await _cosmosClient.CreateItemAsync(newEvent, this._cosmosDBConfigurations.EventContainerName).ConfigureAwait(false);
 
                 eventPosition++;
             }

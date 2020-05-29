@@ -28,7 +28,7 @@ namespace ImGalaxy.ES.Core
 
             if (existingAggregate.HasValue) { return new Optional<TAggregateRoot>((TAggregateRoot)existingAggregate.Value.Root); }
 
-            var aggregate = await _aggregateStore.Load<TAggregateRoot>(identifier); 
+            var aggregate = await _aggregateStore.Load<TAggregateRoot>(identifier).ConfigureAwait(false); 
 
             AttachAggregateToChangeTracker(aggregate);
 
@@ -36,15 +36,13 @@ namespace ImGalaxy.ES.Core
         }
 
         private Optional<Aggregate> GetAggregateFromChangeTrackerIfExits(string identifier)
-        {
-            Aggregate existingAggregate;
-
-            _changeTracker.TryGet(identifier, out existingAggregate);
+        { 
+            _changeTracker.TryGet(identifier, out Aggregate existingAggregate);
 
             return new Optional<Aggregate>(existingAggregate);
         } 
         private void AttachAggregateToChangeTracker(Aggregate aggregate) =>
-            this._changeTracker.Attach(aggregate);
+            _changeTracker.Attach(aggregate);
 
     }
 }

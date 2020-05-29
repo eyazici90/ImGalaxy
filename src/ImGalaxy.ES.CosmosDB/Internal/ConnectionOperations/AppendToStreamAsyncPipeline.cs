@@ -10,9 +10,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             var asyncLockerWrapper = AsyncStreamLockers.GetOrCreate(operation.StreamId);
 
-            await asyncLockerWrapper.SemaphoreSlim.LockAsync(async () =>
-                await next(operation)
-            );
+            await asyncLockerWrapper.SemaphoreSlim.LockAsync(async () => await next(operation).ConfigureAwait(false)).ConfigureAwait(false);
 
             AsyncStreamLockers.Release(ref asyncLockerWrapper);
 

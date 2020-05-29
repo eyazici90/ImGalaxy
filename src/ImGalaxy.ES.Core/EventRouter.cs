@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Generic; 
 
 namespace ImGalaxy.ES.Core
 {
@@ -31,15 +30,12 @@ namespace ImGalaxy.ES.Core
 
         public void Route(object @event)
         {
-            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event)));
+            @event.ThrowsIfNull(new ArgumentNullException(nameof(@event))); 
 
-            Action<object> handler;
-
-            if (_handlers.TryGetValue(@event.GetType(), out handler))
-                handler(@event);
-            
+            if (_handlers.TryGetValue(@event.GetType(), out var handler))
+                handler(@event); 
         }
 
-        public void Apply(object @event) => this.Route(@event);
+        public void Apply(object @event) =>  Route(@event);
     }
 }

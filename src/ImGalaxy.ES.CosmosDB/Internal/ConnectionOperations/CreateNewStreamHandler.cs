@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System; 
 using System.Threading;
 using System.Threading.Tasks;
 using ImGalaxy.ES.Core;
@@ -21,7 +19,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
             var newStream = CosmosStream.Create(operation.Id, operation.StreamType)
                                           .ChangeVersion(version); 
 
-            await _createItemAsyc(newStream.ToCosmosStreamDocument());
+            await _createItemAsyc(newStream.ToCosmosStreamDocument()).ConfigureAwait(false);
 
             return ExecutionResult.Success;
         }

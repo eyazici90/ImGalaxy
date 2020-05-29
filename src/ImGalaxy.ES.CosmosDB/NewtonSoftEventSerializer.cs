@@ -1,9 +1,7 @@
 ﻿using ImGalaxy.ES.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 
 namespace ImGalaxy.ES.CosmosDB
 {
@@ -23,22 +21,20 @@ namespace ImGalaxy.ES.CosmosDB
          
         private JsonSerializerSettings CreateSerializerSettings(bool camelCase = true, bool indented = false)
         {
-            var settings = new JsonSerializerSettings();
-            settings.TypeNameHandling = TypeNameHandling.None;
-            settings.NullValueHandling = NullValueHandling.Ignore;
-
-            if (indented)
+            var settings = new JsonSerializerSettings
             {
-                settings.Formatting = Formatting.Indented;
-            }
+                TypeNameHandling = TypeNameHandling.None,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+
+            if (indented)  settings.Formatting = Formatting.Indented;
 
             if (camelCase)
-            {
                 settings.ContractResolver = new DefaultContractResolver
                 {
                     NamingStrategy = new CamelCaseNamingStrategy()
                 };
-            }
+            
             return settings;
         }
     }

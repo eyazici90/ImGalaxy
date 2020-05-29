@@ -1,8 +1,6 @@
 ﻿using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,7 +16,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
         {
             var id = CosmosStreamNameStrategy.GetStreamIdentifier(operation.StreamId);
 
-            var existingStream = await _getStreamDocumentByIdAsync(new GetStreamDocumentByIdAsync(id));
+            var existingStream = await _getStreamDocumentByIdAsync(new GetStreamDocumentByIdAsync(id)).ConfigureAwait(false);
 
             if (!existingStream.HasValue)
                 return Optional<CosmosStream>.Empty;

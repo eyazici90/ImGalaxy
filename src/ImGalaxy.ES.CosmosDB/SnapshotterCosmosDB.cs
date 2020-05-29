@@ -36,17 +36,15 @@ namespace ImGalaxy.ES.CosmosDB
             Optional<TAggregateRoot> root = await _rootRepository.GetAsync(stream);
 
             root.ThrowsIf(r => !r.HasValue, new AggregateNotFoundException(stream));
+             
+            _changeTracker.TryGet(stream, out Aggregate aggregate);
 
-            Aggregate aggregate;
-
-            this._changeTracker.TryGet(stream, out aggregate);
-
-            var serializedState = this._eventSerializer.Serialize(((ISnapshotable)root.Value).TakeSnapshot());
+            var serializedState = _eventSerializer.Serialize(root.Value.TakeSnapshot());
 
             var newSnapshot = new SnapshotDocument(aggregate.Identifier, serializedState, aggregate.ExpectedVersion.Value.ToString(), null, typeof(TSnapshot).TypeQualifiedName());
 
             await _cosmosDbClient.CreateItemAsync(newSnapshot,
-                            this._cosmosDBConfigurations.SnapshotContainerName);
+                             _cosmosDBConfigurations.SnapshotContainerName).ConfigureAwait(false);
 
             return ExecutionResult.Success;
         }

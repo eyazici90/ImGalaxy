@@ -1,7 +1,4 @@
-﻿using ImGalaxy.ES.Core;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ImGalaxy.ES.Core; 
 
 namespace ImGalaxy.ES.CosmosDB
 {

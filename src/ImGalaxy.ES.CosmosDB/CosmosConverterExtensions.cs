@@ -38,7 +38,7 @@ namespace ImGalaxy.ES.CosmosDB
                                                @event,
                                                   new EventMetadata
                                                   {
-                                                      TimeStamp = DateTime.Now,
+                                                      TimeStamp = DateTime.UtcNow,
                                                       AggregateType = rootType.Name,
                                                       AggregateAssemblyQualifiedName = rootType.AssemblyQualifiedName,
                                                       IsSnapshot = false

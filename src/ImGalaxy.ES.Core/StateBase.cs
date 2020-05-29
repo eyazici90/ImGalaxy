@@ -36,8 +36,7 @@ namespace ImGalaxy.ES.Core
         }
         public virtual void BeforeApplyEvent(object @event)
         {
-        }
-
+        } 
 
         public virtual void AfterApplyEvent(object @event)
         {

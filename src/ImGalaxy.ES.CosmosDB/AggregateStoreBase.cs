@@ -26,7 +26,7 @@ namespace ImGalaxy.ES.CosmosDB
             slice.Events.Select(e => this.EventDeserializer.Deserialize(Type.GetType(e.EventType, true), e.Data));
         protected virtual string GetStreamNameOfRoot<T>(string identifier) => StreamNameProvider.GetStreamName(typeof(T), identifier);
         protected virtual Optional<T> IntanceOfRoot<T>() where T : IAggregateRootState<T> =>
-        new Optional<T>((T)Activator.CreateInstance(typeof(T), true));
+            new Optional<T>((T)Activator.CreateInstance(typeof(T), true));
         protected virtual Optional<T> IntanceOfRoot<T>(Aggregate aggregate) where T : IAggregateRootState<T> =>
             new Optional<T>((T)((aggregate).Root));
         protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateChangeTracker).ClearEvents();
