@@ -7,9 +7,9 @@ namespace ImGalaxy.ES.Core
             where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot
     {
         private readonly IAggregateStore _aggregateStore;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         public AggregateRootRepository(IAggregateStore aggregateStore,
-            IChangeTracker changeTracker)
+            IAggregateChangeTracker changeTracker)
         {
             _aggregateStore = aggregateStore;
             _changeTracker = changeTracker;

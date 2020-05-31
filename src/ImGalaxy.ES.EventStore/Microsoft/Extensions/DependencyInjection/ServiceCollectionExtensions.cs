@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
                      .AddTransient<IAggregateStoreDependencies, AggregateStoreDependencies>()
                      .AddTransient<ISnapshotReader, SnapshotReaderEventStore>();
         private static IServiceCollection RegisterChangeTracker(this IServiceCollection services) =>
-           services.AddScoped<IChangeTracker, ChangeTracker>();
+           services.AddScoped<IAggregateChangeTracker, AggregateChangeTracker>();
 
         private static IServiceCollection RegisterRepositories(this IServiceCollection services) =>
              services.AddScoped(typeof(IAggregateRootRepository<>), typeof(AggregateRootRepository<>));

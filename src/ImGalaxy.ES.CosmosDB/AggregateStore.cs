@@ -42,7 +42,7 @@ namespace ImGalaxy.ES.CosmosDB
 
         public async Task<IExecutionResult> Save(Aggregate aggregate)
         {
-            CosmosEventData[] changes = (aggregate.Root as IAggregateChangeTracker)
+            CosmosEventData[] changes = (aggregate.Root as IAggregateRootChangeTracker)
                                                                             .GetEvents()
                                                                             .ToCosmosEventData(aggregate.Root.GetType());
 

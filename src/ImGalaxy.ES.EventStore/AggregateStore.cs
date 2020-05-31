@@ -70,7 +70,7 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task<IExecutionResult> Save(Aggregate aggregate)
         {
-            EventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
+            EventData[] changes = (aggregate.Root as IAggregateRootChangeTracker).GetEvents()
                                          .Select(@event => new EventData(
                                              Guid.NewGuid(),
                                              @event.GetType().TypeQualifiedName(),

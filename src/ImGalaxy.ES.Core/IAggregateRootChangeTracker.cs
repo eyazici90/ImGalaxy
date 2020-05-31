@@ -2,7 +2,7 @@
 
 namespace ImGalaxy.ES.Core
 {
-    public interface IAggregateChangeTracker
+    public interface IAggregateRootChangeTracker
     { 
         bool HasEvents(); 
         IEnumerable<object> GetEvents(); 

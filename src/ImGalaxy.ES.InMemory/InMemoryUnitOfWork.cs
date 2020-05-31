@@ -6,9 +6,9 @@ namespace ImGalaxy.ES.InMemory
 {
     public class InMemoryUnitOfWork : IUnitOfWork
     {
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly IAggregateStore _aggregateStore;
-        public InMemoryUnitOfWork(IChangeTracker changeTracker,
+        public InMemoryUnitOfWork(IAggregateChangeTracker changeTracker,
             IAggregateStore aggregateStore)
         {
             _changeTracker = changeTracker ?? throw new ArgumentNullException(nameof(changeTracker));

@@ -29,7 +29,7 @@ namespace ImGalaxy.ES.CosmosDB
             new Optional<T>((T)Activator.CreateInstance(typeof(T), true));
         protected virtual Optional<T> IntanceOfRoot<T>(Aggregate aggregate) where T : IAggregateRootState<T> =>
             new Optional<T>((T)((aggregate).Root));
-        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateChangeTracker).ClearEvents();
+        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateRootChangeTracker).ClearEvents();
         protected virtual async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamName, long version) =>
               await CosmosDBConnection.ReadStreamEventsForwardAsync(streamName, version, CosmosDBConfigurations.ReadBatchSize);
     }

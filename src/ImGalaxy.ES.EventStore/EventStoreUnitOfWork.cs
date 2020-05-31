@@ -12,10 +12,10 @@ namespace ImGalaxy.ES.EventStore
     public class EventStoreUnitOfWork : IUnitOfWork
     {
         private readonly IAggregateStore _aggregateStore;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly IMediator _mediator;
         public EventStoreUnitOfWork(IAggregateStore aggregateStore,
-            IChangeTracker changeTracker,
+            IAggregateChangeTracker changeTracker,
             IMediator mediator)
         {
             _aggregateStore = aggregateStore ?? throw new ArgumentNullException(nameof(aggregateStore));
@@ -26,7 +26,7 @@ namespace ImGalaxy.ES.EventStore
 
         private async Task DispatchNotificationsAsync()
         {
-            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateChangeTracker));
+            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateRootChangeTracker));
 
             var domainEvents = notifications
                 .SelectMany(x => x.GetEvents())

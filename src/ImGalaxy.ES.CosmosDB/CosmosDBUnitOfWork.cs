@@ -9,9 +9,9 @@ namespace ImGalaxy.ES.CosmosDB
     public class CosmosDBUnitOfWork : IUnitOfWork
     {
         private readonly IAggregateStore _aggregateStore;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly IMediator _mediator;
-        public CosmosDBUnitOfWork(IChangeTracker changeTracker,
+        public CosmosDBUnitOfWork(IAggregateChangeTracker changeTracker,
             IAggregateStore aggregateStore,
             IMediator mediator)
         {
@@ -33,7 +33,7 @@ namespace ImGalaxy.ES.CosmosDB
 
         private async Task DispatchNotificationsAsync()
         {
-            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateChangeTracker));
+            var notifications = this._changeTracker.GetChanges().Select(a => (a.Root as IAggregateRootChangeTracker));
 
             var domainEvents = notifications
                 .SelectMany(x => x.GetEvents())

@@ -1,6 +1,6 @@
 ﻿namespace ImGalaxy.ES.Core
 {
-    public interface IAggregateRoot : IAggregateChangeTracker, IAggregateRootInitializer
+    public interface IAggregateRoot : IAggregateRootChangeTracker, IAggregateRootInitializer
     {
     }
 }

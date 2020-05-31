@@ -37,7 +37,7 @@ namespace ImGalaxy.ES.InMemory
 
         public async Task<IExecutionResult> Save(Aggregate aggregate)
         {
-            InMemoryEventData[] changes = (aggregate.Root as IAggregateChangeTracker).GetEvents()
+            InMemoryEventData[] changes = (aggregate.Root as IAggregateRootChangeTracker).GetEvents()
                                            .Select(@event => new InMemoryEventData(
                                                Guid.NewGuid().ToString(),
                                                @event.GetType().TypeQualifiedName(),

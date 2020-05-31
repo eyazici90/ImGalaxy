@@ -6,10 +6,10 @@ using System.Linq;
 
 namespace ImGalaxy.ES.Core
 {
-    public class ChangeTracker : IChangeTracker
+    public class AggregateChangeTracker : IAggregateChangeTracker
     {
         private readonly ConcurrentDictionary<string, Aggregate> _aggregates;
-        public ChangeTracker()=>
+        public AggregateChangeTracker()=>
             _aggregates = new ConcurrentDictionary<string, Aggregate>();
         
         public IExecutionResult Attach(Aggregate aggregate)

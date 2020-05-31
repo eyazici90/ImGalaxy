@@ -13,13 +13,13 @@ namespace ImGalaxy.ES.EventStore
     {
 
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly IStreamNameProvider _streamNameProvider;
         private readonly IEventStoreConnection _connection;
         private readonly IEventSerializer _eventSerializer; 
         private readonly Func<ResolvedEvent, bool> _strategy;
         public SnapshotEventStore(IAggregateRootRepository<TAggregateRoot> rootRepository,
-            IChangeTracker changeTracker,
+            IAggregateChangeTracker changeTracker,
             IStreamNameProvider streamNameProvider,
             IEventStoreConnection connection,
             IEventSerializer eventSerializer, 

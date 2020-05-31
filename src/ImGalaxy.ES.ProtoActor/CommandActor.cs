@@ -40,7 +40,7 @@ namespace ImGalaxy.ES.ProtoActor
         {
             await AggregateStore.Save(new Aggregate(identifier, aggregateVersion, result.State));
 
-            (result.State as IAggregateChangeTracker).ClearEvents();
+            (result.State as IAggregateRootChangeTracker).ClearEvents();
         }
 
         protected void When<TCommand>(Func<TCommand, string> identifyHandler, Func<TCommand, AggregateRootState<TState>.Result> handler)

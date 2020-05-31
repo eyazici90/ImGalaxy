@@ -33,7 +33,7 @@ namespace ImGalaxy.ES.EventStore
         protected virtual Optional<T> IntanceOfRoot<T>(Aggregate aggregate) where T : IAggregateRootState<T> =>
             new Optional<T>((T)((aggregate).Root)); 
 
-        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateChangeTracker).ClearEvents(); 
+        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateRootChangeTracker).ClearEvents(); 
 
         protected virtual async Task<StreamEventsSlice> ReadStreamEventsForwardAsync(string streamName, long version) =>
               await EventStoreConnection.ReadStreamEventsForwardAsync(streamName, version, this.EventStoreConfigurations.ReadBatchSize, false);

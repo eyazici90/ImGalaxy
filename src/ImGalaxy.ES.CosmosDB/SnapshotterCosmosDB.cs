@@ -9,12 +9,12 @@ namespace ImGalaxy.ES.CosmosDB
        where TAggregateRoot : class, IAggregateRootState<TAggregateRoot>, IAggregateRoot, ISnapshotable
     {
         private readonly IAggregateRootRepository<TAggregateRoot> _rootRepository;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly ICosmosDBClient _cosmosDbClient;
         private readonly ICosmosDBConfigurations _cosmosDBConfigurations;
         private readonly IEventSerializer _eventSerializer;
         public SnapshotterCosmosDB(IAggregateRootRepository<TAggregateRoot> rootRepository,
-            IChangeTracker changeTracker,
+            IAggregateChangeTracker changeTracker,
             ICosmosDBClient cosmosDbClient,
             ICosmosDBConfigurations cosmosDBConfigurations,
             IEventSerializer eventSerializer)

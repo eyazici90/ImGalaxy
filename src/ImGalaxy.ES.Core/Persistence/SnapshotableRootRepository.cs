@@ -8,11 +8,11 @@ namespace ImGalaxy.ES.Core
     { 
         private readonly ISnapshotReader _snapshotStore;
         private readonly IAggregateStore _aggregateStore;
-        private readonly IChangeTracker _changeTracker;
+        private readonly IAggregateChangeTracker _changeTracker;
         private readonly IStreamNameProvider _streamNameProvider;
         public SnapshotableRootRepository(ISnapshotReader snapshotStore,
             IAggregateStore aggregateStore,
-            IChangeTracker changeTracker,
+            IAggregateChangeTracker changeTracker,
             IStreamNameProvider streamNameProvider)
         {
             _snapshotStore = snapshotStore;

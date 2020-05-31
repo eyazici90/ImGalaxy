@@ -79,7 +79,7 @@ namespace ImGalaxy.ES.TestBase
         }
         public void Assert()
         {
-            var changeEventsForsut = ((IAggregateChangeTracker)_sut).GetEvents();
+            var changeEventsForsut = ((IAggregateRootChangeTracker)_sut).GetEvents();
             if (throwenException != null)
             {
                 expectedException.GetType().Should().Be(throwenException.GetType());
