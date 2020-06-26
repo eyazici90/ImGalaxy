@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Projector
@@ -17,12 +18,18 @@ namespace ImGalaxy.ES.Projector
 
         public async Task ProjectAsync(object @event)
         {
-            var projection = _serviceFactory(typeof(IProjection<T>));
+            var projections = _serviceFactory(typeof(IProjection<T>));
 
-            if (projection == default)
-                throw new ProjectionNotFoundException(typeof(T).Name);
+            if (projections == default) throw new ProjectionNotRegisteredException(typeof(T).Name);
 
-            await ((IProjection<T>)projection).HandleAsync(@event, _connector).ConfigureAwait(false);
+            var foundProjections = ProjectionFinder.FindProjections<T>(projections, @event);
+
+            if (!foundProjections.Any()) throw new ProjectionNotFoundException(typeof(T).Name);
+
+            foreach (var projection in foundProjections)
+            {
+                await projection.HandleAsync(@event, _connector).ConfigureAwait(false);
+            }
         }
     }
 }

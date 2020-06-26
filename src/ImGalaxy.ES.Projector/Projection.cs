@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Projector
 {
     public abstract class Projection<T> : IProjection<T> where T : class
     {
-        private readonly ConcurrentDictionary<Type, Collection<Handle<T>>> _handlers = new ConcurrentDictionary<Type, Collection<Handle<T>>>();
+        public readonly ConcurrentDictionary<Type, Collection<Handle<T>>> _handlers = new ConcurrentDictionary<Type, Collection<Handle<T>>>();
+        public ConcurrentDictionary<Type, Collection<Handle<T>>> Handlers => _handlers; 
         protected virtual void When<TMessage>(Func<TMessage, T, Task> handler)
          where TMessage : class =>
            _handlers.AddOrUpdate(typeof(TMessage),

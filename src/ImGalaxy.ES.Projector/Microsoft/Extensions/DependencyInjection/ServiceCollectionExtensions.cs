@@ -1,5 +1,5 @@
 ﻿using ImGalaxy.ES.Projector;
-using System; 
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params Type[] projectionTypes)
             where T : class
         {
-            services.AddTransient<ServiceFactory>(p => p.GetService);
+            services.AddTransient<ServiceFactory>(p => p.GetServices);
 
             var projectorDescriptor = new ServiceDescriptor(typeof(IProjector), typeof(ConnectedProjector<T>), serviceLifetime);
 

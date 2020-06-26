@@ -1,20 +1,19 @@
-﻿using ImGalaxy.ES.Projector.Tests.Views; 
-using System.Collections.Concurrent; 
+﻿using System.Collections.Concurrent;
 
 namespace ImGalaxy.ES.Projector.Tests.Stubs
 {
     public class InMemoryConnector
     {
-        private readonly static ConcurrentDictionary<string, CarView> _states = new ConcurrentDictionary<string, CarView>();
+        private readonly static ConcurrentDictionary<string, object> _states = new ConcurrentDictionary<string, object>();
 
-        public void Create(CarView state) =>
-            _states.TryAdd(state.Id, state);
+        public void Create<T>(string identifer, T state) =>
+            _states.TryAdd($"{typeof(T).Name}-{identifer}", state);
 
 
-        public CarView Get(string id)
+        public T Get<T>(string id) where T : class
         {
-            _states.TryGetValue(id, out var state);
-            return state;
+            _states.TryGetValue($"{typeof(T).Name}-{id}", out var state);
+            return state as T;
         }
     }
 }

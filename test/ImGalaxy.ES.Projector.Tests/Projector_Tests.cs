@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using ImGalaxy.ES.Projector.Tests.Projections;
 using ImGalaxy.ES.Projector.Tests.Stubs;
+using ImGalaxy.ES.Projector.Tests.Views;
 using Microsoft.Extensions.DependencyInjection;
-using System; 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestApp;
 using Xunit;
@@ -18,7 +20,10 @@ namespace ImGalaxy.ES.Projector.Tests
             //Arrange
             var connector = new InMemoryConnector();
 
-            var projector = new ConnectedProjector<InMemoryConnector>(connector, _ => new CarProjection());
+            var projector = new ConnectedProjector<InMemoryConnector>(connector, _ => new List<IProjection<InMemoryConnector>>
+            {
+                new CarProjection()
+            });
 
             var @event = new CarRegisteredEvent("123", "Ferrari");
 
@@ -26,7 +31,7 @@ namespace ImGalaxy.ES.Projector.Tests
             await projector.ProjectAsync(@event).ConfigureAwait(false);
 
             //Assertion
-            var view = connector.Get("123");
+            var view = connector.Get<CarView>("123");
             view.Should().NotBeNull();
 
             view.Name.Should().Be("Ferrari");
@@ -35,7 +40,7 @@ namespace ImGalaxy.ES.Projector.Tests
 
 
         [Fact]
-        public void Should_throw_when_projected()
+        public void Should_throw_not_registered_when_projected()
         {
             //Arrange
             var connector = new InMemoryConnector();
@@ -47,9 +52,55 @@ namespace ImGalaxy.ES.Projector.Tests
             //Act
             Func<Task> act = () => projector.ProjectAsync(@event);
 
+            act.Should().Throw<ProjectionNotRegisteredException>();
+        }
+
+        [Fact]
+        public void Should_throw_not_found_when_projected()
+        {
+            //Arrange
+            var connector = new InMemoryConnector();
+
+            var projector = new ConnectedProjector<InMemoryConnector>(connector, _ => new List<IProjection<InMemoryConnector>>
+            {
+                new CarProjection()
+            });
+
+            var @event = new CarNameChangedEvent("123", "Ferrari");
+
+            //Act
+            Func<Task> act = () => projector.ProjectAsync(@event);
+
             act.Should().Throw<ProjectionNotFoundException>();
         }
 
+        [Fact]
+        public async Task Should_be_when_projected_multiple()
+        {
+            //Arrange
+            var connector = new InMemoryConnector();
+
+            var projector = new ConnectedProjector<InMemoryConnector>(connector, _ => new List<IProjection<InMemoryConnector>>
+            {
+                new CarProjection(),
+                new CarHistoryProjection()
+            });
+
+            var @event = new CarRegisteredEvent("123", "Ferrari");
+
+            //Act
+            await projector.ProjectAsync(@event).ConfigureAwait(false);
+
+            //Assertion
+            var carView = connector.Get<CarView>("123");
+            carView.Should().NotBeNull();
+            carView.Name.Should().Be("Ferrari");
+
+            var carHistoryView = connector.Get<CarHistoryView>("123");
+            carHistoryView.Should().NotBeNull();
+            carHistoryView.Name.Should().Be("Ferrari");
+
+        } 
 
         [Theory]
         [InlineData(typeof(IProjector))]

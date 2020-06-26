@@ -1,4 +1,5 @@
-﻿using ImGalaxy.ES.Projector; 
+﻿using ImGalaxy.ES.Projector;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.Examples.Projector
@@ -9,11 +10,14 @@ namespace ImGalaxy.ES.Examples.Projector
         {
             var connector = new ConsoleConnector();
 
-            var projector = new ConnectedProjector<ConsoleConnector>(connector, _ => new ConsoleProjection());
+            var projector = new ConnectedProjector<ConsoleConnector>(connector, _ => new List<IProjection<ConsoleConnector>>
+            {
+              new ConsoleProjection()
+            });
 
             var @event = new FakeEvent("Amsterdam");
 
-            await projector.ProjectAsync(@event).ConfigureAwait(false); 
+            await projector.ProjectAsync(@event).ConfigureAwait(false);
         }
     }
 }

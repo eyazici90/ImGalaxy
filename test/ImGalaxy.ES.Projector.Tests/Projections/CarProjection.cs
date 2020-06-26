@@ -1,5 +1,5 @@
 ﻿using ImGalaxy.ES.Projector.Tests.Stubs;
-using ImGalaxy.ES.Projector.Tests.Views; 
+using ImGalaxy.ES.Projector.Tests.Views;
 using TestApp;
 
 namespace ImGalaxy.ES.Projector.Tests.Projections
@@ -10,7 +10,7 @@ namespace ImGalaxy.ES.Projector.Tests.Projections
         {
             When<CarRegisteredEvent>(async (@event, connector) =>
             {
-                connector.Create(new CarView { Id = @event.Id, Name = @event.Name });
+                connector.Create(@event.Id, new CarView { Id = @event.Id, Name = @event.Name });
             });
         }
     }

@@ -1,6 +1,7 @@
-﻿using System; 
+﻿using System;
+using System.Collections.Generic;
 
 namespace ImGalaxy.ES.Projector
 {
-    public delegate object ServiceFactory(Type serviceType);
+    public delegate IEnumerable<object> ServiceFactory(Type serviceType);
 }
