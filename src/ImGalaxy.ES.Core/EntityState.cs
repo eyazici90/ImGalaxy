@@ -1,4 +1,5 @@
-﻿using System; 
+﻿using Galaxy.Railway;
+using System; 
 
 namespace ImGalaxy.ES.Core
 { 

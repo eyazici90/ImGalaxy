@@ -1,7 +1,7 @@
 ﻿using System; 
 using System.Threading;
 using System.Threading.Tasks;
-using ImGalaxy.ES.Core;
+using Galaxy.Railway; 
 using ImGalaxy.ES.CosmosDB.Documents;
 
 namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations

@@ -15,7 +15,7 @@ namespace ImGalaxy.ES.Projector.Tests.Projections
 
             When<CarModelRenewedEvent>(async (@event, connector) =>
             {
-                connector.Create(@event.Id, new CarHistoryView { Id = @event.Id, Name = @event.Name });
+                connector.Create(@event.Id, new CarHistoryView { Id = @event.Id, Year = @event.Year });
             });
         }
     }

@@ -1,12 +1,12 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
+using ImGalaxy.ES.Core;
 using ImGalaxy.ES.TestApp.Domain.Cars;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 using System.Threading;
 using System.Threading.Tasks;
 using TestApp.Domain.Cars;
+using Unit = MediatR.Unit;
 
 namespace TestApp.Application.Commands.Handlers
 {
@@ -21,9 +21,9 @@ namespace TestApp.Application.Commands.Handlers
 
         public async Task<Unit> Handle(AddItemToCarCommand request, CancellationToken cancellationToken) =>
             await UpdateAsync(new CarId(request.CarId), async car => Car.AddCarItem(car,
-                                                                        new CarItemId(Guid.NewGuid().ToString()), 
+                                                                        new CarItemId(Guid.NewGuid().ToString()),
                                                                         request.Desc, _carPolicy))
-                 .PipeToAsync(Unit.Value);
+                 .MapAsync(_ => Unit.Value);
 
     }
 }

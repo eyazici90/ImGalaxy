@@ -1,5 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Exceptions;
+using Galaxy.Railway;
 using ImGalaxy.ES.Core;
 using MediatR;
 using System;
@@ -38,7 +39,7 @@ namespace ImGalaxy.ES.EventStore
             var tasks = domainEvents
                 .Select(async (domainEvent) =>
                 {
-                    await this._mediator.Publish(domainEvent);
+                    await this._mediator.Publish(domainEvent).ConfigureAwait(false);
                 });
 
             await Task.WhenAll(tasks);
@@ -48,7 +49,7 @@ namespace ImGalaxy.ES.EventStore
         {
             foreach (Aggregate aggregate in this._changeTracker.GetChanges())
             {
-                await _aggregateStore.Save(aggregate);
+                await _aggregateStore.Save(aggregate).ConfigureAwait(false);
             }
             return ExecutionResult.Success;
         }
@@ -57,8 +58,8 @@ namespace ImGalaxy.ES.EventStore
 
         public async Task<IExecutionResult> SaveChangesAsync()
         {
-            await AppendChangesToStreamAsync();
-            await DispatchNotificationsAsync();
+            await AppendChangesToStreamAsync().ConfigureAwait(false);
+            await DispatchNotificationsAsync().ConfigureAwait(false);
             _changeTracker.ResetChanges();
 
             return ExecutionResult.Success;

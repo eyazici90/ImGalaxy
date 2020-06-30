@@ -1,4 +1,5 @@
 ﻿using EventStore.ClientAPI;
+using Galaxy.Railway;
 using ImGalaxy.ES.Core;
 using System;
 using System.Collections.Generic;
@@ -21,19 +22,19 @@ namespace ImGalaxy.ES.EventStore
             EventStoreConfigurations = dependencies.EventStoreConfigurations;
             StreamNameProvider = dependencies.StreamNameProvider;
         }
-        protected virtual T ApplyChangesToRoot<T>(T root, IEnumerable<object> events) where T: IAggregateRootState<T> =>
-          root.With(r => (r as IAggregateRootInitializer).Initialize(events)); 
+        protected virtual T ApplyChangesToRoot<T>(T root, IEnumerable<object> events) where T : IAggregateRootState<T> =>
+          root.With(r => (r as IAggregateRootInitializer).Initialize(events));
         protected virtual IEnumerable<object> DeserializeEventsFromSlice(StreamEventsSlice slice) =>
             slice.Events.Select(e => this.EventDeserializer.Deserialize(Type.GetType(e.Event.EventType, true)
-                       , Encoding.UTF8.GetString(e.Event.Data))); 
+                       , Encoding.UTF8.GetString(e.Event.Data)));
         protected virtual string GetStreamNameOfRoot<T>(string identifier) where T : IAggregateRootState<T> =>
             StreamNameProvider.GetStreamName(typeof(T), identifier);
         protected virtual Optional<T> IntanceOfRoot<T>() where T : IAggregateRootState<T> =>
-            new Optional<T>((T)Activator.CreateInstance(typeof(T), true));
+            ((T)Activator.CreateInstance(typeof(T), true)).ToOptional();
         protected virtual Optional<T> IntanceOfRoot<T>(Aggregate aggregate) where T : IAggregateRootState<T> =>
-            new Optional<T>((T)((aggregate).Root)); 
+            ((T)((aggregate).Root)).ToOptional();
 
-        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateRootChangeTracker).ClearEvents(); 
+        protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateRootChangeTracker).ClearEvents();
 
         protected virtual async Task<StreamEventsSlice> ReadStreamEventsForwardAsync(string streamName, long version) =>
               await EventStoreConnection.ReadStreamEventsForwardAsync(streamName, version, this.EventStoreConfigurations.ReadBatchSize, false);

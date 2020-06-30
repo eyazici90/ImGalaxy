@@ -1,7 +1,6 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
 using ImGalaxy.ES.CosmosDB.Documents;
 using Microsoft.Azure.Cosmos;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations
             {
                 var result = await _cosmosClient.ReadItemAsync<StreamDocument>(operation.Id, PartitionKey.None, _cosmosDBConfigurations.StreamContainerName).ConfigureAwait(false);
 
-                return new Optional<StreamDocument>(result.Resource);
+                return result.Resource.ToOptional();
             }
             catch (CosmosException)
             {

@@ -1,4 +1,5 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
+using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
 using Microsoft.Azure.Cosmos;
 using System; 
@@ -42,7 +43,7 @@ namespace ImGalaxy.ES.CosmosDB
                     .ToList()
                     .FirstOrDefault();
 
-                return new Optional<SnapshotDocument>(document);
+                return document.ToOptional();
             }
             catch (CosmosException)
             {

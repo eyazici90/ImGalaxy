@@ -1,4 +1,5 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
+using ImGalaxy.ES.Core;
 using ImGalaxy.ES.CosmosDB.Documents;
 using ImGalaxy.ES.CosmosDB.Internal;
 using ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations;

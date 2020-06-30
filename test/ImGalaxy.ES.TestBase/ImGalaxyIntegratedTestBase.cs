@@ -1,8 +1,7 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
+using ImGalaxy.ES.Core;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System; 
 using System.Threading.Tasks;
 
 namespace ImGalaxy.ES.TestBase

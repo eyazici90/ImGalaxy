@@ -1,5 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
+using Galaxy.Railway;
 using ImGalaxy.ES.Core;
 using ImGalaxy.ES.EventStore; 
 using System; 

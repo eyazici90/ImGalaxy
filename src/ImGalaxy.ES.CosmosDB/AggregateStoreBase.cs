@@ -1,4 +1,5 @@
-﻿using ImGalaxy.ES.Core;
+﻿using Galaxy.Railway;
+using ImGalaxy.ES.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,9 @@ namespace ImGalaxy.ES.CosmosDB
             slice.Events.Select(e => this.EventDeserializer.Deserialize(Type.GetType(e.EventType, true), e.Data));
         protected virtual string GetStreamNameOfRoot<T>(string identifier) => StreamNameProvider.GetStreamName(typeof(T), identifier);
         protected virtual Optional<T> IntanceOfRoot<T>() where T : IAggregateRootState<T> =>
-            new Optional<T>((T)Activator.CreateInstance(typeof(T), true));
+            ((T)Activator.CreateInstance(typeof(T), true)).ToOptional();
         protected virtual Optional<T> IntanceOfRoot<T>(Aggregate aggregate) where T : IAggregateRootState<T> =>
-            new Optional<T>((T)((aggregate).Root));
+            ((T)((aggregate).Root)).ToOptional();
         protected virtual void ClearChangesOfRoot<T>(T root) where T : IAggregateRootState<T> => (root as IAggregateRootChangeTracker).ClearEvents();
         protected virtual async Task<Optional<CosmosStream>> ReadStreamEventsForwardAsync(string streamName, long version) =>
               await CosmosDBConnection.ReadStreamEventsForwardAsync(streamName, version, CosmosDBConfigurations.ReadBatchSize);

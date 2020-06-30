@@ -1,8 +1,5 @@
-﻿using ImGalaxy.ES.Core;
-using ImGalaxy.ES.TestApp.Domain.Cars;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Galaxy.Railway; 
+using ImGalaxy.ES.TestApp.Domain.Cars; 
 
 namespace TestApp.Domain.Cars
 {

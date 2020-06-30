@@ -1,5 +1,6 @@
 ﻿using System; 
 using System.Threading.Tasks;
+using Galaxy.Railway;
 using ImGalaxy.ES.Core;
 
 namespace ImGalaxy.ES.CosmosDB.Internal.ConnectionOperations

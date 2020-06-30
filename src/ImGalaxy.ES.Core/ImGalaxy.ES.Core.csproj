@@ -11,4 +11,8 @@
     <Version>2.2.0</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Galaxy.Railway" Version="1.0.1" />
+  </ItemGroup>
+
 </Project>

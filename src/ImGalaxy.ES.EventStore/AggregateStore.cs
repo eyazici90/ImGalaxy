@@ -1,5 +1,6 @@
 ﻿using EventStore.ClientAPI;
 using EventStore.ClientAPI.Exceptions;
+using Galaxy.Railway;
 using ImGalaxy.ES.Core;
 using System;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace ImGalaxy.ES.EventStore
                                               )).ToArray();
 
             return await AppendToStreamInternalAsync(_aggregateStoreDependencies.StreamNameProvider.GetStreamName(update.State, identifer),
-                version, changes);
+                version, changes).ConfigureAwait(false);
         }
 
         public async Task<IExecutionResult> Save(Aggregate aggregate)
@@ -86,14 +87,14 @@ namespace ImGalaxy.ES.EventStore
                                              )).ToArray();
 
             return await AppendToStreamInternalAsync(_aggregateStoreDependencies.StreamNameProvider.GetStreamName(aggregate.Root, aggregate.Identifier),
-                aggregate.ExpectedVersion, changes);
+                aggregate.ExpectedVersion, changes).ConfigureAwait(false);
         }
 
         private async Task<IExecutionResult> AppendToStreamInternalAsync(string stream, long expectedVersion, EventData[] events)
         {
             try
             {
-                await this._aggregateStoreDependencies.EventStoreConnection.AppendToStreamAsync(stream, expectedVersion, events);
+                await this._aggregateStoreDependencies.EventStoreConnection.AppendToStreamAsync(stream, expectedVersion, events).ConfigureAwait(false);
 
             }
             catch (WrongExpectedVersionException)

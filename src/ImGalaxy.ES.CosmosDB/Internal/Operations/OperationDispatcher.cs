@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
-using ImGalaxy.ES.Core;
+using Galaxy.Railway; 
 
 namespace ImGalaxy.ES.CosmosDB.Internal
 {
